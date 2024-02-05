@@ -1,0 +1,2 @@
+Hola, este es un archivo de texto creado con C++.
+Puedes escribir más líneas aquí.
