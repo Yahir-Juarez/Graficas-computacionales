@@ -14,7 +14,7 @@ int main()
 	float posPixelX;
 	float posPixelY;
 
-	float grados = 60;
+	float grados = 140;
 	
 	float radianes = (grados * 3.1416) / 180;
 	
@@ -33,6 +33,23 @@ int main()
 		{
 			Color colorInBuffer = imagen.GetPixel(x, y);
 			rotImg.SetPixel((rotImg.getRoationPosX(x, y, grados) + posPixel3 - posPixelX) - 1, (rotImg.getRoationPosY(x, y, grados)) - 1 , colorInBuffer);
+		}
+	}
+
+	for (int x = 1; x < rotImg.m_width; x++)
+	{
+		for (int y = 1; y < rotImg.m_height; y++)
+		{
+			Color colorInBuffer = rotImg.GetPixel(x, y);
+			if (colorInBuffer.isBlack())
+			{
+				colorInBuffer = rotImg.GetPixel(x + 1, y);
+				if (!colorInBuffer.isBlack())
+				{
+					colorInBuffer = rotImg.GetPixel(x - 1, y);
+					rotImg.SetPixel(x, y, colorInBuffer);
+				}
+			}
 		}
 	}
 

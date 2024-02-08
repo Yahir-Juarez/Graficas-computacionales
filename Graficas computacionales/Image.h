@@ -15,6 +15,21 @@ public:
 	Color(uint8 _r, uint8 _g, uint8 _b)
 		: r(_r), g(_g), b(_b)
 	{}
+
+	bool isBlack()
+	{
+		if (r == 0)
+		{
+			if (g == 0)
+			{
+				if (b == 0)
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 	~Color() = default;
 
 	unsigned char r;
