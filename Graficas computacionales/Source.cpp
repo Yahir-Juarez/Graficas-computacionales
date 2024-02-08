@@ -11,28 +11,55 @@ int main()
 	
 	Image rotImg;
 
-	float posPixelX;
-	float posPixelY;
-
-	float grados = 140;
+	float grados = 359.7;
 	
-	float radianes = (grados * 3.1416) / 180;
-	
-	posPixelX = (imagen.m_width * cos(radianes));
-	posPixelY = (imagen.m_height * cos(radianes) + imagen.m_width * sin(radianes));
-	float posPixel3 = (-1 ) * (imagen.m_height * sin(radianes));
-
-	posPixel3 *= -1;
-	posPixel3 += posPixelX;
-
-	rotImg.CreateImage(posPixel3, posPixelY, imagen.m_bpp);
+	float primerPunto;
+	float negativoX = 0;
+	float negativoY = 0;
+	float ancho;
+	float alto;
+	if (grados <= 90)
+	{
+		primerPunto = imagen.getRoationPosX(imagen.m_width, 0, grados);
+		negativoX = imagen.getRoationPosX(0, imagen.m_height, grados);
+		negativoX *= -1;
+		ancho = (negativoX) + primerPunto;
+		alto = imagen.getRoationPosY(imagen.m_width, imagen.m_height, grados);
+	}
+	else if (grados <= 180)
+	{
+		primerPunto = imagen.getRoationPosY(imagen.m_width, 0, grados);
+		negativoY = imagen.getRoationPosY(0, imagen.m_height, grados);
+		negativoY *= -1;
+		alto = (negativoY) + primerPunto;
+		negativoX = -1 * (imagen.getRoationPosX(imagen.m_width, imagen.m_height, grados));
+		ancho = negativoX;
+	}
+	else if (grados <= 270)
+	{
+		primerPunto = imagen.getRoationPosX(0, imagen.m_height, grados);
+		negativoX = imagen.getRoationPosX(imagen.m_width, 0, grados);
+		negativoX *= -1;
+		ancho = (negativoX)+primerPunto;
+		negativoY = -1 * (imagen.getRoationPosY(imagen.m_width, imagen.m_height, grados));
+		alto = negativoY;
+	}
+	else if (grados <= 360)
+	{
+		primerPunto = imagen.getRoationPosY(0, imagen.m_height, grados);
+		negativoY = imagen.getRoationPosY(imagen.m_width, 0, grados);
+		negativoY *= -1;
+		alto = (negativoY)+primerPunto;
+		ancho = imagen.getRoationPosX(imagen.m_width, imagen.m_height, grados);
+	}
+	rotImg.CreateImage(ancho, alto, imagen.m_bpp);
 
 	for (int x = 1; x < imagen.m_width; x++)
 	{
 		for (int y = 1; y < imagen.m_height; y++)
 		{
 			Color colorInBuffer = imagen.GetPixel(x, y);
-			rotImg.SetPixel((rotImg.getRoationPosX(x, y, grados) + posPixel3 - posPixelX) - 1, (rotImg.getRoationPosY(x, y, grados)) - 1 , colorInBuffer);
+			rotImg.SetPixel((rotImg.getRoationPosX(x, y, grados) + negativoX) - 1, (rotImg.getRoationPosY(x, y, grados) + negativoY) - 1 , colorInBuffer);
 		}
 	}
 
