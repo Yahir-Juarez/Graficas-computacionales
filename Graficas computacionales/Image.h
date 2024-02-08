@@ -47,6 +47,8 @@ public:
 
 	void SetPixel(uint32 x, uint32 y, Color color)
 	{
+		if (x < 0 || y < 0 || x >= m_width || y >= m_height) { return; }
+
 		uint32 basePos = (y * m_pitch) + (x * (m_bpp >> 3));
 		if (m_bpp == 24)
 		{
@@ -58,6 +60,8 @@ public:
 
 	Color GetPixel(uint32 x, uint32 y) const
 	{
+		if (x < 0 || y < 0 || x >= m_width || y >= m_height) { return Color(); }
+
 		uint32 basePos = (y * m_pitch) + (x * (m_bpp >> 3));
 		if (m_bpp == 24)
 		{
@@ -169,6 +173,19 @@ public:
 			}
 		}
 		return true;
+	}
+
+	float getRoationPosX(int x, int y, float grados)
+	{
+		float radianes = (grados * 3.1416) / 180;
+		float posInX = (x * cos(radianes)) - (y * sin(radianes));
+		return posInX;
+	}
+	int getRoationPosY(int x, int y, float grados)
+	{
+		float radianes = (grados * 3.1416) / 180;
+		float posInY = (x * sin(radianes)) + (y * cos(radianes));
+		return posInY;
 	}
 
 	uint32 m_bpp = 0;

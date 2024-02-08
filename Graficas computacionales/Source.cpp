@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cmath>
 #include "Image.h"
 
 
@@ -7,14 +8,42 @@ int main()
 	g_CodecMan.AddCodec(new BMPCodec());
 	Image imagen;
 	imagen.CreateFromImageFile("StarWars.bmp");
+	
+	Image rotImg;
 
-	float imgScale = 3.5f;
-	Image scaleImage;
+	float posPixelX;
+	float posPixelY;
 
-	//scaleImage.scaleImg2(imgScale, imagen);
+	float grados = 60;
+	
+	float radianes = (grados * 3.1416) / 180;
+	
+	posPixelX = (imagen.m_width * cos(radianes));
+	posPixelY = (imagen.m_height * cos(radianes) + imagen.m_width * sin(radianes));
+	float posPixel3 = (-1 ) * (imagen.m_height * sin(radianes));
+
+	posPixel3 *= -1;
+	posPixel3 += posPixelX;
+
+	rotImg.CreateImage(posPixel3, posPixelY, imagen.m_bpp);
+
+	for (int x = 1; x < imagen.m_width; x++)
+	{
+		for (int y = 1; y < imagen.m_height; y++)
+		{
+			Color colorInBuffer = imagen.GetPixel(x, y);
+			rotImg.SetPixel((rotImg.getRoationPosX(x, y, grados) + posPixel3 - posPixelX) - 1, (rotImg.getRoationPosY(x, y, grados)) - 1 , colorInBuffer);
+		}
+	}
+
+	//rotImg.SetPixel((rotImg.getRoationPosX(x, y, grados) + posPixel3 - posPixelX), rotImg.getRoationPosY(x, y, grados), colorInBuffer);
+
 
 	/////////////////////////////////////////////////////// Escalar Imagen /////////////////////////////////////////////////////
 
+	/*
+	float imgScale = 3.5f;
+	Image scaleImage;
 	scaleImage.CreateImage(imagen.m_width * imgScale, imagen.m_height * imgScale, imagen.m_bpp);
 
 	float siU = 1.0f / scaleImage.m_width;
@@ -26,7 +55,7 @@ int main()
 		{
 			scaleImage.SetPixel(x, y, imagen.SamplePixel(siU * x, siV * y));
 		}
-	}
+	}*/
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -34,7 +63,7 @@ int main()
 
 	if (codec)
 	{
-		codec->Encode(scaleImage, "StarWrsScale5.bmp");
+		codec->Encode(rotImg, "pruebaRotada.bmp");
 	}
 
 	return 0;
