@@ -56,7 +56,7 @@ public:
 		}
 	}
 
-	Color GetPixel(uint32 x, uint32 y)
+	Color GetPixel(uint32 x, uint32 y) const
 	{
 		uint32 basePos = (y * m_pitch) + (x * (m_bpp >> 3));
 		if (m_bpp == 24)
@@ -67,6 +67,14 @@ public:
 		}
 
 		return Color();
+	}
+
+	Color SamplePixel(float u, float v) const
+	{
+		uint32 pixX = m_width * u;
+		uint32 pixY = m_height * v;
+
+		return GetPixel(pixX, pixY);
 	}
 
 	void CreateFromImageFile(const Path& filePath)
@@ -143,6 +151,23 @@ public:
 			}
 		}
 		m_pixelData = scalePixels;
+		return true;
+	}
+
+	bool scaleImg2(float scale, Image& ptrImg)
+	{
+		CreateImage(m_width * scale, m_height * scale, m_bpp);
+
+		float siU = 1.0f / m_width;
+		float siV = 1.0f / m_height;
+
+		for (int y = 0; y < m_height; ++y)
+		{
+			for (int x = 0; x < m_width; x++)
+			{
+				SetPixel(x, y, ptrImg.SamplePixel(siU * x, siV * y));
+			}
+		}
 		return true;
 	}
 
