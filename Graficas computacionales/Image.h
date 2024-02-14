@@ -221,9 +221,74 @@ public:
 		return posInY;
 	}
 
-	void rotate()
+	void rotate(float grados, Image& imagen)
 	{
+		float primerPunto;
+		float negativoX = 0;
+		float negativoY = 0;
+		float ancho;
+		float alto;
+		if (grados <= 90)
+		{
+			primerPunto = imagen.getRoationPosX(imagen.m_width, 0, grados);
+			negativoX = imagen.getRoationPosX(0, imagen.m_height, grados);
+			negativoX *= -1;
+			ancho = (negativoX)+primerPunto;
+			alto = imagen.getRoationPosY(imagen.m_width, imagen.m_height, grados);
+		}
+		else if (grados <= 180)
+		{
+			primerPunto = imagen.getRoationPosY(imagen.m_width, 0, grados);
+			negativoY = imagen.getRoationPosY(0, imagen.m_height, grados);
+			negativoY *= -1;
+			alto = (negativoY)+primerPunto;
+			negativoX = -1 * (imagen.getRoationPosX(imagen.m_width, imagen.m_height, grados));
+			ancho = negativoX;
+		}
+		else if (grados <= 270)
+		{
+			primerPunto = imagen.getRoationPosX(0, imagen.m_height, grados);
+			negativoX = imagen.getRoationPosX(imagen.m_width, 0, grados);
+			negativoX *= -1;
+			ancho = (negativoX)+primerPunto;
+			negativoY = -1 * (imagen.getRoationPosY(imagen.m_width, imagen.m_height, grados));
+			alto = negativoY;
+		}
+		else if (grados <= 360)
+		{
+			primerPunto = imagen.getRoationPosY(0, imagen.m_height, grados);
+			negativoY = imagen.getRoationPosY(imagen.m_width, 0, grados);
+			negativoY *= -1;
+			alto = (negativoY)+primerPunto;
+			ancho = imagen.getRoationPosX(imagen.m_width, imagen.m_height, grados);
+		}
+		CreateImage(ancho, alto, imagen.m_bpp);
 
+		for (int x = 1; x < imagen.m_width; x++)
+		{
+			for (int y = 1; y < imagen.m_height; y++)
+			{
+				Color colorInBuffer = imagen.GetPixel(x, y);
+				SetPixel((getRoationPosX(x, y, grados) + negativoX) - 1, (getRoationPosY(x, y, grados) + negativoY) - 1, colorInBuffer);
+			}
+		}
+
+		for (int x = 1; x < m_width; x++)
+		{
+			for (int y = 1; y < m_height; y++)
+			{
+				Color colorInBuffer = GetPixel(x, y);
+				if (colorInBuffer.isBlack())
+				{
+					colorInBuffer = GetPixel(x + 1, y);
+					if (!colorInBuffer.isBlack())
+					{
+						colorInBuffer = GetPixel(x - 1, y);
+						SetPixel(x, y, colorInBuffer);
+					}
+				}
+			}
+		}
 	}
 
 	uint32 m_bpp = 0;

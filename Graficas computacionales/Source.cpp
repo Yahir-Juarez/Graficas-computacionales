@@ -9,11 +9,12 @@ int main()
 	Image imagen;
 	imagen.CreateFromImageFile("StarWars.bmp");
 	
-	/*Image rotImg;
+	Image rotImg;
 
-	float grados = 230.7;
+	float grados = 280;
 	
-	float primerPunto;
+	rotImg.rotate(grados, imagen);
+	/*float primerPunto;
 	float negativoX = 0;
 	float negativoY = 0;
 	float ancho;
@@ -85,15 +86,11 @@ int main()
 
 	/////////////////////////////////////////////////////// Escalar Imagen /////////////////////////////////////////////////////
 
-	
-	float imgScale = .5f;
-	Image scaleImage;
-	scaleImage.scaleImg2(imgScale, imagen);
 	auto codec = g_CodecMan.GetCodecByFileExt(".bmp");
 
 	if (codec)
 	{
-		codec->Encode(scaleImage, "pruebaRotada.bmp");
+		codec->Encode(rotImg, "pruebaRotada.bmp");
 	}
 
 	return 0;
