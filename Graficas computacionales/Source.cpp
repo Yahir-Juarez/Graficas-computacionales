@@ -9,9 +9,9 @@ int main()
 	Image imagen;
 	imagen.CreateFromImageFile("StarWars.bmp");
 	
-	Image rotImg;
+	/*Image rotImg;
 
-	float grados = 359.7;
+	float grados = 230.7;
 	
 	float primerPunto;
 	float negativoX = 0;
@@ -78,36 +78,22 @@ int main()
 				}
 			}
 		}
-	}
+	}*/
 
 	//rotImg.SetPixel((rotImg.getRoationPosX(x, y, grados) + posPixel3 - posPixelX), rotImg.getRoationPosY(x, y, grados), colorInBuffer);
 
 
 	/////////////////////////////////////////////////////// Escalar Imagen /////////////////////////////////////////////////////
 
-	/*
-	float imgScale = 3.5f;
+	
+	float imgScale = .5f;
 	Image scaleImage;
-	scaleImage.CreateImage(imagen.m_width * imgScale, imagen.m_height * imgScale, imagen.m_bpp);
-
-	float siU = 1.0f / scaleImage.m_width;
-	float siV = 1.0f / scaleImage.m_height;
-
-	for (int y = 0; y < scaleImage.m_height; ++y)
-	{
-		for (int x = 0; x < scaleImage.m_width; x++)
-		{
-			scaleImage.SetPixel(x, y, imagen.SamplePixel(siU * x, siV * y));
-		}
-	}*/
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+	scaleImage.scaleImg2(imgScale, imagen);
 	auto codec = g_CodecMan.GetCodecByFileExt(".bmp");
 
 	if (codec)
 	{
-		codec->Encode(rotImg, "pruebaRotada.bmp");
+		codec->Encode(scaleImage, "pruebaRotada.bmp");
 	}
 
 	return 0;

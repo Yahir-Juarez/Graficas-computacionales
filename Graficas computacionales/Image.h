@@ -60,6 +60,8 @@ public:
 		m_pixelData.resize(numBytes);
 	}
 
+
+
 	void SetPixel(uint32 x, uint32 y, Color color)
 	{
 		if (x < 0 || y < 0 || x >= m_width || y >= m_height) { return; }
@@ -124,6 +126,20 @@ public:
 		m_pixelData = pCodec->GetPixelData();
 	}
 
+	void bitBlt(Image& src,
+		int x,
+		int y,
+		int srcIniX,
+		int srcIniY,
+		int srcEndX,
+		int srcEndY)
+	{
+		if (0 == srcEndX)
+		{
+			//srcEndX = src.GetWidth();
+		}
+	}
+
 	bool Scale(float scale)
 	{
 		m_pitch *= scale;
@@ -173,9 +189,10 @@ public:
 		return true;
 	}
 
-	bool scaleImg2(float scale, Image& ptrImg)
+	bool scaleImg(float scale, Image& ptrImg)
 	{
-		CreateImage(m_width * scale, m_height * scale, m_bpp);
+		CreateImage(ptrImg.m_width * scale, ptrImg.m_height * scale,
+			ptrImg.m_bpp);
 
 		float siU = 1.0f / m_width;
 		float siV = 1.0f / m_height;
@@ -184,7 +201,8 @@ public:
 		{
 			for (int x = 0; x < m_width; x++)
 			{
-				SetPixel(x, y, ptrImg.SamplePixel(siU * x, siV * y));
+				SetPixel(x, y, ptrImg.SamplePixel(siU * x,
+					siV * y));
 			}
 		}
 		return true;
@@ -201,6 +219,11 @@ public:
 		float radianes = (grados * 3.1416) / 180;
 		float posInY = (x * sin(radianes)) + (y * cos(radianes));
 		return posInY;
+	}
+
+	void rotate()
+	{
+
 	}
 
 	uint32 m_bpp = 0;
