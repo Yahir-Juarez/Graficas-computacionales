@@ -131,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Image.cpp" />
     <ClCompile Include="ImgCodec.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
