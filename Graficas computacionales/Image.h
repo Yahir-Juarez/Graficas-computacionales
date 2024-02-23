@@ -48,6 +48,22 @@ struct Rect
 	int GetHeight() { bottom - top; }
 };
 
+struct vector2D
+{
+	vector2D() 
+	{
+		pointX = 0;
+		pointY = 0;
+	}
+	vector2D(int x, int y)
+	{
+		pointX = x;
+		pointY = y;
+	}
+	int pointX;
+	int pointY;
+};
+
 class Image
 {
 public:
@@ -73,9 +89,9 @@ public:
 
 
 
-	void SetPixel(uint32 x, uint32 y, Color color)
+	bool SetPixel(uint32 x, uint32 y, Color color)
 	{
-		if (x < 0 || y < 0 || x >= m_width || y >= m_height) { return; }
+		if (x < 0 || y < 0 || x >= m_width || y >= m_height) { return false; }
 
 		uint32 basePos = (y * m_pitch) + (x * (m_bpp >> 3));
 		if (m_bpp == 24)
@@ -84,6 +100,7 @@ public:
 			m_pixelData[basePos + 1] = static_cast<byte>(color.g);
 			m_pixelData[basePos + 2] = static_cast<byte>(color.b);
 		}
+		return true;
 	}
 
 	Color GetPixel(uint32 x, uint32 y) const
@@ -144,7 +161,90 @@ public:
 		int srcEndX = 0,
 		int srcEndY = 0);
 
-	//bool Scale(float scale)
+	void bitBltImgRotate(Image& src,
+		int x = 0,
+		int y = 0);
+
+	bool scaleImg(float scale, Image& ptrImg)
+	{
+		CreateImage(ptrImg.m_width * scale, ptrImg.m_height * scale,
+			ptrImg.m_bpp);
+
+		float siU = 1.0f / m_width;
+		float siV = 1.0f / m_height;
+
+		for (int y = 0; y < m_height; ++y)
+		{
+			for (int x = 0; x < m_width; x++)
+			{
+				SetPixel(x, y, ptrImg.SamplePixel(siU * x,
+					siV * y));
+			}
+		}
+		return true;
+	}
+
+	void draw_line(int x0, int y0, int x1, int y1);
+
+	int getRoationPosX(int x, int y, float grados)
+	{
+		float radianes = (grados * 3.1416) / 180;
+		float posInX = (x * cos(radianes)) - (y * sin(radianes));
+		return posInX;
+	}
+	int getRoationPosY(int x, int y, float grados)
+	{
+		float radianes = (grados * 3.1416) / 180;
+		float posInY = (x * sin(radianes)) + (y * cos(radianes));
+		return posInY;
+	}
+
+	void rotate(float grados, Image& imagen);
+
+	vector2D GetPointInLine(int x0, int y0, int x1, int y1, int &iter, bool& isValid);
+
+	void DrawLine(int x0, int y0, int x1, int y1, Color color);
+
+	uint32 GetWidth()
+	{
+		return m_width;
+	}
+	uint32 GetHeight()
+	{
+		return m_height;
+	}
+
+	vector2D getPoint1()
+	{
+		return point1;
+	}
+	vector2D getPoint2()
+	{
+		return point2;
+	}
+	vector2D getPoint3()
+	{
+		return point3;
+	}
+	vector2D getPoint4()
+	{
+		return point4;
+	}
+
+	uint32 m_bpp = 0;
+	uint32 m_width = 0;
+	uint32 m_height = 0;
+	uint32 m_pitch = 0;
+
+	Vector<byte> m_pixelData;
+
+	vector2D point1;
+	vector2D point2;
+	vector2D point3;
+	vector2D point4;
+};
+
+//bool Scale(float scale)
 	//{
 	//	m_pitch *= scale;
 	//	m_width *= scale;
@@ -192,115 +292,3 @@ public:
 	//	m_pixelData = scalePixels;
 	//	return true;
 	//}
-
-	bool scaleImg(float scale, Image& ptrImg)
-	{
-		CreateImage(ptrImg.m_width * scale, ptrImg.m_height * scale,
-			ptrImg.m_bpp);
-
-		float siU = 1.0f / m_width;
-		float siV = 1.0f / m_height;
-
-		for (int y = 0; y < m_height; ++y)
-		{
-			for (int x = 0; x < m_width; x++)
-			{
-				SetPixel(x, y, ptrImg.SamplePixel(siU * x,
-					siV * y));
-			}
-		}
-		return true;
-	}
-
-	int getRoationPosX(int x, int y, float grados)
-	{
-		float radianes = (grados * 3.1416) / 180;
-		float posInX = (x * cos(radianes)) - (y * sin(radianes));
-		return posInX;
-	}
-	int getRoationPosY(int x, int y, float grados)
-	{
-		float radianes = (grados * 3.1416) / 180;
-		float posInY = (x * sin(radianes)) + (y * cos(radianes));
-		return posInY;
-	}
-
-	void rotate(float grados, Image& imagen)
-	{
-		int poinX1 = getRoationPosX(0, 0, grados);
-		int poinY1 = getRoationPosY(0, 0, grados);
-
-		int poinX2 = getRoationPosX(imagen.m_width, 0, grados);
-		int poinY2 = getRoationPosY(imagen.m_width, 0, grados);
-
-		int poinX3 = getRoationPosX(imagen.m_width, imagen.m_height, grados);
-		int poinY3 = getRoationPosY(imagen.m_width, imagen.m_height, grados);
-
-		int poinX4 = getRoationPosX(0, imagen.m_height, grados);
-		int poinY4 = getRoationPosY(0, imagen.m_height, grados);
-
-		int maxX = max(max(max(poinX1, poinX2), poinX3), poinX4);
-		int maxY = max(max(max(poinY1, poinY2), poinY3), poinY4);
-
-		int minX = min(min(min(poinX1, poinX2), poinX3), poinX4);
-		int minY = min(min(min(poinY1, poinY2), poinY3), poinY4);
-
-		float ancho = abs(maxX) + abs(minX);
-		float alto = abs(maxY) + abs(minY);
-
-		CreateImage(ancho, alto, imagen.m_bpp);
-
-		for (int x = 1; x < imagen.m_width; x++)
-		{
-			for (int y = 1; y < imagen.m_height; y++)
-			{
-				Color colorInBuffer = imagen.GetPixel(x, y);
-				SetPixel((getRoationPosX(x, y, grados)) + (abs(minX) - 1), (getRoationPosY(x, y, grados)), colorInBuffer);
-			}
-		}
-
-		//SetPixel((getRoationPosX(x, y, grados) + negativoX) - 1, (getRoationPosY(x, y, grados) + negativoY) - 1, colorInBuffer);
-		for (int x = 0; x < m_width; x++)
-		{
-			for (int y = 0; y < m_height; y++)
-			{
-				Color colorInBuffer = GetPixel(x, y);
-				if (colorInBuffer.isBlack())
-				{
-					colorInBuffer = GetPixel(x + 1, y);
-					if (!colorInBuffer.isBlack())
-					{
-						colorInBuffer = GetPixel(x - 1, y);
-						SetPixel(x, y, colorInBuffer);
-					}
-				}
-			}
-		}
-
-		/*for (int y = 1; y < alto; y++)
-		{
-			SetPixel(2, y, Color(0, 0, 255));
-			SetPixel(ancho - 1, y, Color(0, 0, 255));
-		}
-		for (int x = 1; x < ancho; x++)
-		{
-			SetPixel(x, 2, Color(0, 0, 255));
-			SetPixel(x, alto - 2, Color(0, 0, 255));
-		}*/
-	}
-
-	uint32 GetWidth()
-	{
-		return m_width;
-	}
-	uint32 GetHeight()
-	{
-		return m_height;
-	}
-	uint32 m_bpp = 0;
-	uint32 m_width = 0;
-	uint32 m_height = 0;
-	uint32 m_pitch = 0;
-
-	Vector<byte> m_pixelData;
-};
