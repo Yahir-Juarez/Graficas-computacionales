@@ -33,12 +33,12 @@ void Image::rotate(float grados, Image& imagen)
 
 	CreateImage(ancho, alto, imagen.m_bpp);
 
-	for (int x = 1; x < imagen.m_width; x++)
+	for (int x = 0; x < imagen.m_width; x++)
 	{
-		for (int y = 1; y < imagen.m_height; y++)
+		for (int y = 0; y < imagen.m_height; y++)
 		{
 			Color colorInBuffer = imagen.GetPixel(x, y);
-			bool setPix  = SetPixel((getRoationPosX(x, y, grados)) + (abs(minX) - 1), (getRoationPosY(x, y, grados)), colorInBuffer);
+			bool setPix  = SetPixel((getRoationPosX(x, y, grados)) + (abs(minX) - 1), (getRoationPosY(x, y, grados) + (abs(minY) - 1)), colorInBuffer);
 			if (setPix == false)
 			{
 				SetPixel((getRoationPosX(x, y, grados)) + (abs(minX) - 1), (getRoationPosY(x, y, grados)), colorInBuffer);
@@ -47,7 +47,7 @@ void Image::rotate(float grados, Image& imagen)
 	}
 
 	//SetPixel((getRoationPosX(x, y, grados) + negativoX) - 1, (getRoationPosY(x, y, grados) + negativoY) - 1, colorInBuffer);
-	for (int x = 0; x < m_width; x++)
+	/*for (int x = 0; x < m_width; x++)
 	{
 		for (int y = 0; y < m_height; y++)
 		{
@@ -62,7 +62,7 @@ void Image::rotate(float grados, Image& imagen)
 				}
 			}
 		}
-	}
+	}*/
 
 	/*for (int y = 1; y < alto; y++)
 	{
@@ -327,3 +327,54 @@ void Image::draw_line(int x0, int y0, int x1, int y1) {
 	// Dibujar el último píxel (x1, y1)
 	std::cout << "(" << x1 << ", " << y1 << ")\n";
 }
+
+
+
+
+
+
+/*
+void Image::rotate(float grados, Image& imagen)
+{
+	point1.pointX = getRoationPosX(0, 0, grados);
+	point1.pointY = getRoationPosY(0, 0, grados);
+
+	point2.pointX = getRoationPosX(imagen.m_width, 0, grados);
+	point2.pointY = getRoationPosY(imagen.m_width, 0, grados);
+
+	point4.pointX = getRoationPosX(imagen.m_width, imagen.m_height, grados);
+	point4.pointY = getRoationPosY(imagen.m_width, imagen.m_height, grados);
+
+	point3.pointX = getRoationPosX(0, imagen.m_height, grados);
+	point3.pointY = getRoationPosY(0, imagen.m_height, grados);
+
+	int maxX = max(max(max(point1.pointX, point2.pointX), point3.pointX), point4.pointX);
+	int maxY = max(max(max(point1.pointY, point2.pointY), point3.pointY), point4.pointY);
+
+	int minX = min(min(min(point1.pointX, point2.pointX), point3.pointX), point4.pointX);
+	int minY = min(min(min(point1.pointY, point2.pointY), point3.pointY), point4.pointY);
+
+	float ancho = abs(maxX) + abs(minX);
+	float alto = abs(maxY) + abs(minY);
+
+	point1.pointX += (abs(minX)) + 1;
+	point2.pointX += (abs(minX)) + 1;
+	point3.pointX += (abs(minX)) + 1;
+	point4.pointX += (abs(minX)) + 1;
+
+	CreateImage(ancho, alto, imagen.m_bpp);
+
+	for (int x = 1; x <= imagen.m_width; x++)
+	{
+		for (int y = 1; y <= imagen.m_height; y++)
+		{
+			Color colorInBuffer = imagen.GetPixel(x, y);
+			bool setPix = SetPixel((getRoationPosX(x, y, grados)) + (abs(minX)), (getRoationPosY(x, y, grados)), colorInBuffer);
+			if (setPix == false)
+			{
+				SetPixel((getRoationPosX(x, y, grados)) + (abs(minX) - 1), (getRoationPosY(x, y, grados)), colorInBuffer);
+			}
+		}
+	}
+}
+*/

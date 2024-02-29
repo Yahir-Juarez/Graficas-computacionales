@@ -4,6 +4,9 @@
 #include "AppTypes.h"
 #include "FileUtil.h"
 #include "ImgCodec.h"
+#include <iostream>
+
+using std::cout;
 
 using std::max;
 using std::min;
@@ -92,6 +95,8 @@ public:
 	bool SetPixel(uint32 x, uint32 y, Color color)
 	{
 		if (x < 0 || y < 0 || x >= m_width || y >= m_height) { return false; }
+
+		//cout << "Pixel X -> " << x << " Y -> " << y << '\n';
 
 		uint32 basePos = (y * m_pitch) + (x * (m_bpp >> 3));
 		if (m_bpp == 24)
@@ -190,12 +195,29 @@ public:
 	{
 		float radianes = (grados * 3.1416) / 180;
 		float posInX = (x * cos(radianes)) - (y * sin(radianes));
+		double redondeado = round(posInX);
+
+		if (posInX - floor(posInX) >= 0.5) {
+			redondeado = ceil(posInX);
+		}
+		else {
+			redondeado = floor(posInX);
+		}
 		return posInX;
 	}
 	int getRoationPosY(int x, int y, float grados)
 	{
 		float radianes = (grados * 3.1416) / 180;
 		float posInY = (x * sin(radianes)) + (y * cos(radianes));
+		double redondeado = round(posInY);
+
+		if (posInY - floor(posInY) >= 0.5) {
+			redondeado = ceil(posInY);
+		}
+		else {
+			redondeado = floor(posInY);
+		}
+
 		return posInY;
 	}
 

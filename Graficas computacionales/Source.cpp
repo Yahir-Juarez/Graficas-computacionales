@@ -7,10 +7,10 @@ int main()
 {
 	g_CodecMan.AddCodec(new BMPCodec());
 	Image imagen;
-	imagen.CreateFromImageFile("Yoda.bmp");
+	imagen.CreateFromImageFile("RectangulosP2.bmp");
 	Image ImagenRotate;
-	ImagenRotate.rotate(80, imagen);
-	ImagenRotate.draw_line(ImagenRotate.getPoint1().pointX, ImagenRotate.getPoint1().pointY, ImagenRotate.getPoint3().pointX, ImagenRotate.getPoint3().pointY);
+	ImagenRotate.rotate(45, imagen);
+	//ImagenRotate.draw_line(ImagenRotate.getPoint1().pointX, ImagenRotate.getPoint1().pointY, ImagenRotate.getPoint3().pointX, ImagenRotate.getPoint3().pointY);
 	//Image BBLImg;
 	//BBLImg.CreateImage(1920, 1080, imagen.m_bpp);
 	//BBLImg.CreateImage(1920, 1080, imagen.m_bpp);
@@ -34,7 +34,10 @@ int main()
 
 	//rotImg.SetPixel((rotImg.getRoationPosX(x, y, grados) + posPixel3 - posPixelX), rotImg.getRoationPosY(x, y, grados), colorInBuffer);
 
-
+	/*for (int i = 0; i <= 4; i++)
+	{
+		ImagenRotate.SetPixel(i, 1, Color(0, 0, 255));
+	}*/
 	auto codec = g_CodecMan.GetCodecByFileExt(".bmp");
 
 	if (codec)
