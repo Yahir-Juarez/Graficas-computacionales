@@ -7,17 +7,20 @@ int main()
 {
 	g_CodecMan.AddCodec(new BMPCodec());
 	Image imagen;
-	imagen.CreateFromImageFile("RectangulosP2.bmp");
+	imagen.CreateFromImageFile("Yoda.bmp");
+	Image scale;
+	scale.scaleImg(.25, imagen);
 	Image ImagenRotate;
-	ImagenRotate.rotate(45, imagen);
+	ImagenRotate.rotate(89, scale);
 	//ImagenRotate.draw_line(ImagenRotate.getPoint1().pointX, ImagenRotate.getPoint1().pointY, ImagenRotate.getPoint3().pointX, ImagenRotate.getPoint3().pointY);
-	//Image BBLImg;
+	Image BBLImg;
 	//BBLImg.CreateImage(1920, 1080, imagen.m_bpp);
 	//BBLImg.CreateImage(1920, 1080, imagen.m_bpp);
-	//BBLImg.CreateFromImageFile("Yoda.bmp");
+	BBLImg.CreateFromImageFile("StarWars.bmp");
 	//Image scaled;
 	//Image ImgRotate;
-	//scaled.scaleImg(4.5, BBLImg);
+	//scaled.scaleImg(2, BBLImg);
+	BBLImg.bitBltImgRotate(ImagenRotate, 50, 50);
 	//BBLImg.bitBltImgRotate(ImagenRotate, 120, 300);
 	//ImgRotate.rotate(25, imagen);
 	//scaled.bitBlt(ImgRotate, 150);
@@ -42,7 +45,7 @@ int main()
 
 	if (codec)
 	{
-		codec->Encode(ImagenRotate, "ImgPegada.bmp");
+		codec->Encode(BBLImg, "ImgPegada.bmp");
 	}
 
 	return 0;

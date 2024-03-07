@@ -47,7 +47,7 @@ void Image::rotate(float grados, Image& imagen)
 	}
 
 	//SetPixel((getRoationPosX(x, y, grados) + negativoX) - 1, (getRoationPosY(x, y, grados) + negativoY) - 1, colorInBuffer);
-	/*for (int x = 0; x < m_width; x++)
+	for (int x = 0; x < m_width; x++)
 	{
 		for (int y = 0; y < m_height; y++)
 		{
@@ -62,7 +62,7 @@ void Image::rotate(float grados, Image& imagen)
 				}
 			}
 		}
-	}*/
+	}
 
 	/*for (int y = 1; y < alto; y++)
 	{
@@ -181,28 +181,89 @@ void Image::bitBlt(Image& src,
 vector2D Image::GetPointInLine(int x0, int y0, int x1, int y1, int& iter, bool& isValid)
 {
 	vector2D pointXY;
-	if (iter > 0)
-	{
-		/*iter += 2 * (y0)+(-2 * (x0));
-		x0 += 1;
-		y0 += 1;*/
-		isValid = false;
-		return vector2D(x0, y0);
-	}
-	else
-	{
-		iter += 2 * (y0);
-		if (x0 > x1)
-		{
-			x0 += 1;
+	x0 += 1;
+	y1 += 1;
+	int dx = std::abs(x1 - x0);
+	int dy = std::abs(y1 - y0);
+
+	int x_inc = (x1 > x0) ? 1 : -1;
+	int y_inc = (y1 > y0) ? 1 : -1;
+
+	int error = dx - dy;
+
+	while (x0 != x1 || y0 != y1) {
+		std::cout << "(" << x0 << ", " << y0 << ")\n";
+		int error_2 = 2 * error;
+
+		if (error_2 > -dy) {
+			error -= dy;
+			x0 += x_inc;
 		}
-		else
-		{
-			x0 -= 1;
+
+		if (error_2 < dx) {
+			pointXY.pointX = x0;
+			pointXY.pointY = y0;
+			return pointXY;
+			error += dx;
+			y0 += y_inc;
 		}
-		isValid = true;
-		pointXY = GetPointInLine(x0, y0, x1, y1, iter, isValid);
 	}
+	//vector2D pointXY;
+	//if (iter > 0)
+	//{
+	//	/*iter += 2 * (y0)+(-2 * (x0));
+	//	x0 += 1;
+	//	y0 += 1;*/
+	//	isValid = false;
+	//	return vector2D(x0, y0);
+	//}
+	//else
+	//{
+	//	iter += 2 * (y0);
+	//	if (x0 > x1)
+	//	{
+	//		x0 += 1;
+	//	}
+	//	else
+	//	{
+	//		x0 -= 1;
+	//	}
+	//	isValid = true;
+	//	pointXY = GetPointInLine(x0, y0, x1, y1, iter, isValid);
+	//}
+	return pointXY;
+}
+
+vector2D Image::GetPointInLine(int x0, int y0, int x1, int y1, int& dx, int& dy, int& error, int& iter, bool& isValid)
+{
+	vector2D pointXY;
+	/*x0 += 1;
+	y1 += 1;*/
+	
+
+	int x_inc = (x1 > x0) ? 1 : -1;
+	int y_inc = (y1 > y0) ? 1 : -1;
+
+	while (x0 != x1 || y0 != y1) {
+		std::cout << "(" << x0 << ", " << y0 << ")\n";
+		int error_2 = 2 * error;
+
+		if (error_2 > -dy) {
+			error -= dy;
+			x0 += x_inc;
+		}
+
+		if (error_2 < dx) {
+			pointXY.pointX = (x0);
+			pointXY.pointY = y0;
+			error += dx;
+			return pointXY;
+			
+			y0 += y_inc;
+		}
+	}
+	pointXY.pointX = (x0);
+	pointXY.pointY = y0;
 	return pointXY;
 }
 
@@ -214,20 +275,92 @@ void Image::bitBltImgRotate(Image& src,
 
 	int iterPoinX1 = src.getPoint1().pointX;
 	int iterPoinY1 = src.getPoint1().pointY;
-	int iterPoinX2 = src.getPoint4().pointX;
-	int iterPoinY2 = src.getPoint4().pointY;
-	int PoinX3 = src.getPoint2().pointX;
-	int PoinY3 = src.getPoint2().pointY;
+	int iterPoinX2 = src.getPoint2().pointX;
+	int iterPoinY2 = src.getPoint2().pointY;
+	int PoinX3 = src.getPoint3().pointX;
+	int PoinY3 = src.getPoint3().pointY;
 	int PoinX4 = src.getPoint4().pointX;
 	int PoinY4 = src.getPoint4().pointY;
 
-	int dx = iterPoinX2 - iterPoinX1;
+
+	/*int dx = iterPoinX2 - iterPoinX1;
 	int dy = iterPoinY2 - iterPoinY1;
-	int Pk = 2 * (dy - dx);
-	for (int i = 1; i < src.GetHeight(); ++i)
+	int Pk = 2 * (dy - dx);*/
+
+	
+	int s = 1;
+	SetPixel(iterPoinX1, iterPoinY1, GetPixel(iterPoinX1, iterPoinY1));
+	vector2D PointIter(iterPoinX1 + 1, iterPoinY1);
+	vector2D PointIterR(iterPoinX1 + 1, iterPoinY1);
+
+	int dx = std::abs(PoinX3 - (PointIter.pointX));
+	int dy = std::abs((PoinY3 + 1)- iterPoinY1);
+	int error = dx - dy;
+
+	int dx2 = std::abs(iterPoinX2 - (PointIterR.pointX));
+	int dy2 = std::abs((iterPoinY2 + 1) - iterPoinY1);
+	int error2 = dx2 - dy2;
+
+	for (int fy = 0; fy < PoinY4; ++fy)
 	{
-		vector2D temporal = GetPointInLine(iterPoinX1, i, iterPoinX2, iterPoinY2, Pk, validLeft);
+		if (fy == 78)
+		{
+			cout << "si";
+		}
+		cout << "Detector de puntos en linea hacia la izquierda\n";
+		PointIter = GetPointInLine((PointIter.pointX), fy, PoinX3, (PoinY3 + 1), dx, dy, error, s, validLeft);
+		cout << "Fin de recorrimiento\n\n";
+		PointIterR = GetPointInLine((PointIterR.pointX), fy, iterPoinX2, (iterPoinY2 + 1), dx2, dy2, error2, s, validLeft);
+		for (int fx = PointIter.pointX; fx <= PointIterR.pointX; fx++)
+		{
+			/////////////////////////////////
+			//No dejar esto			/////
+			//isBlack() muy racista	/////
+			//como para estar en el	/////
+			//codigo xD				/////
+			/////////////////////////////////
+			if (!(src.GetPixel(fx, fy)).isBlack())
+			{
+				SetPixel((fx + x), (fy + y), src.GetPixel(fx, fy));
+			}
+		}
+		if (PointIter.pointX == (PoinX3) && fy == (PoinY3 + 1))
+		{
+			PointIter.pointX = PoinX3 + 1;
+			PointIter.pointY = PoinY3 + 1;
+			PoinX3 = PoinX4;
+			PoinY3 = PoinY4;
+			dx = std::abs(PoinX3 - (PointIter.pointX));
+			dy = std::abs((PoinY3 + 1)- PointIter.pointY);
+			error = dx - dy;
+		}
+		if (PointIterR.pointX == (iterPoinX2) && fy == (iterPoinY2 + 1))
+		{
+			PointIterR.pointX = iterPoinX2 + 1;
+			PointIterR.pointY = iterPoinY2 + 1;
+			iterPoinX2 = PoinX4;
+			iterPoinY2 = PoinY4;
+			dx2 = std::abs(iterPoinX2 - (PointIterR.pointX));
+			dy2 = std::abs((iterPoinY2 + 1)- PointIterR.pointY);
+			error2 = dx2 - dy2;
+		}
 	}
+	iterPoinX1 = src.getPoint1().pointX;
+	iterPoinY1 = src.getPoint1().pointY;
+	iterPoinX2 = src.getPoint2().pointX;
+	iterPoinY2 = src.getPoint2().pointY;
+	PoinX3 = src.getPoint3().pointX;
+	PoinY3 = src.getPoint3().pointY;
+	PoinX4 = src.getPoint4().pointX;
+	PoinY4 = src.getPoint4().pointY;
+
+	draw_line(iterPoinX1, iterPoinY1, iterPoinX2, iterPoinY2);
+	cout << "\nLinea roja Izquierda\n\n\n";
+	draw_line(iterPoinX1, iterPoinY1, PoinX3, PoinY3);
+	cout << "\n\n\nFin\n\n\n";
+	draw_line(PoinX3, PoinY3, PoinX4, PoinY4);
+
+	bool truee = 0;
 }
 
 void Image::DrawLine(int x0, int y0, int x1, int y1, Color color)
@@ -308,9 +441,8 @@ void Image::draw_line(int x0, int y0, int x1, int y1) {
 	int error = dx - dy;
 
 	while (x0 != x1 || y0 != y1) {
-		// Dibujar el píxel actual
 		std::cout << "(" << x0 << ", " << y0 << ")\n";
-		SetPixel(x0, y0, Color(0, 0, 255));
+		SetPixel((x0 + 50), (y0 + 50), Color(0, 0, 255));
 		int error_2 = 2 * error;
 
 		if (error_2 > -dy) {
@@ -323,9 +455,6 @@ void Image::draw_line(int x0, int y0, int x1, int y1) {
 			y0 += y_inc;
 		}
 	}
-
-	// Dibujar el último píxel (x1, y1)
-	std::cout << "(" << x1 << ", " << y1 << ")\n";
 }
 
 
