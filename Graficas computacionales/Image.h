@@ -5,6 +5,7 @@
 #include "FileUtil.h"
 #include "ImgCodec.h"
 #include <iostream>
+#include <functional>
 
 using std::cout;
 
@@ -58,13 +59,13 @@ struct vector2D
 		pointX = 0;
 		pointY = 0;
 	}
-	vector2D(int x, int y)
+	vector2D(float x, float y)
 	{
 		pointX = x;
 		pointY = y;
 	}
-	int pointX;
-	int pointY;
+	float pointX;
+	float pointY;
 };
 
 class Image
@@ -169,6 +170,9 @@ public:
 	void bitBltImgRotate(Image& src,
 		int x = 0,
 		int y = 0);
+
+	Image ProcessImage(std::function<Color(const Image&, int, int)> procFunction);
+	Image ProcessImage2(Color *procFunction(const Image&, int, int));
 
 	bool scaleImg(float scale, Image& ptrImg)
 	{

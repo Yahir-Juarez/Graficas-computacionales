@@ -2,6 +2,18 @@
 #include <cmath>
 #include "Image.h"
 
+float lsR = 0.55f;
+float lsG = 0.60f;
+float lsB = 0.03f;
+
+Color GreyScale(const Image& img, int pX, int pY)
+{
+	vector2D textCoorsSize(1.0f / img.m_width, 1.0f / img.m_height);
+	Color currColor(img.SamplePixel(textCoorsSize.pointX * pX, textCoorsSize.pointY * pY));
+
+	float lum = (currColor.r * lsR + currColor.g * lsG + currColor.b * lsB);
+	return Color(lum, lum, lum);
+}
 
 int main()
 {
@@ -9,18 +21,20 @@ int main()
 	Image imagen;
 	imagen.CreateFromImageFile("Yoda.bmp");
 	Image scale;
-	scale.scaleImg(.25, imagen);
-	Image ImagenRotate;
-	ImagenRotate.rotate(89, scale);
-	//ImagenRotate.draw_line(ImagenRotate.getPoint1().pointX, ImagenRotate.getPoint1().pointY, ImagenRotate.getPoint3().pointX, ImagenRotate.getPoint3().pointY);
-	Image BBLImg;
-	//BBLImg.CreateImage(1920, 1080, imagen.m_bpp);
-	//BBLImg.CreateImage(1920, 1080, imagen.m_bpp);
-	BBLImg.CreateFromImageFile("StarWars.bmp");
-	//Image scaled;
-	//Image ImgRotate;
-	//scaled.scaleImg(2, BBLImg);
-	BBLImg.bitBltImgRotate(ImagenRotate, 50, 50);
+
+	imagen = imagen.ProcessImage(GreyScale);
+	//scale.scaleImg(4, imagen);
+	////ImagenRotate.draw_line(ImagenRotate.getPoint1().pointX, ImagenRotate.getPoint1().pointY, ImagenRotate.getPoint3().pointX, ImagenRotate.getPoint3().pointY);
+	//Image BBLImg;
+	////BBLImg.CreateImage(1920, 1080, imagen.m_bpp);
+	////BBLImg.CreateImage(1920, 1080, imagen.m_bpp);
+	//BBLImg.CreateFromImageFile("StarWars.bmp");
+	//Image ImagenRotate;
+	//ImagenRotate.rotate(67, BBLImg);
+	////Image scaled;
+	////Image ImgRotate;
+	////scaled.scaleImg(2, BBLImg);
+	//scale.bitBltImgRotate(ImagenRotate, 50, 50);
 	//BBLImg.bitBltImgRotate(ImagenRotate, 120, 300);
 	//ImgRotate.rotate(25, imagen);
 	//scaled.bitBlt(ImgRotate, 150);
@@ -45,7 +59,7 @@ int main()
 
 	if (codec)
 	{
-		codec->Encode(BBLImg, "ImgPegada.bmp");
+		codec->Encode(imagen, "ImgPegada.bmp");
 	}
 
 	return 0;

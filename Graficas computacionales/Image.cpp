@@ -321,8 +321,9 @@ void Image::bitBltImgRotate(Image& src,
 			/////////////////////////////////
 			if (!(src.GetPixel(fx, fy)).isBlack())
 			{
-				SetPixel((fx + x), (fy + y), src.GetPixel(fx, fy));
+				
 			}
+			SetPixel((fx + x), (fy + y), src.GetPixel(fx, fy));
 		}
 		if (PointIter.pointX == (PoinX3) && fy == (PoinY3 + 1))
 		{
@@ -345,22 +346,22 @@ void Image::bitBltImgRotate(Image& src,
 			error2 = dx2 - dy2;
 		}
 	}
-	iterPoinX1 = src.getPoint1().pointX;
-	iterPoinY1 = src.getPoint1().pointY;
-	iterPoinX2 = src.getPoint2().pointX;
-	iterPoinY2 = src.getPoint2().pointY;
-	PoinX3 = src.getPoint3().pointX;
-	PoinY3 = src.getPoint3().pointY;
-	PoinX4 = src.getPoint4().pointX;
-	PoinY4 = src.getPoint4().pointY;
+}
 
-	draw_line(iterPoinX1, iterPoinY1, iterPoinX2, iterPoinY2);
-	cout << "\nLinea roja Izquierda\n\n\n";
-	draw_line(iterPoinX1, iterPoinY1, PoinX3, PoinY3);
-	cout << "\n\n\nFin\n\n\n";
-	draw_line(PoinX3, PoinY3, PoinX4, PoinY4);
+Image Image::ProcessImage(std::function<Color(const Image&, int, int)> procFunction)
+{
+	Image rt;
+	rt.CreateImage(m_width, m_height, m_bpp);
 
-	bool truee = 0;
+	for (int iY = 0; iY < m_height; iY++)
+	{
+		for (int iX = 0; iX < m_width; iX++)
+		{
+			Color color = procFunction(*this, iX, iY);
+			rt.SetPixel(iX, iY, color);
+		}
+	}
+	return rt;
 }
 
 void Image::DrawLine(int x0, int y0, int x1, int y1, Color color)
