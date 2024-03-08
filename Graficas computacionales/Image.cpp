@@ -348,7 +348,7 @@ void Image::bitBltImgRotate(Image& src,
 	}
 }
 
-Image Image::ProcessImage(std::function<Color(const Image&, int, int)> procFunction)
+Image Image::ProcessImage(std::function<Color(const Image&, int, int, const float[])> procFunction, const float matrix[])
 {
 	Image rt;
 	rt.CreateImage(m_width, m_height, m_bpp);
@@ -357,7 +357,7 @@ Image Image::ProcessImage(std::function<Color(const Image&, int, int)> procFunct
 	{
 		for (int iX = 0; iX < m_width; iX++)
 		{
-			Color color = procFunction(*this, iX, iY);
+			Color color = procFunction(*this, iX, iY, matrix);
 			rt.SetPixel(iX, iY, color);
 		}
 	}

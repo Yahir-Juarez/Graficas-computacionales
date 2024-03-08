@@ -171,7 +171,7 @@ public:
 		int x = 0,
 		int y = 0);
 
-	Image ProcessImage(std::function<Color(const Image&, int, int)> procFunction);
+	Image ProcessImage(std::function<Color(const Image&, int, int, const float[])> procFunction, const float matrix[] = NULL);
 	Image ProcessImage2(Color *procFunction(const Image&, int, int));
 
 	bool scaleImg(float scale, Image& ptrImg)
