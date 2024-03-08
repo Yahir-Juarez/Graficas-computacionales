@@ -227,8 +227,8 @@ public:
 
 	void rotate(float grados, Image& imagen);
 
-	vector2D GetPointInLine(int x0, int y0, int x1, int y1, int &iter, bool& isValid);
-	vector2D GetPointInLine(int x0, int y0, int x1, int y1, int& dx, int& dy, int& error, int& iter, bool& isValid);
+	//vector2D GetPointInLine(int x0, int y0, int x1, int y1, int &iter, bool& isValid);
+	vector2D GetPointInLine(int x0, int y0, int x1, int y1, int& dx, int& dy, int& error);
 
 	void DrawLine(int x0, int y0, int x1, int y1, Color color);
 

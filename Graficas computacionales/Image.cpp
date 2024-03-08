@@ -26,10 +26,15 @@ void Image::rotate(float grados, Image& imagen)
 	float ancho = abs(maxX) + abs(minX);
 	float alto = abs(maxY) + abs(minY);
 	
-	point1.pointX += (abs(minX)) + 1;
-	point2.pointX += (abs(minX)) + 1;
-	point3.pointX += (abs(minX)) + 1;
-	point4.pointX += (abs(minX)) + 1;
+	point1.pointX += (abs(minX));
+	point2.pointX += (abs(minX));
+	point3.pointX += (abs(minX));
+	point4.pointX += (abs(minX));
+
+	point1.pointY += (abs(minY));
+	point2.pointY += (abs(minY));
+	point3.pointY += (abs(minY));
+	point4.pointY += (abs(minY));
 
 	CreateImage(ancho, alto, imagen.m_bpp);
 
@@ -178,63 +183,63 @@ void Image::bitBlt(Image& src,
 
 }
 
-vector2D Image::GetPointInLine(int x0, int y0, int x1, int y1, int& iter, bool& isValid)
-{
-	vector2D pointXY;
-	x0 += 1;
-	y1 += 1;
-	int dx = std::abs(x1 - x0);
-	int dy = std::abs(y1 - y0);
+//vector2D Image::GetPointInLine(int x0, int y0, int x1, int y1, int& iter, bool& isValid)
+//{
+//	vector2D pointXY;
+//	x0 += 1;
+//	y1 += 1;
+//	int dx = std::abs(x1 - x0);
+//	int dy = std::abs(y1 - y0);
+//
+//	int x_inc = (x1 > x0) ? 1 : -1;
+//	int y_inc = (y1 > y0) ? 1 : -1;
+//
+//	int error = dx - dy;
+//
+//	while (x0 != x1 || y0 != y1) {
+//		std::cout << "(" << x0 << ", " << y0 << ")\n";
+//		int error_2 = 2 * error;
+//
+//		if (error_2 > -dy) {
+//			error -= dy;
+//			x0 += x_inc;
+//		}
+//
+//		if (error_2 < dx) {
+//			pointXY.pointX = x0;
+//			pointXY.pointY = y0;
+//			return pointXY;
+//			error += dx;
+//			y0 += y_inc;
+//		}
+//	}
+//	//vector2D pointXY;
+//	//if (iter > 0)
+//	//{
+//	//	/*iter += 2 * (y0)+(-2 * (x0));
+//	//	x0 += 1;
+//	//	y0 += 1;*/
+//	//	isValid = false;
+//	//	return vector2D(x0, y0);
+//	//}
+//	//else
+//	//{
+//	//	iter += 2 * (y0);
+//	//	if (x0 > x1)
+//	//	{
+//	//		x0 += 1;
+//	//	}
+//	//	else
+//	//	{
+//	//		x0 -= 1;
+//	//	}
+//	//	isValid = true;
+//	//	pointXY = GetPointInLine(x0, y0, x1, y1, iter, isValid);
+//	//}
+//	return pointXY;
+//}
 
-	int x_inc = (x1 > x0) ? 1 : -1;
-	int y_inc = (y1 > y0) ? 1 : -1;
-
-	int error = dx - dy;
-
-	while (x0 != x1 || y0 != y1) {
-		std::cout << "(" << x0 << ", " << y0 << ")\n";
-		int error_2 = 2 * error;
-
-		if (error_2 > -dy) {
-			error -= dy;
-			x0 += x_inc;
-		}
-
-		if (error_2 < dx) {
-			pointXY.pointX = x0;
-			pointXY.pointY = y0;
-			return pointXY;
-			error += dx;
-			y0 += y_inc;
-		}
-	}
-	//vector2D pointXY;
-	//if (iter > 0)
-	//{
-	//	/*iter += 2 * (y0)+(-2 * (x0));
-	//	x0 += 1;
-	//	y0 += 1;*/
-	//	isValid = false;
-	//	return vector2D(x0, y0);
-	//}
-	//else
-	//{
-	//	iter += 2 * (y0);
-	//	if (x0 > x1)
-	//	{
-	//		x0 += 1;
-	//	}
-	//	else
-	//	{
-	//		x0 -= 1;
-	//	}
-	//	isValid = true;
-	//	pointXY = GetPointInLine(x0, y0, x1, y1, iter, isValid);
-	//}
-	return pointXY;
-}
-
-vector2D Image::GetPointInLine(int x0, int y0, int x1, int y1, int& dx, int& dy, int& error, int& iter, bool& isValid)
+vector2D Image::GetPointInLine(int x0, int y0, int x1, int y1, int& dx, int& dy, int& error)
 {
 	vector2D pointXY;
 	/*x0 += 1;
@@ -267,51 +272,59 @@ vector2D Image::GetPointInLine(int x0, int y0, int x1, int y1, int& dx, int& dy,
 	return pointXY;
 }
 
+void intercambiar(vector2D& a, vector2D& b) {
+	vector2D temp = a;
+	a = b;
+	b = temp;
+}
+
+void bubbleSort(vector2D arreglo[], int tamano) {
+	for (int i = 0; i < tamano - 1; ++i) {
+		for (int j = 0; j < tamano - i - 1; ++j) {
+			// Compara elementos adyacentes y los intercambia si están en el orden incorrecto
+			if (arreglo[j].pointY > arreglo[j + 1].pointY) {
+				intercambiar(arreglo[j], arreglo[j + 1]);
+			}
+		}
+	}
+}
+
 void Image::bitBltImgRotate(Image& src,
 	int x,
 	int y)
 {
-	bool validLeft;
+	vector2D arrayPoints[4] = { vector2D(src.getPoint1().pointX, src.getPoint1().pointY), vector2D(src.getPoint2().pointX, src.getPoint2().pointY), 
+		vector2D(src.getPoint3().pointX, src.getPoint3().pointY), vector2D(src.getPoint4().pointX, src.getPoint4().pointY) };
 
-	int iterPoinX1 = src.getPoint1().pointX;
-	int iterPoinY1 = src.getPoint1().pointY;
-	int iterPoinX2 = src.getPoint2().pointX;
-	int iterPoinY2 = src.getPoint2().pointY;
-	int PoinX3 = src.getPoint3().pointX;
-	int PoinY3 = src.getPoint3().pointY;
-	int PoinX4 = src.getPoint4().pointX;
-	int PoinY4 = src.getPoint4().pointY;
+	bubbleSort(arrayPoints, 4);
+	if (arrayPoints[2].pointX > 1)
+	{
+		intercambiar(arrayPoints[2], arrayPoints[1]);
+	}
 
+	SetPixel(arrayPoints[0].pointX, arrayPoints[0].pointY, GetPixel(arrayPoints[0].pointX, arrayPoints[0].pointY));
+	vector2D PointIterL(arrayPoints[0].pointX + 1, arrayPoints[0].pointY);
+	vector2D PointIterR(arrayPoints[0].pointX + 1, arrayPoints[0].pointY);
 
-	/*int dx = iterPoinX2 - iterPoinX1;
-	int dy = iterPoinY2 - iterPoinY1;
-	int Pk = 2 * (dy - dx);*/
-
-	
-	int s = 1;
-	SetPixel(iterPoinX1, iterPoinY1, GetPixel(iterPoinX1, iterPoinY1));
-	vector2D PointIter(iterPoinX1 + 1, iterPoinY1);
-	vector2D PointIterR(iterPoinX1 + 1, iterPoinY1);
-
-	int dx = std::abs(PoinX3 - (PointIter.pointX));
-	int dy = std::abs((PoinY3 + 1)- iterPoinY1);
+	int dx = std::abs(arrayPoints[2].pointX - (PointIterL.pointX));
+	int dy = std::abs((arrayPoints[2].pointY + 1)- arrayPoints[0].pointY);
 	int error = dx - dy;
 
-	int dx2 = std::abs(iterPoinX2 - (PointIterR.pointX));
-	int dy2 = std::abs((iterPoinY2 + 1) - iterPoinY1);
+	int dx2 = std::abs(arrayPoints[1].pointX - (PointIterR.pointX));
+	int dy2 = std::abs((arrayPoints[1].pointY + 1) - PointIterR.pointY);
 	int error2 = dx2 - dy2;
 
-	for (int fy = 0; fy < PoinY4; ++fy)
+	for (int fy = 0; fy < arrayPoints[3].pointY; ++fy)
 	{
 		if (fy == 78)
 		{
 			cout << "si";
 		}
 		cout << "Detector de puntos en linea hacia la izquierda\n";
-		PointIter = GetPointInLine((PointIter.pointX), fy, PoinX3, (PoinY3 + 1), dx, dy, error, s, validLeft);
+		PointIterL = GetPointInLine((PointIterL.pointX), fy, arrayPoints[2].pointX, (arrayPoints[2].pointY + 1), dx, dy, error);
 		cout << "Fin de recorrimiento\n\n";
-		PointIterR = GetPointInLine((PointIterR.pointX), fy, iterPoinX2, (iterPoinY2 + 1), dx2, dy2, error2, s, validLeft);
-		for (int fx = PointIter.pointX; fx <= PointIterR.pointX; fx++)
+		PointIterR = GetPointInLine((PointIterR.pointX), fy, arrayPoints[1].pointX, (arrayPoints[1].pointY + 1), dx2, dy2, error2);
+		for (int fx = PointIterL.pointX; fx <= PointIterR.pointX; fx++)
 		{
 			/////////////////////////////////
 			//No dejar esto			/////
@@ -325,24 +338,24 @@ void Image::bitBltImgRotate(Image& src,
 			}
 			SetPixel((fx + x), (fy + y), src.GetPixel(fx, fy));
 		}
-		if (PointIter.pointX == (PoinX3) && fy == (PoinY3 + 1))
+		if (PointIterL.pointX == (arrayPoints[2].pointX) && fy == (arrayPoints[2].pointY + 1))
 		{
-			PointIter.pointX = PoinX3 + 1;
-			PointIter.pointY = PoinY3 + 1;
-			PoinX3 = PoinX4;
-			PoinY3 = PoinY4;
-			dx = std::abs(PoinX3 - (PointIter.pointX));
-			dy = std::abs((PoinY3 + 1)- PointIter.pointY);
+			PointIterL.pointX = arrayPoints[2].pointX + 1;
+			PointIterL.pointY = arrayPoints[2].pointY + 1;
+			arrayPoints[2].pointX = arrayPoints[3].pointX;
+			arrayPoints[2].pointY = arrayPoints[3].pointY;
+			dx = std::abs(arrayPoints[2].pointX - (PointIterL.pointX));
+			dy = std::abs((arrayPoints[2].pointY + 1)- PointIterL.pointY);
 			error = dx - dy;
 		}
-		if (PointIterR.pointX == (iterPoinX2) && fy == (iterPoinY2 + 1))
+		if (PointIterR.pointX == (arrayPoints[1].pointX) && fy == (arrayPoints[1].pointY + 1))
 		{
-			PointIterR.pointX = iterPoinX2 + 1;
-			PointIterR.pointY = iterPoinY2 + 1;
-			iterPoinX2 = PoinX4;
-			iterPoinY2 = PoinY4;
-			dx2 = std::abs(iterPoinX2 - (PointIterR.pointX));
-			dy2 = std::abs((iterPoinY2 + 1)- PointIterR.pointY);
+			PointIterR.pointX = arrayPoints[1].pointX + 1;
+			PointIterR.pointY = arrayPoints[1].pointY + 1;
+			arrayPoints[1].pointX = arrayPoints[3].pointX;
+			arrayPoints[1].pointY = arrayPoints[3].pointY;
+			dx2 = std::abs(arrayPoints[1].pointX - (PointIterR.pointX));
+			dy2 = std::abs((arrayPoints[1].pointY + 1)- PointIterR.pointY);
 			error2 = dx2 - dy2;
 		}
 	}

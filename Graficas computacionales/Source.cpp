@@ -86,37 +86,19 @@ int main()
 {
 	g_CodecMan.AddCodec(new BMPCodec());
 	Image imagen;
-	imagen.CreateFromImageFile("StarWars.bmp");
+	imagen.CreateFromImageFile("Yoda.bmp");
 	Image scale;
-
-	imagen = imagen.ProcessImage(GreyScale);
-	imagen = imagen.ProcessImage(sobelScale, blur);
-	imagen = imagen.ProcessImage(sobelScale, sobel);
-	/*for (int i = 0; i < imagen.m_width; i++) {
-		imagen.SetPixel(i, 80, Color(0, 0, 255));
-	}
-	for (int i = 0; i < imagen.m_height; i++) {
-		imagen.SetPixel(245, i, Color(0, 0, 255));
-	}*/
-	//scale.scaleImg(4, imagen);
-	////ImagenRotate.draw_line(ImagenRotate.getPoint1().pointX, ImagenRotate.getPoint1().pointY, ImagenRotate.getPoint3().pointX, ImagenRotate.getPoint3().pointY);
-	//Image BBLImg;
-	////BBLImg.CreateImage(1920, 1080, imagen.m_bpp);
-	////BBLImg.CreateImage(1920, 1080, imagen.m_bpp);
-	//BBLImg.CreateFromImageFile("StarWars.bmp");
-	//Image ImagenRotate;
-	//ImagenRotate.rotate(67, BBLImg);
-	////Image scaled;
-	////Image ImgRotate;
-	////scaled.scaleImg(2, BBLImg);
-	//scale.bitBltImgRotate(ImagenRotate, 50, 50);
-	//BBLImg.bitBltImgRotate(ImagenRotate, 120, 300);
-	//ImgRotate.rotate(25, imagen);
-	//scaled.bitBlt(ImgRotate, 150);
-	//scaled.DrawLine(1, 5, 9, 1331, Color(255, 0, 0));
-	//BBLImg;
-	//BBLImg.bitBlt(imagen, 100);
-	//BBLImg.rotate(80, imagen);
+	scale.scaleImg(2, imagen);
+	Image imgRotate;
+	imgRotate.CreateFromImageFile("StarWars.bmp");
+	Image rotate;
+	rotate.rotate(197, imgRotate);
+	scale.bitBltImgRotate(rotate, 50, 50);
+	scale = scale.ProcessImage(GreyScale);
+	scale = scale.ProcessImage(sobelScale, blur);
+	scale = scale.ProcessImage(sobelScale, sobel);
+	
+	
 	/*Image rotImg;
 
 	float grados = 33;
@@ -134,7 +116,7 @@ int main()
 
 	if (codec)
 	{
-		codec->Encode(imagen, "ImgPegada.bmp");
+		codec->Encode(scale, "ImgPegada.bmp");
 	}
 
 	return 0;
