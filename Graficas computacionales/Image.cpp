@@ -289,6 +289,39 @@ void bubbleSort(vector2D arreglo[], int tamano) {
 	}
 }
 
+Image Image::ProcessImage(std::function<Color(const Image&, int, int, const float[])> procFunction, const float matrix[])
+{
+	Image rt;
+	rt.CreateImage(m_width, m_height, m_bpp);
+
+	for (int iY = 0; iY < m_height; iY++)
+	{
+		for (int iX = 0; iX < m_width; iX++)
+		{
+			Color color = procFunction(*this, iX, iY, matrix);
+			rt.SetPixel(iX, iY, color);
+		}
+	}
+	return rt;
+}
+
+Image Image::ProcessImage(std::function<Color(const Image&, int, int)> procFunction)
+{
+	Image rt;
+	rt.CreateImage(m_width, m_height, m_bpp);
+
+	for (int iY = 0; iY < m_height; iY++)
+	{
+		for (int iX = 0; iX < m_width; iX++)
+		{
+			Color color = procFunction(*this, iX, iY);
+			rt.SetPixel(iX, iY, color);
+		}
+	}
+	return rt;
+}
+
+
 void Image::bitBltImgRotate(Image& src,
 	int x,
 	int y)
@@ -361,21 +394,6 @@ void Image::bitBltImgRotate(Image& src,
 	}
 }
 
-Image Image::ProcessImage(std::function<Color(const Image&, int, int, const float[])> procFunction, const float matrix[])
-{
-	Image rt;
-	rt.CreateImage(m_width, m_height, m_bpp);
-
-	for (int iY = 0; iY < m_height; iY++)
-	{
-		for (int iX = 0; iX < m_width; iX++)
-		{
-			Color color = procFunction(*this, iX, iY, matrix);
-			rt.SetPixel(iX, iY, color);
-		}
-	}
-	return rt;
-}
 
 void Image::DrawLine(int x0, int y0, int x1, int y1, Color color)
 {

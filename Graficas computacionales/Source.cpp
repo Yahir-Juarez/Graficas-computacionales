@@ -2,24 +2,32 @@
 #include <cmath>
 #include "Image.h"
 
-float lsR = 0.55f;
+float lsR = 0.33f;
 float lsG = 0.60f;
 float lsB = 0.03f;
 
-float sobel[9]  =  {-1, 0, 1,
+float leftSobel[9]  =  {-1, 0, 1,
 					-2, 0, 2,
 					-1, 0, 1};
+
+float topSobel[9] = { 1, 2, 1,
+				  0, 0, 0,
+				  -1, -2, -1 };
 
 float blur[9] = { 0.0625f, 0.125f, 0.0625f,
 				0.125f, 0.25f, 0.125f,
 				0.0625f, 0.125f, 0.0625f };
 
-Color GreyScale(const Image& img, int pX, int pY, const float Null[] = 0)
+float outLine[9] = { -1, -1, -1,
+					-1, 8, -1,
+					-1, -1, -1 };
+
+Color GreyScale(const Image& img, int pX, int pY)
 {
 	vector2D textCoorsSize(1.0f / img.m_width, 1.0f / img.m_height);
 	Color currColor(img.SamplePixel(textCoorsSize.pointX * pX, textCoorsSize.pointY * pY));
 
-	float lum = (currColor.r * lsR + currColor.g * lsG + currColor.b * lsB);
+	float lum = ((currColor.r * lsR) + (currColor.g * lsG) + (currColor.b * lsB));
 	if (lum > 255)
 	{
 		lum = 255;
@@ -86,17 +94,17 @@ int main()
 {
 	g_CodecMan.AddCodec(new BMPCodec());
 	Image imagen;
-	imagen.CreateFromImageFile("Yoda.bmp");
-	Image scale;
-	scale.scaleImg(2, imagen);
-	Image imgRotate;
-	imgRotate.CreateFromImageFile("StarWars.bmp");
-	Image rotate;
-	rotate.rotate(197, imgRotate);
-	scale.bitBltImgRotate(rotate, 50, 50);
-	scale = scale.ProcessImage(GreyScale);
-	scale = scale.ProcessImage(sobelScale, blur);
-	scale = scale.ProcessImage(sobelScale, sobel);
+	imagen.CreateFromImageFile("StarWars.bmp");
+	//.Image scale;
+	//scale.scaleImg(2, imagen);
+	//Image imgRotate;
+	//imgRotate.CreateFromImageFile("StarWars.bmp");
+	//Image rotate;
+	//rotate.rotate(197, imgRotate);
+	//scale.bitBltImgRotate(rotate, 50, 50);
+	imagen = imagen.ProcessImage(GreyScale);
+	//imagen = imagen.ProcessImage(sobelScale, blur);
+	imagen = imagen.ProcessImage(sobelScale, outLine);
 	
 	
 	/*Image rotImg;
@@ -116,7 +124,7 @@ int main()
 
 	if (codec)
 	{
-		codec->Encode(scale, "ImgPegada.bmp");
+		codec->Encode(imagen, "StarWarsGray.bmp");
 	}
 
 	return 0;
