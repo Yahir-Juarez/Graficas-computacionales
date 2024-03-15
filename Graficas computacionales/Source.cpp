@@ -1,4 +1,5 @@
 #include <iostream>
+#include <random>
 #include <cmath>
 #include "Image.h"
 
@@ -92,39 +93,84 @@ Color sobelScale(const Image& img, int pX, int pY, const float matrix[])
 
 int main()
 {
+	std::random_device rd;  // Obtener una semilla aleatoria del dispositivo
+	std::mt19937 gen(rd()); // Inicializar el generador con la semilla
+
+	// Definir el rango de números aleatorios
+	int min = 1;
+	int max = 1080;
+
+	// Crear una distribución uniforme dentro del rango especificado
+	std::uniform_int_distribution<> distribucion(min, max);
+
+	// Generar un número aleatorio
+	int numero_aleatorio = distribucion(gen);
+
 	g_CodecMan.AddCodec(new BMPCodec());
-	Image imagen;
-	imagen.CreateFromImageFile("StarWars.bmp");
-	//.Image scale;
-	//scale.scaleImg(2, imagen);
-	//Image imgRotate;
-	//imgRotate.CreateFromImageFile("StarWars.bmp");
-	//Image rotate;
-	//rotate.rotate(197, imgRotate);
-	//scale.bitBltImgRotate(rotate, 50, 50);
-	imagen = imagen.ProcessImage(GreyScale);
-	//imagen = imagen.ProcessImage(sobelScale, blur);
-	imagen = imagen.ProcessImage(sobelScale, outLine);
-	
-	
-	/*Image rotImg;
 
-	float grados = 33;
-	
-	rotImg.rotate(grados, imagen);*/
-	
 
-	//rotImg.SetPixel((rotImg.getRoationPosX(x, y, grados) + posPixel3 - posPixelX), rotImg.getRoationPosY(x, y, grados), colorInBuffer);
+	/////////////// Crear Imagen //////////////////////////
 
-	/*for (int i = 0; i <= 4; i++)
+	Image imagenOriginal;
+	Image imageOriginalRaster;
+	imagenOriginal.CreateFromImageFile("StarWars.bmp");
+	imageOriginalRaster.CreateFromImageFile("Yoda.bmp");
+
+	///////////////// Escalar Imagen //////////////////////
+
+	Image imageScale;
+	imageScale.scaleImg(2.5, imagenOriginal);
+
+	//////////////// bitBlit ////////////////////////
+
+	Image imagebBitBlit;
+	imagebBitBlit.CreateImage(1920, 1080, imagenOriginal.m_bpp);
+	for (int i = 0; i < 200; i++)
 	{
-		ImagenRotate.SetPixel(i, 1, Color(0, 0, 255));
-	}*/
+		imagebBitBlit.bitBlt(imagenOriginal, 200 + i, 200 - i, 200 - i , 200 - i);
+	}
+
+	////////////// Rotar Imagen ///////////////////////////	
+	
+	Image imageRotate;
+	Image imageRasterRotate;
+	imageRotate.rotate(127, imageScale);
+	imageRasterRotate.rotate(237, imageOriginalRaster);
+
+	///////////// Raster ////////////////////////////////
+
+	Image imageRaster;
+	imageRaster = imageScale;
+	imageRaster.Raster(imageRasterRotate, 95, 123);
+
+	////////////// Scale Gray ///////////////////////////
+
+	Image processImageGray;
+	processImageGray = imagenOriginal.ProcessImage(GreyScale);
+
+	///////////// Process Blur //////////////////////////////
+
+	Image processImageBlur;
+	processImageBlur = processImageGray.ProcessImage(sobelScale, blur);
+
+	///////////// Process sobel //////////////////////////////
+
+	Image processImageSobel;
+	processImageSobel = processImageGray.ProcessImage(sobelScale, leftSobel);
+
+	
 	auto codec = g_CodecMan.GetCodecByFileExt(".bmp");
 
 	if (codec)
 	{
-		codec->Encode(imagen, "StarWarsGray.bmp");
+		codec->Encode(imagenOriginal, "ImageProcess/StarWars.bmp");
+		codec->Encode(imageScale, "ImageProcess/StarWarsScale.bmp");
+		codec->Encode(imagebBitBlit, "ImageProcess/StarWarsBitBlit.bmp");
+		codec->Encode(imageRotate, "ImageProcess/StarWarsRotate.bmp");
+		codec->Encode(imageRaster, "ImageProcess/StarWarsRaster.bmp");
+		codec->Encode(processImageGray, "ImageProcess/StarWarsGrayScale.bmp");
+		codec->Encode(processImageBlur, "ImageProcess/StarWarsBlur.bmp");
+		codec->Encode(processImageSobel, "ImageProcess/StarWarsSobel.bmp");
 	}
 
 	return 0;

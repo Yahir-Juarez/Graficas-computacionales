@@ -39,6 +39,7 @@ public:
 	unsigned char r;
 	unsigned char g;
 	unsigned char b;
+	unsigned char a;
 };
 
 struct Rect
@@ -106,6 +107,13 @@ public:
 			m_pixelData[basePos + 1] = static_cast<byte>(color.g);
 			m_pixelData[basePos + 2] = static_cast<byte>(color.b);
 		}
+		else if (m_bpp == 32)
+		{
+			m_pixelData[basePos + 0] = static_cast<byte>(color.r);
+			m_pixelData[basePos + 1] = static_cast<byte>(color.g);
+			m_pixelData[basePos + 2] = static_cast<byte>(color.b);
+			m_pixelData[basePos + 3] = static_cast<byte>(color.b);
+		}
 		return true;
 	}
 
@@ -131,6 +139,11 @@ public:
 
 		return GetPixel(pixX, pixY);
 	}
+
+
+
+	/////////Sample bilineal/////////
+
 
 	void CreateFromImageFile(const Path& filePath)
 	{
@@ -167,11 +180,11 @@ public:
 		int srcEndX = 0,
 		int srcEndY = 0);
 
-	void bitBltImgRotate(Image& src,
+	void Raster(Image& src,
 		int x = 0,
 		int y = 0);
 
-	Image ProcessImage(std::function<Color(const Image&, int, int, const float[])> procFunction, const float matrix[] = NULL);
+	Image ProcessImage(std::function<Color(const Image&, int, int, const float[])> procFunction, const float matrix[] = nullptr);
 	Image ProcessImage(std::function < Color(const Image&, int, int)> procFunction);
 
 	bool scaleImg(float scale, Image& ptrImg)

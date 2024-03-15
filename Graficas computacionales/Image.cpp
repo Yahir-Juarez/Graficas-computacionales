@@ -156,9 +156,9 @@ void Image::bitBlt(Image& src,
 
 		DestBuffer += m_pitch;
 		SrcBuffer += src.m_pitch;
-		cout << line << '\n';
 		pruebax++;
 	}
+	bool i = true;
 	/*bool i;
 	i = false;
 	char* DestBuffer = reinterpret_cast<char*>(m_pixelData.data() + (((y * m_width) + x) * m_bpp));
@@ -250,7 +250,6 @@ vector2D Image::GetPointInLine(int x0, int y0, int x1, int y1, int& dx, int& dy,
 	int y_inc = (y1 > y0) ? 1 : -1;
 
 	while (x0 != x1 || y0 != y1) {
-		std::cout << "(" << x0 << ", " << y0 << ")\n";
 		int error_2 = 2 * error;
 
 		if (error_2 > -dy) {
@@ -322,7 +321,7 @@ Image Image::ProcessImage(std::function<Color(const Image&, int, int)> procFunct
 }
 
 
-void Image::bitBltImgRotate(Image& src,
+void Image::Raster(Image& src,
 	int x,
 	int y)
 {
