@@ -89,7 +89,9 @@ void Image::bitBlt(Image& src,
 	int srcEndX,
 	int srcEndY)
 {
-	if (x >= m_width || y >= m_height) 
+	int width = m_width;
+	int height = m_height;
+	if (x >= width || y >= height)
 	{ 
 		return; 
 	}
@@ -116,7 +118,7 @@ void Image::bitBlt(Image& src,
 
 	if ((x + realWidth) > m_width)
 	{
-		realWidth -= (x * realWidth) - m_width;
+		realWidth -= (x + realWidth) - m_width;
 	}
 
 	if ((y + realHeight) > m_height)
@@ -150,7 +152,7 @@ void Image::bitBlt(Image& src,
 		SrcBuffer += src.m_pitch;
 	}*/
 	int pruebax = 0;
-	for (int line = 0; line < realWidth; ++line)
+	for (int line = 0; line < realHeight; ++line)
 	{
 		memcpy(DestBuffer, SrcBuffer, bytesToCopy);
 
@@ -185,6 +187,10 @@ void Image::bitBlt(Image& src,
 	
 Color Image::SampleBilineal(float u, float v) const
 {
+	if (u == 0 || v == 0)
+	{
+		return SamplePixel(u, v);
+	}
 	float sizePixel = 1.0f / m_width;
 	float sizePixelHeight = 1.0f / m_height;
 	vector2D pointA(u - (sizePixel / 2), v - (sizePixelHeight / 2));            // A //// B //

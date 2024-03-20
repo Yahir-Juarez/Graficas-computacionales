@@ -3,6 +3,13 @@
 #include <cmath>
 #include "Image.h"
 
+int Random(int min, int max) {
+	static std::random_device rd;
+	static std::mt19937 gen(rd());
+	std::uniform_int_distribution<int> dis(min, max);
+	return dis(gen);
+}
+
 float lsR = 0.33f;
 float lsG = 0.60f;
 float lsB = 0.03f;
@@ -93,20 +100,6 @@ Color sobelScale(const Image& img, int pX, int pY, const float matrix[])
 
 int main()
 {
-	float prueba = fmod(0.80f, 0.33f);
-	std::random_device rd;  // Obtener una semilla aleatoria del dispositivo
-	std::mt19937 gen(rd()); // Inicializar el generador con la semilla
-
-	// Definir el rango de números aleatorios
-	int min = 1;
-	int max = 1080;
-
-	// Crear una distribución uniforme dentro del rango especificado
-	std::uniform_int_distribution<> distribucion(min, max);
-
-	// Generar un número aleatorio
-	int numero_aleatorio = distribucion(gen);
-
 	g_CodecMan.AddCodec(new BMPCodec());
 
 
@@ -142,10 +135,12 @@ int main()
 
 	Image imagebBitBlit;
 	imagebBitBlit.CreateImage(1920, 1080, imagenOriginal.m_bpp);
-	/*for (int i = 0; i < 200; i++)
+	for (int i = 0; i < 1000; i++)
 	{
-		imagebBitBlit.bitBlt(imagenOriginal, 200 + i, 200 - i, 200 - i , 200 - i);
-	}*/
+		imagebBitBlit.bitBlt(imagenOriginal, Random(-1920, 1920), Random(-1080, 1080), 
+			Random((0), imagenOriginal.m_width)),Random((0), imagenOriginal.m_height), 
+			Random((0), imagenOriginal.m_width), Random((0), imagenOriginal.m_height);
+	}
 
 	////////////// Rotar Imagen ///////////////////////////	
 	
