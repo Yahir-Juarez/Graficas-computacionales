@@ -11,6 +11,17 @@ using std::cout;
 
 using std::max;
 using std::min;
+struct TEXTURE_ADRESS
+{
+	enum E
+	{
+		WRAP = 0,
+		MIRROR,
+		CLAMP,
+		BORDER,
+		MIRROR_ONCE
+	};
+};
 
 class Color
 {
@@ -140,11 +151,18 @@ public:
 		return GetPixel(pixX, pixY);
 	}
 
+	Color SamplePixel(float u, float v, TEXTURE_ADRESS::E texAddr) const
+	{
+		AdjustToTextureAddress(u, v, texAddr);
+		uint32 pixX = m_width * u;
+		uint32 pixY = m_height * v;
+
+		return GetPixel(pixX, pixY);
+	}
+
 	Color SampleBilineal(float u, float v) const;
 
-
-	/////////Sample bilineal/////////
-
+	void AdjustToTextureAddress(float& u, float& v, TEXTURE_ADRESS::E textAddr) const;
 
 	void CreateFromImageFile(const Path& filePath)
 	{

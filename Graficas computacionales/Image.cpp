@@ -184,7 +184,58 @@ void Image::bitBlt(Image& src,
 	if (y > m_width || y >= m_height) { return; }*/
 
 }
-	
+
+void Image::AdjustToTextureAddress(float& u, float& v, TEXTURE_ADRESS::E textAddr) const
+{
+	switch (textAddr)
+	{
+	case TEXTURE_ADRESS::WRAP:
+		u = fmodf(u, 1.0f);
+		v = fmodf(v, 1.0f);
+		break;
+	case TEXTURE_ADRESS::MIRROR:
+		if (u < 0.0f || u > 1.0f)
+		{
+			u = 1.0f - fmod(u, 1.0f);
+		}
+		if (v < 0.0f || v > 1.0f)
+		{
+			v = 1.0f - fmodf(v, 1.0f);
+		}
+		break;
+	case TEXTURE_ADRESS::CLAMP:
+		u = clamp(u, 0.0f, 1.0f);
+		v = clamp(v, 0.0f, 1.0f);
+		break;
+	case TEXTURE_ADRESS::BORDER:
+		/*if (u < 0.0f || u > 1.0f || v < 0.0f || v > 1.0f)
+		{
+			return Color();
+		}*/
+		break;
+	case TEXTURE_ADRESS::MIRROR_ONCE:
+		if ((u > -1.0f && u < 0.0f) || (u > 1.0f && u < 2.0f))
+		{
+			u = 1.0f - fmodf(u, 1.0f);
+		}
+		else
+		{
+			u = clamp(u, 0.0f, 1.0f);
+		}
+		if ((v > -1.0f && v < 0.0f) || (v > 1.0f && v < 2.0))
+		{
+			v = 1.0f - fmodf(v, 1.0f);
+		}
+		else
+		{
+			v = clamp(v, 0.0f, 1.0f);
+		}
+		break;
+	default:
+		break;
+	}
+}
+
 Color Image::SampleBilineal(float u, float v) const
 {
 	if (u == 0 || v == 0)

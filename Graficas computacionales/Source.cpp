@@ -170,6 +170,20 @@ int main()
 	Image processImageSobel;
 	processImageSobel = processImageGray.ProcessImage(sobelScale, leftSobel);
 
+	////////////////// Address Texture ////////////////////////
+
+	//Image imagebBitBlit;
+	//imagebBitBlit.CreateImage(1920, 1080, imagenOriginal.m_bpp);
+	//for (int iY = 0; iY < imagenOriginal.m_height; iY++)
+	//{
+	//	for (int iX = 0; iX < imagenOriginal.m_width; iX++)
+	//	{
+	//		float siU = (1.0f / imagenOriginal.m_width) * iX;
+	//		float siV = (1.0f / imagenOriginal.m_height) * iY;
+	//		Color color(imagenOriginal.SampleBilineal(siU, siV));
+	//		bilinealImage.SetPixel(iX, iY, color);
+	//	}
+	//}
 	
 	auto codec = g_CodecMan.GetCodecByFileExt(".bmp");
 
