@@ -47,34 +47,34 @@ Color GreyScale(const Image& img, int pX, int pY)
 	return Color(lum, lum, lum);
 }
 
-Color sobelScale(const Image& img, int pX, int pY, const float matrix[])
-{
-	float sum = 0;
-	sum += ((img.GetPixel(pX - 1, pY - 1)).r) * matrix[0];
-	sum += ((img.GetPixel(pX, pY - 1)).r) * matrix[1];
-	sum += ((img.GetPixel(pX + 1, pY - 1)).r) * matrix[2];
-	sum += ((img.GetPixel(pX - 1, pY)).r) * matrix[3];
-	sum += ((img.GetPixel(pX, pY)).r) * matrix[4];
-	sum += ((img.GetPixel(pX + 1, pY)).r) * matrix[5];
-	sum += ((img.GetPixel(pX - 1, pY + 1)).r) * matrix[6];
-	sum += ((img.GetPixel(pX, pY + 1)).r) * matrix[7];
-	sum += ((img.GetPixel(pX + 1, pY + 1)).r) * matrix[8];
-
-	/*if (sum < 50 && sum >= 0)
-	{
-		cout << sum << " X -> " << pX << " Y -> " << pY << "\n";
-		return Color(50, 30, 255);
-	}*/
-	if (sum > 255)
-	{
-		sum = 255;
-	}
-	else if (sum < 0)
-	{
-		sum = 0;
-	}
-	return Color(sum, sum, sum);
-}
+//Color sobelScale(const Image& img, int pX, int pY, const float matrix[])
+//{
+//	float sum = 0;
+//	sum += ((img.GetPixel(pX - 1, pY - 1)).r) * matrix[0];
+//	sum += ((img.GetPixel(pX, pY - 1)).r) * matrix[1];
+//	sum += ((img.GetPixel(pX + 1, pY - 1)).r) * matrix[2];
+//	sum += ((img.GetPixel(pX - 1, pY)).r) * matrix[3];
+//	sum += ((img.GetPixel(pX, pY)).r) * matrix[4];
+//	sum += ((img.GetPixel(pX + 1, pY)).r) * matrix[5];
+//	sum += ((img.GetPixel(pX - 1, pY + 1)).r) * matrix[6];
+//	sum += ((img.GetPixel(pX, pY + 1)).r) * matrix[7];
+//	sum += ((img.GetPixel(pX + 1, pY + 1)).r) * matrix[8];
+//
+//	/*if (sum < 50 && sum >= 0)
+//	{
+//		cout << sum << " X -> " << pX << " Y -> " << pY << "\n";
+//		return Color(50, 30, 255);
+//	}*/
+//	if (sum > 255)
+//	{
+//		sum = 255;
+//	}
+//	else if (sum < 0)
+//	{
+//		sum = 0;
+//	}
+//	return Color(sum, sum, sum);
+//}
 //Color blurScale(const Image& img, int pX, int pY)
 //{
 //	float sum = 0;
@@ -163,12 +163,12 @@ int main()
 	///////////// Process Blur //////////////////////////////
 
 	Image processImageBlur;
-	processImageBlur = processImageGray.ProcessImage(sobelScale, blur);
+	processImageBlur = processImageGray.ProcessImage(blur);
 
 	///////////// Process sobel //////////////////////////////
 
 	Image processImageSobel;
-	processImageSobel = processImageGray.ProcessImage(sobelScale, leftSobel);
+	processImageSobel = processImageGray.ProcessImage(leftSobel);
 
 	////////////////// Address Texture ////////////////////////
 

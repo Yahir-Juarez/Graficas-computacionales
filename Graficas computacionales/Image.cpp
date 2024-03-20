@@ -318,8 +318,9 @@ void bubbleSort(vector2D arreglo[], int tamano) {
 	}
 }
 
-Image Image::ProcessImage(std::function<Color(const Image&, int, int, const float[])> procFunction, const float matrix[])
+Image Image::ProcessImage(const float matrix[])
 {
+
 	Image rt;
 	rt.CreateImage(m_width, m_height, m_bpp);
 
@@ -327,8 +328,25 @@ Image Image::ProcessImage(std::function<Color(const Image&, int, int, const floa
 	{
 		for (int iX = 0; iX < m_width; iX++)
 		{
-			Color color = procFunction(*this, iX, iY, matrix);
-			rt.SetPixel(iX, iY, color);
+			float sum = 0;
+			sum += ((GetPixel(iX - 1, iY - 1)).r) * matrix[0];
+			sum += ((GetPixel(iX, iY - 1)).r) * matrix[1];
+			sum += ((GetPixel(iX + 1, iY - 1)).r) * matrix[2];
+			sum += ((GetPixel(iX - 1, iY)).r) * matrix[3];
+			sum += ((GetPixel(iX, iY)).r) * matrix[4];
+			sum += ((GetPixel(iX + 1, iY)).r) * matrix[5];
+			sum += ((GetPixel(iX - 1, iY + 1)).r) * matrix[6];
+			sum += ((GetPixel(iX, iY + 1)).r) * matrix[7];
+			sum += ((GetPixel(iX + 1, iY + 1)).r) * matrix[8];
+			if (sum > 255)
+			{
+				sum = 255;
+			}
+			else if (sum < 0)
+			{
+				sum = 0;
+			}
+			rt.SetPixel(iX, iY, Color(sum, sum, sum));
 		}
 	}
 	return rt;
