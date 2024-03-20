@@ -26,7 +26,7 @@ float outLine[9] = { -1, -1, -1,
 Color GreyScale(const Image& img, int pX, int pY)
 {
 	vector2D textCoorsSize(1.0f / img.m_width, 1.0f / img.m_height);
-	Color currColor(img.SamplePixel(textCoorsSize.pointX * pX, textCoorsSize.pointY * pY));
+	Color currColor(img.SampleBilineal(textCoorsSize.pointX * pX, textCoorsSize.pointY * pY));
 
 	float lum = ((currColor.r * lsR) + (currColor.g * lsG) + (currColor.b * lsB));
 	if (lum > 255)
@@ -93,6 +93,7 @@ Color sobelScale(const Image& img, int pX, int pY, const float matrix[])
 
 int main()
 {
+	float prueba = fmod(0.80f, 0.33f);
 	std::random_device rd;  // Obtener una semilla aleatoria del dispositivo
 	std::mt19937 gen(rd()); // Inicializar el generador con la semilla
 
@@ -116,6 +117,22 @@ int main()
 	imagenOriginal.CreateFromImageFile("StarWars.bmp");
 	imageOriginalRaster.CreateFromImageFile("Yoda.bmp");
 
+	///////////////////////////////////////////////////////
+
+	Image bilinealImage;
+	bilinealImage.CreateImage(imagenOriginal.m_width, imagenOriginal.m_height, imagenOriginal.m_bpp);
+	for (int iY = 0; iY < imagenOriginal.m_height; iY++)
+	{
+		for (int iX = 0; iX < imagenOriginal.m_width; iX++)
+		{
+			float siU = (1.0f / imagenOriginal.m_width) * iX;
+			float siV = (1.0f / imagenOriginal.m_height) * iY;
+			Color color(imagenOriginal.SampleBilineal(siU, siV));
+			bilinealImage.SetPixel(iX, iY, color);
+		}
+	}
+
+
 	///////////////// Escalar Imagen //////////////////////
 
 	Image imageScale;
@@ -125,10 +142,10 @@ int main()
 
 	Image imagebBitBlit;
 	imagebBitBlit.CreateImage(1920, 1080, imagenOriginal.m_bpp);
-	for (int i = 0; i < 200; i++)
+	/*for (int i = 0; i < 200; i++)
 	{
 		imagebBitBlit.bitBlt(imagenOriginal, 200 + i, 200 - i, 200 - i , 200 - i);
-	}
+	}*/
 
 	////////////// Rotar Imagen ///////////////////////////	
 	
@@ -164,6 +181,7 @@ int main()
 	if (codec)
 	{
 		codec->Encode(imagenOriginal, "ImageProcess/StarWars.bmp");
+		codec->Encode(bilinealImage, "ImageProcess/StarWarsBilineal.bmp");
 		codec->Encode(imageScale, "ImageProcess/StarWarsScale.bmp");
 		codec->Encode(imagebBitBlit, "ImageProcess/StarWarsBitBlit.bmp");
 		codec->Encode(imageRotate, "ImageProcess/StarWarsRotate.bmp");

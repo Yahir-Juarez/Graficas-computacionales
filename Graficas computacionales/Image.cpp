@@ -182,62 +182,35 @@ void Image::bitBlt(Image& src,
 	if (y > m_width || y >= m_height) { return; }*/
 
 }
+	
+Color Image::SampleBilineal(float u, float v) const
+{
+	float sizePixel = 1.0f / m_width;
+	float sizePixelHeight = 1.0f / m_height;
+	vector2D pointA(u - (sizePixel / 2), v - (sizePixelHeight / 2));            // A //// B //
+	vector2D pointB(u + (sizePixel / 2), v - (sizePixelHeight / 2));			  //////////////
+	vector2D pointC(u + (sizePixel / 2), v + (sizePixelHeight / 2));			  //////////////
+	vector2D pointD(u - (sizePixel / 2), v + (sizePixelHeight / 2));			  // D //// C //
 
-//vector2D Image::GetPointInLine(int x0, int y0, int x1, int y1, int& iter, bool& isValid)
-//{
-//	vector2D pointXY;
-//	x0 += 1;
-//	y1 += 1;
-//	int dx = std::abs(x1 - x0);
-//	int dy = std::abs(y1 - y0);
-//
-//	int x_inc = (x1 > x0) ? 1 : -1;
-//	int y_inc = (y1 > y0) ? 1 : -1;
-//
-//	int error = dx - dy;
-//
-//	while (x0 != x1 || y0 != y1) {
-//		std::cout << "(" << x0 << ", " << y0 << ")\n";
-//		int error_2 = 2 * error;
-//
-//		if (error_2 > -dy) {
-//			error -= dy;
-//			x0 += x_inc;
-//		}
-//
-//		if (error_2 < dx) {
-//			pointXY.pointX = x0;
-//			pointXY.pointY = y0;
-//			return pointXY;
-//			error += dx;
-//			y0 += y_inc;
-//		}
-//	}
-//	//vector2D pointXY;
-//	//if (iter > 0)
-//	//{
-//	//	/*iter += 2 * (y0)+(-2 * (x0));
-//	//	x0 += 1;
-//	//	y0 += 1;*/
-//	//	isValid = false;
-//	//	return vector2D(x0, y0);
-//	//}
-//	//else
-//	//{
-//	//	iter += 2 * (y0);
-//	//	if (x0 > x1)
-//	//	{
-//	//		x0 += 1;
-//	//	}
-//	//	else
-//	//	{
-//	//		x0 -= 1;
-//	//	}
-//	//	isValid = true;
-//	//	pointXY = GetPointInLine(x0, y0, x1, y1, iter, isValid);
-//	//}
-//	return pointXY;
-//}
+	float perHorizontalA = (sizePixel - (fmod(pointA.pointX, sizePixel))) / sizePixel;
+	float perHorizontalB = (fmod(pointB.pointX, sizePixel)) / sizePixel;
+	float perVerticalA = (sizePixelHeight - (fmod(pointA.pointY, sizePixelHeight))) / sizePixelHeight;
+	float perVerticalB = (fmod(pointD.pointY, sizePixelHeight)) / sizePixelHeight;
+
+	Color InterColorTop((SamplePixel(pointA.pointX, pointA.pointY).r * perHorizontalA) + (SamplePixel(pointB.pointX, pointB.pointY).r * perHorizontalB),
+						(SamplePixel(pointA.pointX, pointA.pointY).g * perHorizontalA) + (SamplePixel(pointB.pointX, pointB.pointY).g * perHorizontalB),
+						(SamplePixel(pointA.pointX, pointA.pointY).b * perHorizontalA) + (SamplePixel(pointB.pointX, pointB.pointY).b * perHorizontalB));
+
+	Color InterColorDown((SamplePixel(pointC.pointX, pointC.pointY).r * perHorizontalA) + (SamplePixel(pointD.pointX, pointD.pointY).r * perHorizontalB),
+						(SamplePixel(pointC.pointX, pointC.pointY).g * perHorizontalA) + (SamplePixel(pointD.pointX, pointD.pointY).g * perHorizontalB),
+						(SamplePixel(pointC.pointX, pointC.pointY).b * perHorizontalA) + (SamplePixel(pointD.pointX, pointD.pointY).b * perHorizontalB));
+
+	Color InterColorVertical((InterColorTop.r * perVerticalA) + (InterColorDown.r * perVerticalB),
+							(InterColorTop.g * perVerticalA) + (InterColorDown.g * perVerticalB),
+							(InterColorTop.b * perVerticalA) + (InterColorDown.b * perVerticalB));
+
+	return InterColorVertical;
+}
 
 vector2D Image::GetPointInLine(int x0, int y0, int x1, int y1, int& dx, int& dy, int& error)
 {

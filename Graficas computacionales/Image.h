@@ -140,6 +140,7 @@ public:
 		return GetPixel(pixX, pixY);
 	}
 
+	Color SampleBilineal(float u, float v) const;
 
 
 	/////////Sample bilineal/////////
