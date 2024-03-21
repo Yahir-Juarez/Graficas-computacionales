@@ -27,8 +27,8 @@ class Color
 {
 public:
 	Color() = default;
-	Color(uint8 _r, uint8 _g, uint8 _b)
-		: r(_r), g(_g), b(_b)
+	Color(uint8 _r, uint8 _g, uint8 _b, uint8 _a = 255)
+		: r(_r), g(_g), b(_b), a(_a)
 	{}
 
 	bool isBlack()

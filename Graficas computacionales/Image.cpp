@@ -340,7 +340,7 @@ Image Image::ProcessImage(const float matrix[])
 			sum += ((GetPixel(iX + 1, iY + 1)).r) * matrix[8];
 			if (sum > 255)
 			{
-				sum = 255;
+				//sum = 255;
 			}
 			else if (sum < 0)
 			{

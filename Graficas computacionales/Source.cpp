@@ -102,7 +102,6 @@ int main()
 {
 	g_CodecMan.AddCodec(new BMPCodec());
 
-
 	/////////////// Crear Imagen //////////////////////////
 
 	Image imagenOriginal;

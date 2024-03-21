@@ -5,6 +5,8 @@ VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Graficas computacionales", "Graficas computacionales\Graficas computacionales.vcxproj", "{D657353E-0BBA-403C-B4A2-51F3609370BB}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "D3DWnd", "D3DWnd\D3DWnd.vcxproj", "{FD01DA4C-213C-4913-92BC-EFA30EA1D486}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{D657353E-0BBA-403C-B4A2-51F3609370BB}.Release|x64.Build.0 = Release|x64
 		{D657353E-0BBA-403C-B4A2-51F3609370BB}.Release|x86.ActiveCfg = Release|Win32
 		{D657353E-0BBA-403C-B4A2-51F3609370BB}.Release|x86.Build.0 = Release|Win32
+		{FD01DA4C-213C-4913-92BC-EFA30EA1D486}.Debug|x64.ActiveCfg = Debug|x64
+		{FD01DA4C-213C-4913-92BC-EFA30EA1D486}.Debug|x64.Build.0 = Debug|x64
+		{FD01DA4C-213C-4913-92BC-EFA30EA1D486}.Debug|x86.ActiveCfg = Debug|Win32
+		{FD01DA4C-213C-4913-92BC-EFA30EA1D486}.Debug|x86.Build.0 = Debug|Win32
+		{FD01DA4C-213C-4913-92BC-EFA30EA1D486}.Release|x64.ActiveCfg = Release|x64
+		{FD01DA4C-213C-4913-92BC-EFA30EA1D486}.Release|x64.Build.0 = Release|x64
+		{FD01DA4C-213C-4913-92BC-EFA30EA1D486}.Release|x86.ActiveCfg = Release|Win32
+		{FD01DA4C-213C-4913-92BC-EFA30EA1D486}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
