@@ -1,14 +1,9 @@
 // D3DWnd.cpp : Define el punto de entrada de la aplicación.
 //
 
+#include "Prerequisitos.h"
 #include "framework.h"
 #include "D3DWnd.h"
-
-#include <d3d11.h>
-
-#include <string>
-
-using Wstring = std::wstring;
 
 #include "CGrhaphicsManager.h"
 
@@ -25,6 +20,7 @@ Wstring szWindowClass;            // nombre de clase de la ventana principal
 // Declaraciones de funciones adelantadas incluidas en este módulo de código:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
+BOOL                InitGraphicsAssets(CGraphicsManager* pCGraphicsManager);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
@@ -67,7 +63,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
+       /* graph.clearRenderTarget(graph.getRenderTargetView(), LinearColor(1, 0, 0, 1));
+        graph.present();*/
     }
+
 
     return (int) msg.wParam;
 }
@@ -203,4 +202,53 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     }
     return (INT_PTR)FALSE;
+}
+
+struct MODEL_VERTEX
+{
+    float x;
+    float y;
+    float z;
+};
+
+BOOL InitGraphicsAssets(CGraphicsManager* pCGraphicsManager)
+{
+    /*
+    Bloque de creacion.
+    */
+    auto pVertexShader = pCGraphicsManager->createVertexShader("VertexShader.hlsl", "main", "vs_5_0");
+    auto pPixelShader = pCGraphicsManager->createPixelShader("VertexShader.hlsl", "mainPS", "vs_5_0");
+
+    Vector<D3D11_INPUT_ELEMENT_DESC> vInputElements;
+
+    vInputElements.resize(1);
+
+    auto& posElements = vInputElements.back();
+    memset(&posElements, 0, sizeof(D3D11_INPUT_ELEMENT_DESC));
+
+    posElements.SemanticName = "POSITION";
+    posElements.SemanticIndex = 0;
+    posElements.Format = DXGI_FORMAT_R32G32B32_FLOAT;
+    posElements.InputSlot = 0;
+    posElements.AlignedByteOffset = 0;
+    posElements.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+    posElements.InstanceDataStepRate = 0;
+
+    auto pInputLayout = pCGraphicsManager->createInputLayout(vInputElements, pVertexShader);
+
+    Vector<MODEL_VERTEX> mesh;
+    mesh.push_back({ 0.0f, 0.5f, 0.5f });
+    mesh.push_back({ 0.5f, -0.5f, 0.5f });
+    mesh.push_back({ -0.5f, -0.5f, 0.5f });
+
+    auto pVertexBuffer = pCGraphicsManager->createVertexBuffer<MODEL_VERTEX>(mesh);
+
+    /*
+    * Bloque de render
+    */
+    pCGraphicsManager->clearRenderTarget(pCGraphicsManager->getRenderTargetView(), LinearColor(0, 0, 1, 1));
+    pCGraphicsManager->present();
+
+    return TRUE;
+
 }
