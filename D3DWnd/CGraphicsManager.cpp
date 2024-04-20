@@ -230,7 +230,7 @@ SPtr<PixelShader> CGraphicsManager::createPixelShader(const Path& fileName, cons
 		myShader->m_pBlob->GetBufferSize(),
 		nullptr, &myShader->m_pShader));
 
-	return nullptr;
+	return myShader;
 }
 
 SPtr<InputLayout> CGraphicsManager::createInputLayout(const Vector<D3D11_INPUT_ELEMENT_DESC>& layout,
@@ -239,10 +239,10 @@ SPtr<InputLayout> CGraphicsManager::createInputLayout(const Vector<D3D11_INPUT_E
 	auto pLayout = std::make_shared<InputLayout>();
 	auto vs = pVS.lock();
 	throwIfFailed(m_device->CreateInputLayout(&layout[0], 
-		layout.size(), //rellenar hora 10:06
+		static_cast<UINT>(layout.size()), //rellenar hora 10:06
 		vs->m_pBlob->GetBufferPointer(), 
 		vs->m_pBlob->GetBufferSize(), 
 		&pLayout->m_pLayout));
 
-	return SPtr<InputLayout>();
+	return pLayout;
 }

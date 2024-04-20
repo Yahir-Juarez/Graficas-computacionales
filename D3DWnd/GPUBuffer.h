@@ -10,10 +10,10 @@ public:
 	GPUBuffer() = default;
 	virtual ~GPUBuffer()
 	{
-		GPUBuffer(m_pBuffer);
+		SAFE_RELEASE(m_pBuffer);
 	}
 
-protected:
+public:
 	friend class CGraphicsManager;
 
 	ID3D11Buffer* m_pBuffer = nullptr;
@@ -25,7 +25,7 @@ public:
 	VertexBuffer() = default;
 	~VertexBuffer() = default;
 
-protected:
+public:
 	friend class CGraphicsManager;
 	uint32 m_stride = 0;
 };
@@ -36,7 +36,7 @@ public:
 	IndexBuffer() = default;
 	~IndexBuffer() = default;
 
-protected:
+public:
 	friend class CGraphicsManager;
 	uint32 m_dataFormat = DXGI_FORMAT_R32_UINT;
 };

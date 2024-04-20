@@ -22,7 +22,7 @@ public:
 
 	bool CompileFromFile(const String& fileName, const String& entryPoint, const String& shaderModel);
 
-protected:
+public:
 	friend class CGraphicsManager;
 
 	ID3DBlob* m_pBlob;
@@ -37,7 +37,7 @@ public:
 		SAFE_RELEASE(m_pShader);
 	}
 
-protected:
+public:
 	friend class CGraphicsManager;
 
 	ID3D11VertexShader* m_pShader = nullptr;
@@ -52,7 +52,7 @@ public:
 		SAFE_RELEASE(m_pShader);
 	}
 
-protected:
+public:
 	friend class CGraphicsManager;
 
 	ID3D11PixelShader* m_pShader = nullptr;

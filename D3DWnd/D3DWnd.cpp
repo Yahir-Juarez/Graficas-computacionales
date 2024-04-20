@@ -17,10 +17,19 @@ HINSTANCE hInst;                                // instancia actual
 Wstring szTitle;                  // Texto de la barra de título
 Wstring szWindowClass;            // nombre de clase de la ventana principal
 
+CGraphicsManager* g_GraphicsMan;
+
+SPtr <VertexShader> g_pVertexShader;
+SPtr <PixelShader> g_pPixelShader;
+
+SPtr<InputLayout> g_pInputLayout;
+SPtr <VertexBuffer> g_pVertexBuffer;
+
 // Declaraciones de funciones adelantadas incluidas en este módulo de código:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
-BOOL                InitGraphicsAssets(CGraphicsManager* pCGraphicsManager);
+BOOL                InitGraphicsAssets();
+void                Render();
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
@@ -51,20 +60,31 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_D3DWND));
 
     //Init Graphics Managrer
-    CGraphicsManager graph(reinterpret_cast<void*>(g_hWnd), false, false, 1, 1);
+    g_GraphicsMan = new CGraphicsManager(reinterpret_cast<void*>(g_hWnd), false, false, 1, 1);
+    InitGraphicsAssets();
 
     MSG msg;
 
     // Bucle principal de mensajes:
-    while (GetMessage(&msg, nullptr, 0, 0))
+
+    bool isRunning = true;
+    while (isRunning)
     {
-        if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+        while (PeekMessage(&msg, g_hWnd, 0, 0, PM_REMOVE))
         {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
+            if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+            {
+                TranslateMessage(&msg);
+                DispatchMessage(&msg);
+            }
+            if (msg.message == WM_QUIT)
+            {
+                isRunning = false;
+            }
+            /*graph.clearRenderTarget(graph.getRenderTargetView(), LinearColor(1, 0, 0, 1));
+            graph.present();*/
         }
-       /* graph.clearRenderTarget(graph.getRenderTargetView(), LinearColor(1, 0, 0, 1));
-        graph.present();*/
+        Render();
     }
 
 
@@ -172,6 +192,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
             // TODO: Agregar cualquier código de dibujo que use hDC aquí...
+
             EndPaint(hWnd, &ps);
         }
         break;
@@ -211,13 +232,13 @@ struct MODEL_VERTEX
     float z;
 };
 
-BOOL InitGraphicsAssets(CGraphicsManager* pCGraphicsManager)
+BOOL InitGraphicsAssets()
 {
     /*
     Bloque de creacion.
     */
-    auto pVertexShader = pCGraphicsManager->createVertexShader("VertexShader.hlsl", "main", "vs_5_0");
-    auto pPixelShader = pCGraphicsManager->createPixelShader("VertexShader.hlsl", "mainPS", "vs_5_0");
+    g_pVertexShader = g_GraphicsMan->createVertexShader("VertexShader.hlsl", "main", "vs_5_0");
+    g_pPixelShader = g_GraphicsMan->createPixelShader("VertexShader.hlsl", "mainPS", "ps_5_0");
 
     Vector<D3D11_INPUT_ELEMENT_DESC> vInputElements;
 
@@ -234,21 +255,42 @@ BOOL InitGraphicsAssets(CGraphicsManager* pCGraphicsManager)
     posElements.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
     posElements.InstanceDataStepRate = 0;
 
-    auto pInputLayout = pCGraphicsManager->createInputLayout(vInputElements, pVertexShader);
+    g_pInputLayout = g_GraphicsMan->createInputLayout(vInputElements, g_pVertexShader);
 
     Vector<MODEL_VERTEX> mesh;
     mesh.push_back({ 0.0f, 0.5f, 0.5f });
     mesh.push_back({ 0.5f, -0.5f, 0.5f });
     mesh.push_back({ -0.5f, -0.5f, 0.5f });
 
-    auto pVertexBuffer = pCGraphicsManager->createVertexBuffer<MODEL_VERTEX>(mesh);
+    g_pVertexBuffer = g_GraphicsMan->createVertexBuffer<MODEL_VERTEX>(mesh);
 
-    /*
-    * Bloque de render
-    */
-    pCGraphicsManager->clearRenderTarget(pCGraphicsManager->getRenderTargetView(), LinearColor(0, 0, 1, 1));
-    pCGraphicsManager->present();
+   
 
     return TRUE;
 
+}
+
+void Render()
+{
+    /*
+   * Bloque de render
+   */
+
+    auto BBRTV = g_GraphicsMan->getRenderTargetView();
+    g_GraphicsMan->clearRenderTarget(g_GraphicsMan->getRenderTargetView(), LinearColor(0, 0, 1, 1));
+
+    auto pDC = g_GraphicsMan->getDC();
+
+    UINT offset = 0;
+    
+    pDC->OMSetRenderTargets(1, &BBRTV, nullptr);
+    pDC->IASetInputLayout(g_pInputLayout->m_pLayout);
+    pDC->IASetVertexBuffers(0, 1, &g_pVertexBuffer->m_pBuffer, &g_pVertexBuffer->m_stride, &offset);
+    pDC->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    pDC->VSSetShader(g_pVertexShader->m_pShader, nullptr, 0);
+    pDC->PSSetShader(g_pPixelShader->m_pShader, nullptr, 0);
+
+    pDC->Draw(3, 0);
+
+    g_GraphicsMan->present();
 }

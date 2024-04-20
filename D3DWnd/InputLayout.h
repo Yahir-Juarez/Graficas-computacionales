@@ -13,7 +13,7 @@ public:
 		SAFE_RELEASE(m_pLayout);
 	}
 
-protected:
+public:
 	friend class CGraphicsManager;
 
 	ID3D11InputLayout* m_pLayout = nullptr;

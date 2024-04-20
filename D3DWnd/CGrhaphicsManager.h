@@ -71,13 +71,14 @@ public:
 		initData.SysMemPitch = 0;
 		initData.SysMemSlicePitch = 0;
 
+		pVB->m_stride = sizeof(T);
 
 		m_device->CreateBuffer(&desc, &initData, &pVB->m_pBuffer);
 
 		return pVB;
 	}
 
-	ID3D11DeviceContext* getDC() {return } //minuto 10:20
+	ID3D11DeviceContext* getDC() { return m_deviceContext; } //minuto 10:20
 
 private:
 	bool m_bFullScreen;

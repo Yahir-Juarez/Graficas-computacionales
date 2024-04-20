@@ -106,7 +106,7 @@ int main()
 
 	Image imagenOriginal;
 	Image imageOriginalRaster;
-	imagenOriginal.CreateFromImageFile("StarWars.bmp");
+	imagenOriginal.CreateFromImageFile("Lena.bmp");
 	imageOriginalRaster.CreateFromImageFile("Yoda.bmp");
 
 	///////////////////////////////////////////////////////
@@ -169,6 +169,32 @@ int main()
 	Image processImageSobel;
 	processImageSobel = processImageGray.ProcessImage(leftSobel);
 
+	Image SumScale;
+	SumScale = processImageGray.ProcessImage(topSobel);
+
+	for (int x = 0; x < SumScale.m_height; x++)
+	{
+		for (int y = 0; y < SumScale.m_width; y++)
+		{
+			if (!processImageSobel.GetPixel(x, y).isBlack())
+			{
+				Color newColorLeft;
+				Color neColorTop;
+				newColorLeft = processImageSobel.GetPixel(x, y);
+				neColorTop = SumScale.GetPixel(x, y);
+				newColorLeft.r += neColorTop.r;
+				newColorLeft.g += neColorTop.r;
+				newColorLeft.b += neColorTop.r;
+				if (newColorLeft.r > 255)
+				{
+					newColorLeft.r = 255;
+					newColorLeft.g = 255;
+					newColorLeft.b = 255;
+				}
+				SumScale.SetPixel(x, y, newColorLeft);
+			}
+		}
+	}
 	////////////////// Address Texture ////////////////////////
 
 	//Image imagebBitBlit;
@@ -197,6 +223,7 @@ int main()
 		codec->Encode(processImageGray, "ImageProcess/StarWarsGrayScale.bmp");
 		codec->Encode(processImageBlur, "ImageProcess/StarWarsBlur.bmp");
 		codec->Encode(processImageSobel, "ImageProcess/StarWarsSobel.bmp");
+		codec->Encode(SumScale, "ImageProcess/StarWarsSobelSum.bmp");
 	}
 
 	return 0;
