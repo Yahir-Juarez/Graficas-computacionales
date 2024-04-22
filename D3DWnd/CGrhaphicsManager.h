@@ -78,6 +78,47 @@ public:
 		return pVB;
 	}
 
+	template<typename T>
+	inline SPtr<VertexBuffer> createIndexBuffer(const Vector<T>& vertices, uint32 usage = D3D11_USAGE_DEFAULT)
+	{
+		auto pVB = std::make_shared<IndexBuffer>();
+
+		D3D11_BUFFER_DESC desc;
+		memset(&desc, 0, sizeof(desc));
+		desc.Usage = static_cast<D3D11_USAGE>(usage);
+		desc.ByteWidth = static_cast<UINT>(vertices.size() * sizeof(T));
+		desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+		desc.CPUAccessFlags = usage == D3D10_USAGE_DYNAMIC ? D3D11_CPU_ACCESS_WRITE : 0;
+		desc.MiscFlags = 0;
+
+		D3D11_SUBRESOURCE_DATA initData;
+		initData.pSysMem = &vertices[0];
+
+		//pVB->m_dataFormat = sizeof(T);
+
+		m_device->CreateBuffer(&desc, &initData, &pVB->m_pBuffer);
+
+		return pVB;
+	}
+
+	template<typename T>
+	inline SPtr<ConstantBuffer> createIndexBuffer(const Vector<T>& vertices, uint32 usage = D3D11_USAGE_DEFAULT)
+	{
+		auto pVB = std::make_shared<ConstantBuffer>();
+
+		D3D11_BUFFER_DESC desc;
+		memset(&desc, 0, sizeof(desc));
+		desc.Usage = static_cast<D3D11_USAGE>(usage);
+		desc.ByteWidth = static_cast<UINT>(vertices.size() * sizeof(T));
+		desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		desc.CPUAccessFlags = usage == D3D10_USAGE_DYNAMIC ? D3D11_CPU_ACCESS_WRITE : 0;
+
+
+		m_device->CreateBuffer(&desc, nullptr, &pVB->m_pBuffer);
+
+		return pVB;
+	}
+
 	ID3D11DeviceContext* getDC() { return m_deviceContext; } //minuto 10:20
 
 private:

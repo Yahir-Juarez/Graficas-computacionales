@@ -41,4 +41,12 @@ public:
 	uint32 m_dataFormat = DXGI_FORMAT_R32_UINT;
 };
 
-//constants buffer
+class ConstantBuffer final : public GPUBuffer
+{
+public:
+	ConstantBuffer() = default;
+	~ConstantBuffer() = default;
+
+public:
+	friend class CGraphicsManager;
+};
