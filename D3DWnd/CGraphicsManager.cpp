@@ -246,3 +246,38 @@ SPtr<InputLayout> CGraphicsManager::createInputLayout(const Vector<D3D11_INPUT_E
 
 	return pLayout;
 }
+
+void CGraphicsManager::setRenderTargets(UINT numViews)
+{
+	m_deviceContext->OMSetRenderTargets(numViews, &m_pRenderTargetView, nullptr);
+}
+
+void CGraphicsManager::setInputLayout(SPtr<InputLayout> inputLayout)
+{
+	m_deviceContext->IASetInputLayout(inputLayout->m_pLayout);
+}
+
+void CGraphicsManager::setVertexBuffers(SPtr <VertexBuffer> vertexBuffer, UINT& offset)
+{
+	m_deviceContext->IASetVertexBuffers(0, 1, &vertexBuffer->m_pBuffer, &vertexBuffer->m_stride, &offset);
+}
+
+void CGraphicsManager::setPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology)
+{
+	m_deviceContext->IASetPrimitiveTopology(topology);
+}
+
+void CGraphicsManager::setVertexShader(SPtr<VertexShader> pShader)
+{
+	m_deviceContext->VSSetShader(pShader->m_pShader, nullptr, 0);
+}
+
+void CGraphicsManager::setPixelShader(SPtr<PixelShader> pShader)
+{
+	m_deviceContext->PSSetShader(pShader->m_pShader, nullptr, 0);
+}
+
+void CGraphicsManager::Draw(UINT count, UINT startVertexLocation)
+{
+	m_deviceContext->Draw(count, startVertexLocation);
+}

@@ -102,7 +102,7 @@ public:
 	}
 
 	template<typename T>
-	inline SPtr<ConstantBuffer> createIndexBuffer(const Vector<T>& vertices, uint32 usage = D3D11_USAGE_DEFAULT)
+	inline SPtr<ConstantBuffer> createConstantBuffer(const Vector<T>& vertices, uint32 usage = D3D11_USAGE_DEFAULT)
 	{
 		auto pVB = std::make_shared<ConstantBuffer>();
 
@@ -121,6 +121,14 @@ public:
 
 	ID3D11DeviceContext* getDC() { return m_deviceContext; } //minuto 10:20
 
+	void setRenderTargets(UINT numViews = 1);
+	void setInputLayout(SPtr<InputLayout> inputLayout);
+	void setVertexBuffers(SPtr <VertexBuffer> vertexBuffer, UINT& offset);
+	void setPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	void setVertexShader(SPtr<VertexShader> pShader);
+	void setPixelShader(SPtr<PixelShader> pShader);
+
+	void Draw(UINT count, UINT startVertexLocation = 0);
 private:
 	bool m_bFullScreen;
 	DXGI_SAMPLE_DESC m_multiConfig;

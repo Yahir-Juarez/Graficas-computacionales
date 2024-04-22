@@ -275,22 +275,18 @@ void Render()
     /*
    * Bloque de render
    */
-
-    auto BBRTV = g_GraphicsMan->getRenderTargetView();
     g_GraphicsMan->clearRenderTarget(g_GraphicsMan->getRenderTargetView(), LinearColor(0, 0, 1, 1));
-
-    auto pDC = g_GraphicsMan->getDC();
 
     UINT offset = 0;
     
-    pDC->OMSetRenderTargets(1, &BBRTV, nullptr);
-    pDC->IASetInputLayout(g_pInputLayout->m_pLayout);
-    pDC->IASetVertexBuffers(0, 1, &g_pVertexBuffer->m_pBuffer, &g_pVertexBuffer->m_stride, &offset);
-    pDC->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    pDC->VSSetShader(g_pVertexShader->m_pShader, nullptr, 0);
-    pDC->PSSetShader(g_pPixelShader->m_pShader, nullptr, 0);
+    g_GraphicsMan->setRenderTargets();
+    g_GraphicsMan->setInputLayout(g_pInputLayout);
+    g_GraphicsMan->setVertexBuffers(g_pVertexBuffer, offset);
+    g_GraphicsMan->setPrimitiveTopology();
+    g_GraphicsMan->setVertexShader(g_pVertexShader);
+    g_GraphicsMan->setPixelShader(g_pPixelShader);
 
-    pDC->Draw(3, 0);
+    g_GraphicsMan->Draw(3);
 
     g_GraphicsMan->present();
 }

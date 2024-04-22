@@ -13,7 +13,7 @@ public:
 		SAFE_RELEASE(m_pBuffer);
 	}
 
-public:
+protected:
 	friend class CGraphicsManager;
 
 	ID3D11Buffer* m_pBuffer = nullptr;
@@ -25,7 +25,7 @@ public:
 	VertexBuffer() = default;
 	~VertexBuffer() = default;
 
-public:
+protected:
 	friend class CGraphicsManager;
 	uint32 m_stride = 0;
 };
