@@ -5,6 +5,10 @@
 #include "framework.h"
 #include "D3DWnd.h"
 
+#include "ImageProcess/AppTypes.h"
+#include "ImageProcess/FileUtil.h"
+#include "ImageProcess/ImgCodec.h"
+
 #include "CGrhaphicsManager.h"
 
 #define MAX_LOADSTRING 100
@@ -64,6 +68,17 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     InitGraphicsAssets();
 
     MSG msg;
+
+    //g_CodecMan.AddCodec(new BMPCodec());
+    //Image image;
+    //image.CreateFromImageFile("Yoda.bmp");
+    //Image imageRotate;
+    //Image imageRasterRotate;
+    //imageRotate.rotate(127, image);
+    //imageRasterRotate.rotate(237, image);
+
+    //auto codec = g_CodecMan.GetCodecByFileExt(".bmp");
+    //codec->Encode(imageRotate, "StarWarsRotate.bmp");
 
     // Bucle principal de mensajes:
 

@@ -45,6 +45,18 @@
     <ClInclude Include="GPUBuffer.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="ImageProcess\AppTypes.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageProcess\FileUtil.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageProcess\Image.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageProcess\ImgCodec.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="D3DWnd.cpp">
@@ -60,6 +72,15 @@
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="GPUBuffer.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageProcess\FileUtil.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageProcess\Image.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageProcess\ImgCodec.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>

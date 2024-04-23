@@ -10,6 +10,8 @@
 
 #include "GPUBuffer.h"
 
+
+
 class LinearColor
 {
 public:
@@ -79,44 +81,60 @@ public:
 	}
 
 	template<typename T>
-	inline SPtr<VertexBuffer> createIndexBuffer(const Vector<T>& vertices, uint32 usage = D3D11_USAGE_DEFAULT)
+	inline SPtr<VertexBuffer> createIndexBuffer(const Vector<T>& index, uint32 usage = D3D11_USAGE_DEFAULT)
 	{
-		auto pVB = std::make_shared<IndexBuffer>();
+		if (index.empty()) { return nullptr; }
+
+		auto pIB = std::make_shared<IndexBuffer>();
 
 		D3D11_BUFFER_DESC desc;
 		memset(&desc, 0, sizeof(desc));
 		desc.Usage = static_cast<D3D11_USAGE>(usage);
-		desc.ByteWidth = static_cast<UINT>(vertices.size() * sizeof(T));
+		desc.ByteWidth = static_cast<UINT>(index.size() * sizeof(T));
 		desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 		desc.CPUAccessFlags = usage == D3D10_USAGE_DYNAMIC ? D3D11_CPU_ACCESS_WRITE : 0;
 		desc.MiscFlags = 0;
 
 		D3D11_SUBRESOURCE_DATA initData;
-		initData.pSysMem = &vertices[0];
+		initData.pSysMem = &index[0];
+		initData.SysMemPitch = 0;
+		initData.SysMemSlicePitch = 0;
 
-		//pVB->m_dataFormat = sizeof(T);
+		//pIB->m_dataFormat = sizeof(T);
 
-		m_device->CreateBuffer(&desc, &initData, &pVB->m_pBuffer);
+		m_device->CreateBuffer(&desc, &initData, &pIB->m_pBuffer);
 
-		return pVB;
+		if (sizeof(T) == 2)
+		{
+			pIB->m_dataFormat = DXGI_FORMAT_R16_UINT;
+		}
+
+		return pIB;
 	}
 
-	template<typename T>
-	inline SPtr<ConstantBuffer> createConstantBuffer(const Vector<T>& vertices, uint32 usage = D3D11_USAGE_DEFAULT)
+	inline SPtr<ConstantBuffer> createConstantBuffer(const Vector<char>& buffer, uint32 usage = D3D11_USAGE_DEFAULT)
 	{
-		auto pVB = std::make_shared<ConstantBuffer>();
+		auto pCB = std::make_shared<ConstantBuffer>();
 
 		D3D11_BUFFER_DESC desc;
 		memset(&desc, 0, sizeof(desc));
 		desc.Usage = static_cast<D3D11_USAGE>(usage);
-		desc.ByteWidth = static_cast<UINT>(vertices.size() * sizeof(T));
+		desc.ByteWidth = static_cast<UINT>(buffer.size());
 		desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 		desc.CPUAccessFlags = usage == D3D10_USAGE_DYNAMIC ? D3D11_CPU_ACCESS_WRITE : 0;
+		desc.MiscFlags = 0;
+
+		//El D3D11_SUBRESOURCE_DATA lo utilizamos para copiar la nformacion cuando se crea
+
+		D3D11_SUBRESOURCE_DATA initData;
+		initData.pSysMem = &buffer[0];
+		initData.SysMemPitch = 0;
+		initData.SysMemSlicePitch = 0;
 
 
-		m_device->CreateBuffer(&desc, nullptr, &pVB->m_pBuffer);
+		m_device->CreateBuffer(&desc, &initData, &pCB->m_pBuffer);
 
-		return pVB;
+		return pCB;
 	}
 
 	ID3D11DeviceContext* getDC() { return m_deviceContext; } //minuto 10:20

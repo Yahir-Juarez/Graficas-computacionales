@@ -143,6 +143,10 @@
     <ClInclude Include="D3DWnd.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GPUBuffer.h" />
+    <ClInclude Include="ImageProcess\AppTypes.h" />
+    <ClInclude Include="ImageProcess\FileUtil.h" />
+    <ClInclude Include="ImageProcess\Image.h" />
+    <ClInclude Include="ImageProcess\ImgCodec.h" />
     <ClInclude Include="InputLayout.h" />
     <ClInclude Include="Prerequisitos.h" />
     <ClInclude Include="Resource.h" />
@@ -153,6 +157,9 @@
     <ClCompile Include="CGraphicsManager.cpp" />
     <ClCompile Include="D3DWnd.cpp" />
     <ClCompile Include="GPUBuffer.cpp" />
+    <ClCompile Include="ImageProcess\FileUtil.cpp" />
+    <ClCompile Include="ImageProcess\Image.cpp" />
+    <ClCompile Include="ImageProcess\ImgCodec.cpp" />
     <ClCompile Include="InputLayout.cpp" />
     <ClCompile Include="Shader.cpp" />
   </ItemGroup>
