@@ -5,6 +5,8 @@
 
 #include <cassert>
 
+#include "ImageProcess/Image.h"
+
 inline void
 throwIfFailed(HRESULT hr)
 {
@@ -280,4 +282,54 @@ void CGraphicsManager::setPixelShader(SPtr<PixelShader> pShader)
 void CGraphicsManager::Draw(UINT count, UINT startVertexLocation)
 {
 	m_deviceContext->Draw(count, startVertexLocation);
+}
+
+void CGraphicsManager::createTexture2DFromFile(const Path& fileName, uint32 format, uint32 usage)
+{
+	auto pT2D = std::make_shared<Texture2D>();
+	Image newTexture;
+	newTexture.CreateFromImageFile(fileName);
+
+	D3D11_TEXTURE2D_DESC descDepth;
+	memset(&descDepth, 0, sizeof(descDepth));
+	descDepth.Width = newTexture.m_width;
+	descDepth.Height = newTexture.m_height;
+	descDepth.MipLevels = 1;
+	descDepth.ArraySize = 1;
+	descDepth.Format = static_cast<DXGI_FORMAT>(format);
+	descDepth.SampleDesc.Count = 1;
+	descDepth.SampleDesc.Quality = 0;
+	descDepth.Usage = static_cast<D3D11_USAGE>(usage);
+	descDepth.BindFlags = usage == D3D10_USAGE_DYNAMIC ? D3D11_CPU_ACCESS_WRITE : 0;
+	descDepth.CPUAccessFlags = 0;
+	descDepth.MiscFlags = 0;
+
+	/*D3D11_SUBRESOURCE_DATA initData;
+	initData.pSysMem = newTexture.m_pixelData.data();
+	initData.SysMemPitch = newTexture.m_pitch;
+	initData.SysMemSlicePitch = 0;*/
+
+	m_deviceContext->UpdateSubresource(pT2D->m_pTexture, 0, nullptr, newTexture.m_pixelData.data(), newTexture.m_pitch, 0);
+	/*m_device->CreateTexture2D(&descDepth, &initData, &pT2D->m_pTexture);*/
+}
+
+void CGraphicsManager::createTexture(uint32 Width, uint32 Height, uint32 format, uint32 usage)
+{
+	auto pT2D = std::make_shared<Texture2D>();
+
+	D3D11_TEXTURE2D_DESC descDepth;
+	memset(&descDepth, 0, sizeof(descDepth));
+	descDepth.Width = Width;
+	descDepth.Height = Height;
+	descDepth.MipLevels = 1;
+	descDepth.ArraySize = 1;
+	descDepth.Format = static_cast<DXGI_FORMAT>(format);
+	descDepth.SampleDesc.Count = 1;
+	descDepth.SampleDesc.Quality = 0;
+	descDepth.Usage = static_cast<D3D11_USAGE>(usage);
+	descDepth.BindFlags = usage == D3D10_USAGE_DYNAMIC ? D3D11_CPU_ACCESS_WRITE : 0;
+	descDepth.CPUAccessFlags = 0;
+	descDepth.MiscFlags = 0;
+
+	throwIfFailed(m_device->CreateTexture2D(&descDepth, nullptr, &pT2D->m_pTexture));
 }

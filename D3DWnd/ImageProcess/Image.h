@@ -114,16 +114,16 @@ public:
 		uint32 basePos = (y * m_pitch) + (x * (m_bpp >> 3));
 		if (m_bpp == 24)
 		{
-			m_pixelData[basePos + 0] = static_cast<byte>(color.r);
-			m_pixelData[basePos + 1] = static_cast<byte>(color.g);
-			m_pixelData[basePos + 2] = static_cast<byte>(color.b);
+			m_pixelData[basePos + 0] = static_cast<Byte>(color.r);
+			m_pixelData[basePos + 1] = static_cast<Byte>(color.g);
+			m_pixelData[basePos + 2] = static_cast<Byte>(color.b);
 		}
 		else if (m_bpp == 32)
 		{
-			m_pixelData[basePos + 0] = static_cast<byte>(color.r);
-			m_pixelData[basePos + 1] = static_cast<byte>(color.g);
-			m_pixelData[basePos + 2] = static_cast<byte>(color.b);
-			m_pixelData[basePos + 3] = static_cast<byte>(color.b);
+			m_pixelData[basePos + 0] = static_cast<Byte>(color.r);
+			m_pixelData[basePos + 1] = static_cast<Byte>(color.g);
+			m_pixelData[basePos + 2] = static_cast<Byte>(color.b);
+			m_pixelData[basePos + 3] = static_cast<Byte>(color.b);
 		}
 		return true;
 	}
@@ -295,13 +295,15 @@ public:
 	uint32 m_height = 0;
 	uint32 m_pitch = 0;
 
-	Vector<byte> m_pixelData;
+	Vector<Byte> m_pixelData;
 
 	vector2D point1;
 	vector2D point2;
 	vector2D point3;
 	vector2D point4;
 };
+
+
 
 //bool Scale(float scale)
 	//{

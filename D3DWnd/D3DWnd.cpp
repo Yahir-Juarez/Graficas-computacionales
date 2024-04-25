@@ -1,13 +1,9 @@
 // D3DWnd.cpp : Define el punto de entrada de la aplicación.
 //
 
-#include "Prerequisitos.h"
+#include "ImageProcess.h"
 #include "framework.h"
 #include "D3DWnd.h"
-
-#include "ImageProcess/AppTypes.h"
-#include "ImageProcess/FileUtil.h"
-#include "ImageProcess/ImgCodec.h"
 
 #include "CGrhaphicsManager.h"
 
@@ -69,16 +65,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     MSG msg;
 
-    //g_CodecMan.AddCodec(new BMPCodec());
-    //Image image;
-    //image.CreateFromImageFile("Yoda.bmp");
-    //Image imageRotate;
-    //Image imageRasterRotate;
-    //imageRotate.rotate(127, image);
-    //imageRasterRotate.rotate(237, image);
-
-    //auto codec = g_CodecMan.GetCodecByFileExt(".bmp");
-    //codec->Encode(imageRotate, "StarWarsRotate.bmp");
+    ImageProcess mjmnj;
+    mjmnj.createFile("Yoda.bmp");
 
     // Bucle principal de mensajes:
 

@@ -22,6 +22,15 @@ float topSobel[9] = { 1, 2, 1,
 				  0, 0, 0,
 				  -1, -2, -1 };
 
+float leftPrewwit[9] = { 1, 0, -1,
+					1, 0, -1,
+					1, 0, -1 };
+
+
+float topPrewwit[9] = { 1, 1, 1,
+				  0, 0, 0,
+				  -1, -1, -1 };
+
 float blur[9] = { 0.0625f, 0.125f, 0.0625f,
 				0.125f, 0.25f, 0.125f,
 				0.0625f, 0.125f, 0.0625f };
@@ -106,7 +115,7 @@ int main()
 
 	Image imagenOriginal;
 	Image imageOriginalRaster;
-	imagenOriginal.CreateFromImageFile("Lena.bmp");
+	imagenOriginal.CreateFromImageFile("Line.bmp");
 	imageOriginalRaster.CreateFromImageFile("Yoda.bmp");
 
 	///////////////////////////////////////////////////////
@@ -195,6 +204,14 @@ int main()
 			}
 		}
 	}
+
+	///////////// Process Prewwit //////////////////////////////
+
+	Image processImagePrewwit;
+	processImagePrewwit = processImageGray.ProcessImage(leftPrewwit);
+	Image processImagePrewwitTop;
+	processImagePrewwitTop = processImageGray.ProcessImage(topPrewwit);
+
 	////////////////// Address Texture ////////////////////////
 
 	//Image imagebBitBlit;
@@ -222,7 +239,9 @@ int main()
 		codec->Encode(imageRaster, "ImageProcess/StarWarsRaster.bmp");
 		codec->Encode(processImageGray, "ImageProcess/StarWarsGrayScale.bmp");
 		codec->Encode(processImageBlur, "ImageProcess/StarWarsBlur.bmp");
-		codec->Encode(processImageSobel, "ImageProcess/StarWarsSobel.bmp");
+		codec->Encode(processImageSobel, "ImageProcess/leftSobel.bmp");
+		codec->Encode(processImagePrewwit, "ImageProcess/leftPrewitt.bmp");
+		codec->Encode(processImagePrewwitTop, "ImageProcess/StarWarsPrewittTop.bmp");
 		codec->Encode(SumScale, "ImageProcess/StarWarsSobelSum.bmp");
 	}
 

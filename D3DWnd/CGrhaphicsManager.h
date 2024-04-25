@@ -10,7 +10,7 @@
 
 #include "GPUBuffer.h"
 
-
+#include "Texture2D.h"
 
 class LinearColor
 {
@@ -81,7 +81,7 @@ public:
 	}
 
 	template<typename T>
-	inline SPtr<VertexBuffer> createIndexBuffer(const Vector<T>& index, uint32 usage = D3D11_USAGE_DEFAULT)
+	inline SPtr<IndexBuffer> createIndexBuffer(const Vector<T>& index, uint32 usage = D3D11_USAGE_DEFAULT)
 	{
 		if (index.empty()) { return nullptr; }
 
@@ -112,7 +112,7 @@ public:
 		return pIB;
 	}
 
-	inline SPtr<ConstantBuffer> createConstantBuffer(const Vector<char>& buffer, uint32 usage = D3D11_USAGE_DEFAULT)
+	SPtr<ConstantBuffer> createConstantBuffer(const Vector<char>& buffer, uint32 usage = D3D11_USAGE_DEFAULT)
 	{
 		auto pCB = std::make_shared<ConstantBuffer>();
 
@@ -137,6 +137,9 @@ public:
 		return pCB;
 	}
 
+	void createTexture2DFromFile(const Path& fileName, uint32 format = DXGI_FORMAT_B8G8R8A8_UNORM, uint32 usage = D3D11_USAGE_DEFAULT);
+	void createTexture(uint32 Width, uint32 height, uint32 format = DXGI_FORMAT_B8G8R8A8_UNORM, uint32 usage = D3D11_USAGE_DEFAULT);
+
 	ID3D11DeviceContext* getDC() { return m_deviceContext; } //minuto 10:20
 
 	void setRenderTargets(UINT numViews = 1);
@@ -155,6 +158,7 @@ private:
 
 	ID3D11DeviceContext* m_deviceContext = nullptr;
 	ID3D11Texture2D* m_pBackBuffer = nullptr;
+	SPtr<Texture2D> m_pDethStencil;
 	
 	ID3D11RenderTargetView* m_pRenderTargetView = nullptr;
 };
