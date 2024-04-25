@@ -12,6 +12,8 @@
 
 #include "Texture2D.h"
 
+#include "SamplerState.h"
+
 class LinearColor
 {
 public:
@@ -137,19 +139,23 @@ public:
 		return pCB;
 	}
 
-	void createTexture2DFromFile(const Path& fileName, uint32 format = DXGI_FORMAT_B8G8R8A8_UNORM, uint32 usage = D3D11_USAGE_DEFAULT);
-	void createTexture(uint32 Width, uint32 height, uint32 format = DXGI_FORMAT_B8G8R8A8_UNORM, uint32 usage = D3D11_USAGE_DEFAULT);
+	SPtr<SamplerState> CreateSampleState(D3D11_FILTER filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_MODE textureAddress = D3D11_TEXTURE_ADDRESS_WRAP);
+	SPtr<Texture2D> createTexture2DFromFile(const Path& fileName, uint32 format = DXGI_FORMAT_B8G8R8A8_UNORM, uint32 usage = D3D11_USAGE_DEFAULT);
+	SPtr<Texture2D> createTexture(uint32 Width, uint32 height, uint32 format = DXGI_FORMAT_B8G8R8A8_UNORM, uint32 usage = D3D11_USAGE_DEFAULT, uint32 bindFlag = D3D11_BIND_SHADER_RESOURCE);
 
 	ID3D11DeviceContext* getDC() { return m_deviceContext; } //minuto 10:20
 
 	void setRenderTargets(UINT numViews = 1);
 	void setInputLayout(SPtr<InputLayout> inputLayout);
 	void setVertexBuffers(SPtr <VertexBuffer> vertexBuffer, UINT& offset);
+	void setIndexBuffers(SPtr <IndexBuffer> indexBuffer);
 	void setPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	void setVertexShader(SPtr<VertexShader> pShader);
 	void setPixelShader(SPtr<PixelShader> pShader);
-
+	void setShaderResources(WPtr<Texture> shaderResourceView, UINT32 startSlot = 0, UINT32 numViews = 1);
+	void setSamplers(WPtr<SamplerState> sampleState, UINT32 startSlot = 0, UINT32 numSamplers = 1);
 	void Draw(UINT count, UINT startVertexLocation = 0);
+	void DrawIndex(UINT count, UINT startIndexLocation = 0, UINT BaseLocation = 0);
 private:
 	bool m_bFullScreen;
 	DXGI_SAMPLE_DESC m_multiConfig;

@@ -249,6 +249,23 @@ SPtr<InputLayout> CGraphicsManager::createInputLayout(const Vector<D3D11_INPUT_E
 	return pLayout;
 }
 
+SPtr<SamplerState> CGraphicsManager::CreateSampleState(D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE textureAddress)
+{
+	auto pSS = std::make_shared<SamplerState>();
+	D3D11_SAMPLER_DESC sampDesc;
+	memset(&sampDesc, 0, sizeof(sampDesc));
+	sampDesc.Filter = filter;
+	sampDesc.AddressU = textureAddress;
+	sampDesc.AddressV = textureAddress;
+	sampDesc.AddressW = textureAddress;
+	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	sampDesc.MinLOD = 0;
+	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	throwIfFailed(m_device->CreateSamplerState(&sampDesc, &pSS->m_pSampleState));
+	return pSS;
+}
+
+
 void CGraphicsManager::setRenderTargets(UINT numViews)
 {
 	m_deviceContext->OMSetRenderTargets(numViews, &m_pRenderTargetView, nullptr);
@@ -262,6 +279,11 @@ void CGraphicsManager::setInputLayout(SPtr<InputLayout> inputLayout)
 void CGraphicsManager::setVertexBuffers(SPtr <VertexBuffer> vertexBuffer, UINT& offset)
 {
 	m_deviceContext->IASetVertexBuffers(0, 1, &vertexBuffer->m_pBuffer, &vertexBuffer->m_stride, &offset);
+}
+
+void CGraphicsManager::setIndexBuffers(SPtr <IndexBuffer> indexBuffer)
+{
+	m_deviceContext->IASetIndexBuffer(indexBuffer->m_pBuffer, DXGI_FORMAT_R16_UINT, 0);
 }
 
 void CGraphicsManager::setPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology)
@@ -279,30 +301,35 @@ void CGraphicsManager::setPixelShader(SPtr<PixelShader> pShader)
 	m_deviceContext->PSSetShader(pShader->m_pShader, nullptr, 0);
 }
 
+void CGraphicsManager::setShaderResources(WPtr<Texture> shaderResourceView, UINT32 startSlot, UINT32 numViews)
+{
+	auto pSR = shaderResourceView.lock();
+	m_deviceContext->PSSetShaderResources(startSlot, numViews, &pSR->m_pShaderResourceView);
+}
+
+void CGraphicsManager::setSamplers(WPtr<SamplerState> sampleState, UINT32 startSlot, UINT32 numSamplers)
+{
+	auto pSS = sampleState.lock();
+	m_deviceContext->PSSetSamplers(startSlot, numSamplers, &pSS->m_pSampleState);
+}
+
 void CGraphicsManager::Draw(UINT count, UINT startVertexLocation)
 {
 	m_deviceContext->Draw(count, startVertexLocation);
 }
 
-void CGraphicsManager::createTexture2DFromFile(const Path& fileName, uint32 format, uint32 usage)
+void CGraphicsManager::DrawIndex(UINT count, UINT startIndexLocation, UINT BaseLocation)
 {
-	auto pT2D = std::make_shared<Texture2D>();
+	m_deviceContext->DrawIndexed(count, startIndexLocation, BaseLocation);
+}
+
+SPtr<Texture2D> CGraphicsManager::createTexture2DFromFile(const Path& fileName, uint32 format, uint32 usage)
+{
+	g_CodecMan.AddCodec(new BMPCodec());
 	Image newTexture;
 	newTexture.CreateFromImageFile(fileName);
 
-	D3D11_TEXTURE2D_DESC descDepth;
-	memset(&descDepth, 0, sizeof(descDepth));
-	descDepth.Width = newTexture.m_width;
-	descDepth.Height = newTexture.m_height;
-	descDepth.MipLevels = 1;
-	descDepth.ArraySize = 1;
-	descDepth.Format = static_cast<DXGI_FORMAT>(format);
-	descDepth.SampleDesc.Count = 1;
-	descDepth.SampleDesc.Quality = 0;
-	descDepth.Usage = static_cast<D3D11_USAGE>(usage);
-	descDepth.BindFlags = usage == D3D10_USAGE_DYNAMIC ? D3D11_CPU_ACCESS_WRITE : 0;
-	descDepth.CPUAccessFlags = 0;
-	descDepth.MiscFlags = 0;
+	auto pT2D = createTexture(newTexture.m_width, newTexture.m_height);
 
 	/*D3D11_SUBRESOURCE_DATA initData;
 	initData.pSysMem = newTexture.m_pixelData.data();
@@ -311,25 +338,38 @@ void CGraphicsManager::createTexture2DFromFile(const Path& fileName, uint32 form
 
 	m_deviceContext->UpdateSubresource(pT2D->m_pTexture, 0, nullptr, newTexture.m_pixelData.data(), newTexture.m_pitch, 0);
 	/*m_device->CreateTexture2D(&descDepth, &initData, &pT2D->m_pTexture);*/
+	return pT2D;
 }
 
-void CGraphicsManager::createTexture(uint32 Width, uint32 Height, uint32 format, uint32 usage)
+SPtr<Texture2D> CGraphicsManager::createTexture(uint32 Width, uint32 Height, uint32 format, uint32 usage, uint32 bindFlag)
 {
 	auto pT2D = std::make_shared<Texture2D>();
 
-	D3D11_TEXTURE2D_DESC descDepth;
-	memset(&descDepth, 0, sizeof(descDepth));
-	descDepth.Width = Width;
-	descDepth.Height = Height;
-	descDepth.MipLevels = 1;
-	descDepth.ArraySize = 1;
-	descDepth.Format = static_cast<DXGI_FORMAT>(format);
-	descDepth.SampleDesc.Count = 1;
-	descDepth.SampleDesc.Quality = 0;
-	descDepth.Usage = static_cast<D3D11_USAGE>(usage);
-	descDepth.BindFlags = usage == D3D10_USAGE_DYNAMIC ? D3D11_CPU_ACCESS_WRITE : 0;
-	descDepth.CPUAccessFlags = 0;
-	descDepth.MiscFlags = 0;
+	D3D11_TEXTURE2D_DESC textureDesc;
+	memset(&textureDesc, 0, sizeof(textureDesc));
+	textureDesc.Width = Width;
+	textureDesc.Height = Height;
+	textureDesc.MipLevels = 1;
+	textureDesc.ArraySize = 1;
+	textureDesc.Format = static_cast<DXGI_FORMAT>(format);
+	textureDesc.SampleDesc.Count = 1;
+	textureDesc.SampleDesc.Quality = 0;
+	textureDesc.Usage = static_cast<D3D11_USAGE>(usage);
+	textureDesc.BindFlags = bindFlag;
+	textureDesc.CPUAccessFlags = usage == D3D10_USAGE_DYNAMIC ? D3D11_CPU_ACCESS_WRITE : 0;
+	textureDesc.MiscFlags = 0;
 
-	throwIfFailed(m_device->CreateTexture2D(&descDepth, nullptr, &pT2D->m_pTexture));
+	throwIfFailed(m_device->CreateTexture2D(&textureDesc, nullptr, &pT2D->m_pTexture));
+
+	CD3D11_SHADER_RESOURCE_VIEW_DESC shaderRVD;
+
+	memset(&shaderRVD, 0, sizeof(shaderRVD));
+	shaderRVD.Format = textureDesc.Format;
+	shaderRVD.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	shaderRVD.Texture2D.MipLevels = textureDesc.MipLevels;
+	shaderRVD.Texture2D.MostDetailedMip = 0;
+
+	throwIfFailed(m_device->CreateShaderResourceView(pT2D->m_pTexture, &shaderRVD, &pT2D->m_pShaderResourceView));
+
+	return pT2D;
 }
