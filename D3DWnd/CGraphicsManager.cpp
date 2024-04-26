@@ -268,6 +268,7 @@ SPtr<SamplerState> CGraphicsManager::CreateSampleState(D3D11_FILTER filter, D3D1
 
 void CGraphicsManager::setRenderTargets(UINT numViews)
 {
+	Vector<UINT> a;
 	m_deviceContext->OMSetRenderTargets(numViews, &m_pRenderTargetView, nullptr);
 }
 
@@ -283,7 +284,7 @@ void CGraphicsManager::setVertexBuffers(SPtr <VertexBuffer> vertexBuffer, UINT& 
 
 void CGraphicsManager::setIndexBuffers(SPtr <IndexBuffer> indexBuffer)
 {
-	m_deviceContext->IASetIndexBuffer(indexBuffer->m_pBuffer, DXGI_FORMAT_R16_UINT, 0);
+	m_deviceContext->IASetIndexBuffer(indexBuffer->m_pBuffer, DXGI_FORMAT_R32_UINT, 0);
 }
 
 void CGraphicsManager::setPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology)

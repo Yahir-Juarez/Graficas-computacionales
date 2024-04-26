@@ -150,11 +150,11 @@ public:
 
 	ID3D11DeviceContext* getDC() { return m_deviceContext; } //minuto 10:20
 
-	void setRenderTargets(UINT numViews = 1);
-	void setInputLayout(SPtr<InputLayout> inputLayout);
-	void setVertexBuffers(SPtr <VertexBuffer> vertexBuffer, UINT& offset);
-	void setIndexBuffers(SPtr <IndexBuffer> indexBuffer);
-	void setPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	void setRenderTargets(UINT numViews = 1); //--Vectores//
+	void setInputLayout(SPtr<InputLayout> inputLayout); //
+	void setVertexBuffers(SPtr <VertexBuffer> vertexBuffer, UINT& arregloFaltante);//--Cadenas//
+	void setIndexBuffers(SPtr <IndexBuffer> indexBuffer);//--Cadenas//
+	void setPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);//
 	void setVertexShader(SPtr<VertexShader> pShader);
 	void setPixelShader(SPtr<PixelShader> pShader);
 	void setShaderResources(WPtr<Texture> shaderResourceView, UINT32 startSlot = 0, UINT32 numViews = 1);
@@ -172,6 +172,4 @@ private:
 	SPtr<Texture2D> m_pDethStencil;
 	
 	ID3D11RenderTargetView* m_pRenderTargetView = nullptr;
-
-	ID3D11Buffer* m_pVertexBuffer = nullptr;
 };

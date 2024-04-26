@@ -39,6 +39,7 @@ SPtr<MODEL_VERTEX> g_pModelVertex;
 
 SPtr<Texture2D> g_pTexture2D;
 SPtr<SamplerState> g_pSampleState;
+Vector<MODEL_VERTEX> g_Mesh;
 bool g_isRunning = true;
 // Declaraciones de funciones adelantadas incluidas en este módulo de código:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -245,109 +246,10 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     return (INT_PTR)FALSE;
 }
 
-//BOOL InitGraphicsAssets()
-//{
-//    /*
-//    bloque de creacion.
-//    */
-//    g_pVertexShader = g_GraphicsMan->createVertexShader("VertexShader.hlsl", "main", "vs_5_0");
-//    g_pPixelShader = g_GraphicsMan->createPixelShader("VertexShader.hlsl", "mainPS", "ps_5_0");
-//
-//    Vector<D3D11_INPUT_ELEMENT_DESC> vInputElements;
-//
-//    vInputElements.resize(2);
-//    
-//        auto& posElements = vInputElements[0];
-//        memset(&posElements, 0, sizeof(D3D11_INPUT_ELEMENT_DESC));
-//    
-//        posElements.SemanticName = "POSITION";
-//        posElements.SemanticIndex = 0;
-//        posElements.Format = DXGI_FORMAT_R32G32B32_FLOAT;
-//        posElements.InputSlot = 0;
-//        posElements.AlignedByteOffset = 0;
-//        posElements.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-//        posElements.InstanceDataStepRate = 0;
-//    
-//        auto& posElements1 = vInputElements[1];
-//        memset(&posElements1, 0, sizeof(D3D11_INPUT_ELEMENT_DESC));
-//    
-//        posElements1.SemanticName = "TEXCOORD";
-//        posElements1.SemanticIndex = 0;
-//        posElements1.Format = DXGI_FORMAT_R32G32B32_FLOAT;
-//        posElements1.InputSlot = 0;
-//        posElements1.AlignedByteOffset = 12;
-//        posElements1.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-//        posElements1.InstanceDataStepRate = 0;
-//    
-//        g_pInputLayout = g_GraphicsMan->createInputLayout(vInputElements, g_pVertexShader);
-//
-//    Vector<MODEL_VERTEX> mesh;
-//    mesh.push_back({ -0.5f, 0.5f, 0.5f, 0.0f, 0.0f });
-//    mesh.push_back({ 0.5f, 0.5f, 0.5f, 1.0f, 0.0f });
-//    mesh.push_back({ 0.5f, 0.5f, 0.8f, 1.0f, 1.0f });
-//    mesh.push_back({ -0.5f, 0.5f, 0.8f, 0.0f, 1.0f });
-//
-//    mesh.push_back({ -0.5f, -0.5f, 0.5f, 0.0f, 0.0f });
-//    mesh.push_back({ 0.5f, -0.5f, 0.5f, 1.0f, 0.0f });
-//    mesh.push_back({ 0.5f, -0.5f, 0.8f, 1.0f, 1.0f });
-//    mesh.push_back({ -0.5f, -0.5f, 0.8f, 0.0f, 1.0f });
-//
-//    mesh.push_back({ -0.5f, -0.5f, 0.8f, 0.0f, 0.0f });
-//    mesh.push_back({ -0.5f, -0.5f, 0.5f, 1.0f, 0.0f });
-//    mesh.push_back({ -0.5f, 0.5f, 0.5f, 1.0f, 1.0f });
-//    mesh.push_back({ -0.5f, 0.5f, 0.8f, 0.0f, 1.0f });
-//
-//    mesh.push_back({ 0.5f, -0.5f, 0.8f, 0.0f, 0.0f });
-//    mesh.push_back({ 0.5f, -0.5f, 0.5f, 1.0f, 0.0f });
-//    mesh.push_back({ 0.5f, 0.5f, 0.5f, 1.0f, 1.0f });
-//    mesh.push_back({ 0.5f, 0.5f, 0.8f, 0.0f, 1.0f });
-//
-//    mesh.push_back({ -0.5f, -0.5f, 0.5f, 0.0f, 0.0f });
-//    mesh.push_back({ 0.5f, -0.5f, 0.5f, 1.0f, 0.0f });
-//    mesh.push_back({ 0.5f, 0.5f, 0.5f, 1.0f, 1.0f });
-//    mesh.push_back({ -0.5f, 0.5f, 0.5f, 0.0f, 1.0f });
-//
-//    mesh.push_back({ -0.5f, -0.5f, 0.8f, 0.0f, 0.0f });
-//    mesh.push_back({ 0.5f, -0.5f, 0.8f, 1.0f, 0.0f });
-//    mesh.push_back({ 0.5f, 0.5f, 0.8f, 1.0f, 1.0f });
-//    mesh.push_back({ -0.5f, 0.5f, 0.8f, 0.0f, 1.0f });
-//
-//    g_pVertexBuffer = g_GraphicsMan->createVertexBuffer<MODEL_VERTEX>(mesh);
-//
-//    Vector<uint32> indices
-//    {
-//        3, 1, 0,
-//        2, 1, 3,
-//
-//        6, 4, 5,
-//        7, 4, 6,
-//
-//        11, 9, 8,
-//        10, 9, 11,
-//
-//        14, 12, 13,
-//        15, 12, 14,
-//
-//        19, 17, 16,
-//        18, 17, 19,
-//
-//        22, 20, 21,
-//        23, 20, 22
-//    };
-//
-//    g_pIndexBuffer = g_GraphicsMan->createIndexBuffer(indices);
-//
-//    g_pTexture2D = g_GraphicsMan->createTexture2DFromFile("Yoda.bmp");
-//    g_pSampleState = g_GraphicsMan->CreateSampleState();
-//    return TRUE;
-//
-//}
-
-
 BOOL InitGraphicsAssets()
 {
     /*
-    Bloque de creacion.
+    bloque de creacion.
     */
     g_pVertexShader = g_GraphicsMan->createVertexShader("VertexShader.hlsl", "main", "vs_5_0");
     g_pPixelShader = g_GraphicsMan->createPixelShader("VertexShader.hlsl", "mainPS", "ps_5_0");
@@ -355,44 +257,142 @@ BOOL InitGraphicsAssets()
     Vector<D3D11_INPUT_ELEMENT_DESC> vInputElements;
 
     vInputElements.resize(2);
+    
+        auto& posElements = vInputElements[0];
+        memset(&posElements, 0, sizeof(D3D11_INPUT_ELEMENT_DESC));
+    
+        posElements.SemanticName = "POSITION";
+        posElements.SemanticIndex = 0;
+        posElements.Format = DXGI_FORMAT_R32G32B32_FLOAT;
+        posElements.InputSlot = 0;
+        posElements.AlignedByteOffset = 0;
+        posElements.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+        posElements.InstanceDataStepRate = 0;
+    
+        auto& posElements1 = vInputElements[1];
+        memset(&posElements1, 0, sizeof(D3D11_INPUT_ELEMENT_DESC));
+    
+        posElements1.SemanticName = "TEXCOORD";
+        posElements1.SemanticIndex = 0;
+        posElements1.Format = DXGI_FORMAT_R32G32_FLOAT;
+        posElements1.InputSlot = 0;
+        posElements1.AlignedByteOffset = 12;
+        posElements1.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+        posElements1.InstanceDataStepRate = 0;
+    
+        g_pInputLayout = g_GraphicsMan->createInputLayout(vInputElements, g_pVertexShader);
 
-    auto& posElements = vInputElements[0];
-    memset(&posElements, 0, sizeof(D3D11_INPUT_ELEMENT_DESC));
+    g_Mesh.push_back({ -0.5f, 0.5f, 0.5f, 0.0f, 0.0f });
+    g_Mesh.push_back({ 0.5f, 0.5f, 0.5f, 1.0f, 0.0f });
+    g_Mesh.push_back({ 0.5f, 0.5f, 0.8f, 1.0f, 1.0f });
+    g_Mesh.push_back({ -0.5f, 0.5f, 0.8f, 0.0f, 1.0f });
 
-    posElements.SemanticName = "POSITION";
-    posElements.SemanticIndex = 0;
-    posElements.Format = DXGI_FORMAT_R32G32B32_FLOAT;
-    posElements.InputSlot = 0;
-    posElements.AlignedByteOffset = 0;
-    posElements.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-    posElements.InstanceDataStepRate = 0;
+    g_Mesh.push_back({ -0.5f, -0.5f, 0.5f, 0.0f, 0.0f });
+    g_Mesh.push_back({ 0.5f, -0.5f, 0.5f, 1.0f, 0.0f });
+    g_Mesh.push_back({ 0.5f, -0.5f, 0.8f, 1.0f, 1.0f });
+    g_Mesh.push_back({ -0.5f, -0.5f, 0.8f, 0.0f, 1.0f });
 
-    auto& posElements1 = vInputElements[1];
-    memset(&posElements1, 0, sizeof(D3D11_INPUT_ELEMENT_DESC));
+    g_Mesh.push_back({ -0.5f, -0.5f, 0.8f, 0.0f, 0.0f });
+    g_Mesh.push_back({ -0.5f, -0.5f, 0.5f, 1.0f, 0.0f });
+    g_Mesh.push_back({ -0.5f, 0.5f, 0.5f, 1.0f, 1.0f });
+    g_Mesh.push_back({ -0.5f, 0.5f, 0.8f, 0.0f, 1.0f });
 
-    posElements1.SemanticName = "TEXCOORD";
-    posElements1.SemanticIndex = 0;
-    posElements1.Format = DXGI_FORMAT_R32G32_FLOAT;
-    posElements1.InputSlot = 0;
-    posElements1.AlignedByteOffset = 12;
-    posElements1.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-    posElements1.InstanceDataStepRate = 0;
+    g_Mesh.push_back({ 0.5f, -0.5f, 0.8f, 0.0f, 0.0f });
+    g_Mesh.push_back({ 0.5f, -0.5f, 0.5f, 1.0f, 0.0f });
+    g_Mesh.push_back({ 0.5f, 0.5f, 0.5f, 1.0f, 1.0f });
+    g_Mesh.push_back({ 0.5f, 0.5f, 0.8f, 0.0f, 1.0f });
 
-    g_pInputLayout = g_GraphicsMan->createInputLayout(vInputElements, g_pVertexShader);
+    g_Mesh.push_back({ -0.5f, -0.5f, 0.5f, 1.0f, 1.0f });
+    g_Mesh.push_back({ 0.5f, -0.5f, 0.5f, 0.0f, 1.0f });
+    g_Mesh.push_back({ 0.5f, 0.5f, 0.5f, 0.0f, 0.0f });
+    g_Mesh.push_back({ -0.5f, 0.5f, 0.5f, 1.0f, 0.0f });
 
-    Vector<MODEL_VERTEX> mesh;
-    mesh.push_back({ 0.0f, 0.5f, 0.5f, 0.5f, 0.0f });
-    mesh.push_back({ 0.5f, -0.5f, 0.5f, 1.0f, 1.0f });
-    mesh.push_back({ -0.5f, -0.5f, 0.5f,  0.0f, 1.0f });
+    g_Mesh.push_back({ -0.5f, -0.5f, 0.8f, 0.0f, 0.0f });
+    g_Mesh.push_back({ 0.5f, -0.5f, 0.8f, 1.0f, 0.0f });
+    g_Mesh.push_back({ 0.5f, 0.5f, 0.8f, 1.0f, 1.0f });
+    g_Mesh.push_back({ -0.5f, 0.5f, 0.8f, 0.0f, 1.0f });
 
-    g_pVertexBuffer = g_GraphicsMan->createVertexBuffer<MODEL_VERTEX>(mesh);
+    g_pVertexBuffer = g_GraphicsMan->createVertexBuffer<MODEL_VERTEX>(g_Mesh);
 
+    Vector<uint32> indices
+    {
+        3,1,0,
+        2,1,3,
 
-    g_pTexture2D = g_GraphicsMan->createTexture2DFromFile("Yoda.bmp");
+        6,4,5,
+        7,4,6,
+
+        11,9,8,
+        10,9,11,
+
+        14,12,13,
+        15,12,14,
+
+        19,17,16,
+        18,17,19,
+
+        22,20,21,
+        23,20,22
+    };
+
+    g_pIndexBuffer = g_GraphicsMan->createIndexBuffer(indices);
+
+    g_pTexture2D = g_GraphicsMan->createTexture2DFromFile("StarWars_Mando.bmp");
     g_pSampleState = g_GraphicsMan->CreateSampleState();
     return TRUE;
 
 }
+
+
+//BOOL InitGraphicsAssets()
+//{
+//    /*
+//    Bloque de creacion.
+//    */
+//    g_pVertexShader = g_GraphicsMan->createVertexShader("VertexShader.hlsl", "main", "vs_5_0");
+//    g_pPixelShader = g_GraphicsMan->createPixelShader("VertexShader.hlsl", "mainPS", "ps_5_0");
+//
+//    Vector<D3D11_INPUT_ELEMENT_DESC> vInputElements;
+//
+//    vInputElements.resize(2);
+//
+//    auto& posElements = vInputElements[0];
+//    memset(&posElements, 0, sizeof(D3D11_INPUT_ELEMENT_DESC));
+//
+//    posElements.SemanticName = "POSITION";
+//    posElements.SemanticIndex = 0;
+//    posElements.Format = DXGI_FORMAT_R32G32B32_FLOAT;
+//    posElements.InputSlot = 0;
+//    posElements.AlignedByteOffset = 0;
+//    posElements.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+//    posElements.InstanceDataStepRate = 0;
+//
+//    auto& posElements1 = vInputElements[1];
+//    memset(&posElements1, 0, sizeof(D3D11_INPUT_ELEMENT_DESC));
+//
+//    posElements1.SemanticName = "TEXCOORD";
+//    posElements1.SemanticIndex = 0;
+//    posElements1.Format = DXGI_FORMAT_R32G32_FLOAT;
+//    posElements1.InputSlot = 0;
+//    posElements1.AlignedByteOffset = 12;
+//    posElements1.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+//    posElements1.InstanceDataStepRate = 0;
+//
+//    g_pInputLayout = g_GraphicsMan->createInputLayout(vInputElements, g_pVertexShader);
+//
+//    Vector<MODEL_VERTEX> mesh;
+//    mesh.push_back({ 0.0f, 0.5f, 0.5f, 0.5f, 0.0f });
+//    mesh.push_back({ 0.5f, -0.5f, 0.5f, 1.0f, 1.0f });
+//    mesh.push_back({ -0.5f, -0.5f, 0.5f,  0.0f, 1.0f });
+//
+//    g_pVertexBuffer = g_GraphicsMan->createVertexBuffer<MODEL_VERTEX>(mesh);
+//
+//
+//    g_pTexture2D = g_GraphicsMan->createTexture2DFromFile("StarWars_Mando.bmp");
+//    g_pSampleState = g_GraphicsMan->CreateSampleState();
+//    return TRUE;
+//
+//}
 
 void Render()
 {
@@ -406,14 +406,14 @@ void Render()
     g_GraphicsMan->setRenderTargets();
     g_GraphicsMan->setInputLayout(g_pInputLayout);
     g_GraphicsMan->setVertexBuffers(g_pVertexBuffer, offset);
-    //g_GraphicsMan->setIndexBuffers(g_pIndexBuffer);
+    g_GraphicsMan->setIndexBuffers(g_pIndexBuffer);
     g_GraphicsMan->setPrimitiveTopology();
     g_GraphicsMan->setVertexShader(g_pVertexShader);
     g_GraphicsMan->setPixelShader(g_pPixelShader);
     g_GraphicsMan->setShaderResources(g_pTexture2D);
     g_GraphicsMan->setSamplers(g_pSampleState);
 
-    g_GraphicsMan->Draw(3, 0);
+    g_GraphicsMan->DrawIndex(36, 0, 0);
 
     g_GraphicsMan->present();
 }
