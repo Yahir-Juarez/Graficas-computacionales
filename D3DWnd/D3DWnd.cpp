@@ -258,29 +258,29 @@ BOOL InitGraphicsAssets()
 
     vInputElements.resize(2);
     
-        auto& posElements = vInputElements[0];
-        memset(&posElements, 0, sizeof(D3D11_INPUT_ELEMENT_DESC));
+    auto& posElements = vInputElements[0];
+    memset(&posElements, 0, sizeof(D3D11_INPUT_ELEMENT_DESC));
     
-        posElements.SemanticName = "POSITION";
-        posElements.SemanticIndex = 0;
-        posElements.Format = DXGI_FORMAT_R32G32B32_FLOAT;
-        posElements.InputSlot = 0;
-        posElements.AlignedByteOffset = 0;
-        posElements.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-        posElements.InstanceDataStepRate = 0;
+    posElements.SemanticName = "POSITION";
+    posElements.SemanticIndex = 0;
+    posElements.Format = DXGI_FORMAT_R32G32B32_FLOAT;
+    posElements.InputSlot = 0;
+    posElements.AlignedByteOffset = 0;
+    posElements.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+    posElements.InstanceDataStepRate = 0;
     
-        auto& posElements1 = vInputElements[1];
-        memset(&posElements1, 0, sizeof(D3D11_INPUT_ELEMENT_DESC));
+    auto& posElements1 = vInputElements[1];
+    memset(&posElements1, 0, sizeof(D3D11_INPUT_ELEMENT_DESC));
     
-        posElements1.SemanticName = "TEXCOORD";
-        posElements1.SemanticIndex = 0;
-        posElements1.Format = DXGI_FORMAT_R32G32_FLOAT;
-        posElements1.InputSlot = 0;
-        posElements1.AlignedByteOffset = 12;
-        posElements1.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-        posElements1.InstanceDataStepRate = 0;
+    posElements1.SemanticName = "TEXCOORD";
+    posElements1.SemanticIndex = 0;
+    posElements1.Format = DXGI_FORMAT_R32G32_FLOAT;
+    posElements1.InputSlot = 0;
+    posElements1.AlignedByteOffset = 12;
+    posElements1.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+    posElements1.InstanceDataStepRate = 0;
     
-        g_pInputLayout = g_GraphicsMan->createInputLayout(vInputElements, g_pVertexShader);
+    g_pInputLayout = g_GraphicsMan->createInputLayout(vInputElements, g_pVertexShader);
 
     g_Mesh.push_back({ -0.5f, 0.5f, 0.5f, 0.0f, 0.0f });
     g_Mesh.push_back({ 0.5f, 0.5f, 0.5f, 1.0f, 0.0f });
@@ -400,10 +400,11 @@ void Render()
    * Bloque de render
    */
     g_GraphicsMan->clearRenderTarget(g_GraphicsMan->getRenderTargetView(), LinearColor(0, 0, 1, 1));
+    g_GraphicsMan->clearRenderTargetView(g_GraphicsMan->getMainDSV());
 
     UINT offset = 0;
     
-    g_GraphicsMan->setRenderTargets();
+    g_GraphicsMan->setRenderTargets(1, g_GraphicsMan->getMainDSV());
     g_GraphicsMan->setInputLayout(g_pInputLayout);
     g_GraphicsMan->setVertexBuffers(g_pVertexBuffer, offset);
     g_GraphicsMan->setIndexBuffers(g_pIndexBuffer);

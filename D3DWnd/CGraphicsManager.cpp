@@ -132,6 +132,8 @@ CGraphicsManager::CGraphicsManager(void* scrHandle,
 												   nullptr,
 												   &m_pRenderTargetView));
 
+	m_pDethStencil = createTexture(scDesc.BufferDesc.Width, scDesc.BufferDesc.Height, DXGI_FORMAT_D24_UNORM_S8_UINT, D3D11_USAGE_DEFAULT, D3D11_BIND_DEPTH_STENCIL);
+
 
 	//Setup the viewport
 	D3D11_VIEWPORT vp;
@@ -144,7 +146,7 @@ CGraphicsManager::CGraphicsManager(void* scrHandle,
 	m_deviceContext->RSSetViewports(1, &vp);
 	//Remove
 
-	m_deviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, nullptr);
+	m_deviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDethStencil->m_pDepthStencilView);
 
 	//Release all objects
 	SAFE_RELEASE(pFactory);
@@ -168,10 +170,15 @@ void CGraphicsManager::clearRenderTarget(ID3D11RenderTargetView* pTarget, Linear
 	m_deviceContext->ClearRenderTargetView(pTarget, reinterpret_cast<FLOAT*>(&color));
 }
 
+void CGraphicsManager::clearRenderTargetView(ID3D11DepthStencilView* depthStencilView)
+{
+	m_deviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+}
 void CGraphicsManager::present()
 {
 	m_pSwapChain->Present(0, 0);
 }
+
 
 #include <d3dcompiler.h>
 
@@ -266,10 +273,9 @@ SPtr<SamplerState> CGraphicsManager::CreateSampleState(D3D11_FILTER filter, D3D1
 }
 
 
-void CGraphicsManager::setRenderTargets(UINT numViews)
+void CGraphicsManager::setRenderTargets(UINT numViews, ID3D11DepthStencilView* depthStencilView)
 {
-	Vector<UINT> a;
-	m_deviceContext->OMSetRenderTargets(numViews, &m_pRenderTargetView, nullptr);
+	m_deviceContext->OMSetRenderTargets(numViews, &m_pRenderTargetView, depthStencilView);
 }
 
 void CGraphicsManager::setInputLayout(SPtr<InputLayout> inputLayout)
@@ -277,9 +283,9 @@ void CGraphicsManager::setInputLayout(SPtr<InputLayout> inputLayout)
 	m_deviceContext->IASetInputLayout(inputLayout->m_pLayout);
 }
 
-void CGraphicsManager::setVertexBuffers(SPtr <VertexBuffer> vertexBuffer, UINT& offset)
+void CGraphicsManager::setVertexBuffers(SPtr <VertexBuffer> vertexBuffer, Vector <UINT>& offset)
 {
-	m_deviceContext->IASetVertexBuffers(0, 1, &vertexBuffer->m_pBuffer, &vertexBuffer->m_stride, &offset);
+	m_deviceContext->IASetVertexBuffers(0, 1, &vertexBuffer->m_pBuffer, &vertexBuffer->m_stride, &offset[0]);
 }
 
 void CGraphicsManager::setIndexBuffers(SPtr <IndexBuffer> indexBuffer)
@@ -362,15 +368,27 @@ SPtr<Texture2D> CGraphicsManager::createTexture(uint32 Width, uint32 Height, uin
 
 	throwIfFailed(m_device->CreateTexture2D(&textureDesc, nullptr, &pT2D->m_pTexture));
 
-	CD3D11_SHADER_RESOURCE_VIEW_DESC shaderRVD;
 
-	memset(&shaderRVD, 0, sizeof(shaderRVD));
-	shaderRVD.Format = textureDesc.Format;
-	shaderRVD.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	shaderRVD.Texture2D.MipLevels = textureDesc.MipLevels;
-	shaderRVD.Texture2D.MostDetailedMip = 0;
+	if ((bindFlag & D3D11_BIND_SHADER_RESOURCE) == D3D11_BIND_SHADER_RESOURCE)
+	{
+		CD3D11_SHADER_RESOURCE_VIEW_DESC shaderRVD;
 
-	throwIfFailed(m_device->CreateShaderResourceView(pT2D->m_pTexture, &shaderRVD, &pT2D->m_pShaderResourceView));
+		memset(&shaderRVD, 0, sizeof(shaderRVD));
+		shaderRVD.Format = textureDesc.Format;
+		shaderRVD.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		shaderRVD.Texture2D.MipLevels = textureDesc.MipLevels;
+		shaderRVD.Texture2D.MostDetailedMip = 0;
 
+		throwIfFailed(m_device->CreateShaderResourceView(pT2D->m_pTexture, &shaderRVD, &pT2D->m_pShaderResourceView));
+	}
+	if ((bindFlag & D3D11_BIND_DEPTH_STENCIL) == D3D11_BIND_DEPTH_STENCIL)\
+	{
+		D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
+		memset(&descDSV, 0, sizeof(descDSV));
+		descDSV.Format = textureDesc.Format;
+		descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+		descDSV.Texture2D.MipSlice = 0;
+		throwIfFailed(m_device->CreateDepthStencilView(pT2D->m_pTexture, &descDSV, &pT2D->m_pDepthStencilView));
+	}
 	return pT2D;
 }

@@ -42,6 +42,7 @@ public:
 	~CGraphicsManager();
 
 	void clearRenderTarget(ID3D11RenderTargetView* pTarget, LinearColor color);
+	void clearRenderTargetView(ID3D11DepthStencilView* depthStencilView);
 	void present();
 
 	ID3D11RenderTargetView* getRenderTargetView() { return m_pRenderTargetView; }
@@ -149,10 +150,11 @@ public:
 	SPtr<Texture2D> createTexture(uint32 Width, uint32 height, uint32 format = DXGI_FORMAT_B8G8R8A8_UNORM, uint32 usage = D3D11_USAGE_DEFAULT, uint32 bindFlag = D3D11_BIND_SHADER_RESOURCE);
 
 	ID3D11DeviceContext* getDC() { return m_deviceContext; } //minuto 10:20
+	ID3D11DepthStencilView* getMainDSV(){ return m_pDethStencil->m_pDepthStencilView; }
 
-	void setRenderTargets(UINT numViews = 1); //--Vectores//
+	void setRenderTargets(UINT numViews = 1, ID3D11DepthStencilView* depthStencilView = nullptr);
 	void setInputLayout(SPtr<InputLayout> inputLayout); //
-	void setVertexBuffers(SPtr <VertexBuffer> vertexBuffer, UINT& arregloFaltante);//--Cadenas//
+	void setVertexBuffers(SPtr <VertexBuffer> vertexBuffer, Vector<UINT> offset);//--Cadenas//
 	void setIndexBuffers(SPtr <IndexBuffer> indexBuffer);//--Cadenas//
 	void setPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);//
 	void setVertexShader(SPtr<VertexShader> pShader);
