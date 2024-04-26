@@ -1,5 +1,5 @@
 Texture2D txDiffuse : register(t0);
-SamplerState samLinear : register(t0);
+SamplerState samLinear : register(s0);
 
 struct VS_INPUT
 {
@@ -23,7 +23,8 @@ PS_INPUT main(VS_INPUT input)
 
 float4 mainPS(PS_INPUT input) : SV_Target
 {
-	return float4(1.0f, 1.0f, 0.0f, 1.0f);
+	//return float4(1.0f, 1.0f, 0.0f, 1.0f);
+	return txDiffuse.Sample(samLinear, input.tex);
 }
 
 

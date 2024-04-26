@@ -10,6 +10,7 @@ public:
 	virtual ~Texture()
 	{
 		SAFE_RELEASE(m_pShaderResourceView);
+		SAFE_RELEASE(m_pDepthStencilView);
 	}
 
 protected:
@@ -30,6 +31,6 @@ public:
 
 protected:
 	friend class CGraphicsManager;
-	ID3D11Texture2D* m_pTexture;
+	ID3D11Texture2D* m_pTexture = nullptr;
 };
 

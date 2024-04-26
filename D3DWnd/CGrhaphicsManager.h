@@ -77,7 +77,9 @@ public:
 
 		pVB->m_stride = sizeof(T);
 
-		m_device->CreateBuffer(&desc, &initData, &pVB->m_pBuffer);
+		HRESULT hr = 0;
+
+		hr = m_device->CreateBuffer(&desc, &initData, &pVB->m_pBuffer);
 
 		return pVB;
 	}
@@ -104,7 +106,9 @@ public:
 
 		//pIB->m_dataFormat = sizeof(T);
 
-		m_device->CreateBuffer(&desc, &initData, &pIB->m_pBuffer);
+		HRESULT hr = 0;
+
+		hr = m_device->CreateBuffer(&desc, &initData, &pIB->m_pBuffer);
 
 		if (sizeof(T) == 2)
 		{
@@ -133,8 +137,9 @@ public:
 		initData.SysMemPitch = 0;
 		initData.SysMemSlicePitch = 0;
 
+		HRESULT hr = 0;
 
-		m_device->CreateBuffer(&desc, &initData, &pCB->m_pBuffer);
+		hr = m_device->CreateBuffer(&desc, &initData, &pCB->m_pBuffer);
 
 		return pCB;
 	}
@@ -167,4 +172,6 @@ private:
 	SPtr<Texture2D> m_pDethStencil;
 	
 	ID3D11RenderTargetView* m_pRenderTargetView = nullptr;
+
+	ID3D11Buffer* m_pVertexBuffer = nullptr;
 };
