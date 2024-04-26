@@ -283,9 +283,9 @@ void CGraphicsManager::setInputLayout(SPtr<InputLayout> inputLayout)
 	m_deviceContext->IASetInputLayout(inputLayout->m_pLayout);
 }
 
-void CGraphicsManager::setVertexBuffers(SPtr <VertexBuffer> vertexBuffer, Vector <UINT>& offset)
+void CGraphicsManager::setVertexBuffers(SPtr <VertexBuffer> vertexBuffer, UINT& offset)
 {
-	m_deviceContext->IASetVertexBuffers(0, 1, &vertexBuffer->m_pBuffer, &vertexBuffer->m_stride, &offset[0]);
+	m_deviceContext->IASetVertexBuffers(0, 1, &vertexBuffer->m_pBuffer, &vertexBuffer->m_stride, &offset);
 }
 
 void CGraphicsManager::setIndexBuffers(SPtr <IndexBuffer> indexBuffer)

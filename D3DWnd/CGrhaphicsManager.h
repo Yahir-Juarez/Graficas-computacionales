@@ -154,7 +154,7 @@ public:
 
 	void setRenderTargets(UINT numViews = 1, ID3D11DepthStencilView* depthStencilView = nullptr);
 	void setInputLayout(SPtr<InputLayout> inputLayout); //
-	void setVertexBuffers(SPtr <VertexBuffer> vertexBuffer, Vector<UINT> offset);//--Cadenas//
+	void setVertexBuffers(SPtr <VertexBuffer> vertexBuffer,UINT& offset);//--Cadenas//
 	void setIndexBuffers(SPtr <IndexBuffer> indexBuffer);//--Cadenas//
 	void setPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);//
 	void setVertexShader(SPtr<VertexShader> pShader);
