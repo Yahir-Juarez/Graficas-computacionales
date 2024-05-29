@@ -145,9 +145,41 @@ public:
 		return pCB;
 	}
 
+	SPtr<ConstantBuffer> createConsantBuffer(size_t bufferSize, void* pData = nullptr, uint32 usage = D3D11_USAGE_DEFAULT)
+	{
+
+		auto pCB = std::make_shared<ConstantBuffer>();
+
+		D3D11_BUFFER_DESC desc;
+		memset(&desc, 0, sizeof(desc));
+		desc.Usage = static_cast<D3D11_USAGE>(usage);
+		desc.ByteWidth = bufferSize;
+		desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		desc.CPUAccessFlags = usage == D3D10_USAGE_DYNAMIC ? D3D11_CPU_ACCESS_WRITE : 0;
+		desc.MiscFlags = 0;
+
+		//El D3D11_SUBRESOURCE_DATA lo utilizamos para copiar la nformacion cuando se crea
+
+		D3D11_SUBRESOURCE_DATA initData;
+		if (pData)
+		{
+			initData.pSysMem = pData;
+			initData.SysMemPitch = bufferSize;
+			initData.SysMemSlicePitch = 0;
+		}
+
+		HRESULT hr = 0;
+
+		hr = m_device->CreateBuffer(&desc, &initData, &pCB->m_pBuffer);
+
+		return pCB;
+	}
+
+	//void updateConstatntBuffer(WPtr<Cons>)
 	SPtr<SamplerState> CreateSampleState(D3D11_FILTER filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_MODE textureAddress = D3D11_TEXTURE_ADDRESS_WRAP);
 	SPtr<Texture2D> createTexture2DFromFile(const Path& fileName, uint32 format = DXGI_FORMAT_B8G8R8A8_UNORM, uint32 usage = D3D11_USAGE_DEFAULT);
 	SPtr<Texture2D> createTexture(uint32 Width, uint32 height, uint32 format = DXGI_FORMAT_B8G8R8A8_UNORM, uint32 usage = D3D11_USAGE_DEFAULT, uint32 bindFlag = D3D11_BIND_SHADER_RESOURCE);
+	
 
 	ID3D11DeviceContext* getDC() { return m_deviceContext; } //minuto 10:20
 	ID3D11DepthStencilView* getMainDSV(){ return m_pDethStencil->m_pDepthStencilView; }

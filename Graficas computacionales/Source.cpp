@@ -115,7 +115,7 @@ int main()
 
 	Image imagenOriginal;
 	Image imageOriginalRaster;
-	imagenOriginal.CreateFromImageFile("Line.bmp");
+	imagenOriginal.CreateFromImageFile("StarWars.bmp");
 	imageOriginalRaster.CreateFromImageFile("Yoda.bmp");
 
 	///////////////////////////////////////////////////////
