@@ -156,6 +156,8 @@
     <ClInclude Include="ImageProcess\Image.h" />
     <ClInclude Include="ImageProcess\ImgCodec.h" />
     <ClInclude Include="InputLayout.h" />
+    <ClInclude Include="myMatrix.h" />
+    <ClInclude Include="myVector3.h" />
     <ClInclude Include="Prerequisitos.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SamplerState.h" />
