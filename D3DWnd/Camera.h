@@ -29,6 +29,6 @@ public:
 
 	virtual ~Camera() = default;
 
-	MyMatrix4 m_viewMatrix;
-	MyMatrix4 m_projMatrix;
+	ViewMatrix m_viewMatrix;
+	ProjMatrix m_projMatrix;
 };

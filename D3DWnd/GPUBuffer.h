@@ -46,7 +46,10 @@ class ConstantBuffer final : public GPUBuffer
 public:
 	ConstantBuffer() = default;
 	~ConstantBuffer() = default;
-
+	ID3D11Buffer* getBuffer()
+	{
+		return m_pBuffer;
+	}
 public:
 	friend class CGraphicsManager;
 };

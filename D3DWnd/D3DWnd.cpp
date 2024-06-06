@@ -358,12 +358,25 @@ BOOL InitGraphicsAssets()
     g_MainCamera.setViewData(myVector3(0.0f, 0.0f, -5.0f), myVector3(0.0f, 0.0f, 0.0f), myVector3(0.0f, 1.0f, 0.0f));
     g_MainCamera.setProjData(45.0f, static_cast<float>(rc.right) / static_cast<float>(rc.bottom), 0.1f, 100.0f);
 
-    g_GraphicsMan->updateConstantBuffer();
+
+    struct WVP
+    {
+        MyMatrix4 view;
+        MyMatrix4 proj;
+    };
+
+    //Utiliza direct3d matematica intrinsica, para open GL no se necesaita la transpuesta
+
+    WVP myWVP;
+    myWVP.view = g_MainCamera.m_viewMatrix.GetTransposed();
+    myWVP.proj = g_MainCamera.m_projMatrix.GetTransposed();
+    g_GraphicsMan->updateConstantBuffer(g_pWVP, &g_MainCamera.m_viewMatrix, (sizeof(MyMatrix4) * 2));
 
     return TRUE;
 
 }
 
+//y = mx + b
 
 //BOOL InitGraphicsAssets()
 //{
@@ -464,6 +477,7 @@ void Render()
     g_GraphicsMan->setShaderResources(g_pTexture2D);
     g_GraphicsMan->setSamplers(g_pSampleState);
 
+    g_GraphicsMan->vsSetConstantBuffers(g_pWVP);
     g_GraphicsMan->DrawIndex(36, 0, 0);
 
     g_GraphicsMan->present();
