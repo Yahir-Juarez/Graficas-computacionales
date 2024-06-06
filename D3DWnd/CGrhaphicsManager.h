@@ -164,17 +164,32 @@ public:
 		if (pData)
 		{
 			initData.pSysMem = pData;
-			initData.SysMemPitch = bufferSize;
+			initData.SysMemPitch = 0;
 			initData.SysMemSlicePitch = 0;
 		}
-
 		HRESULT hr = 0;
 
-		hr = m_device->CreateBuffer(&desc, &initData, &pCB->m_pBuffer);
+		hr = m_device->CreateBuffer(&desc, pData ? &initData : nullptr, &pCB->m_pBuffer);
 
 		return pCB;
 	}
 
+	void updateConstantBuffer(WPtr<ConstantBuffer> pCB, void* pData, size_t dataSize)
+	{
+		if (pCB.expired())
+		{
+			return;
+		}
+
+		auto pSCB = pCB.lock();
+
+		if (!pSCB->m_pBuffer)
+		{
+			return;
+		}
+
+		m_deviceContext->UpdateSubresource(pSCB->m_pBuffer, 0, nullptr, pData, dataSize, 0);
+	}
 	//void updateConstatntBuffer(WPtr<Cons>)
 	SPtr<SamplerState> CreateSampleState(D3D11_FILTER filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_MODE textureAddress = D3D11_TEXTURE_ADDRESS_WRAP);
 	SPtr<Texture2D> createTexture2DFromFile(const Path& fileName, uint32 format = DXGI_FORMAT_B8G8R8A8_UNORM, uint32 usage = D3D11_USAGE_DEFAULT);

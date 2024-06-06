@@ -6,10 +6,7 @@
 #include "D3DWnd.h"
 #include "myMatrix.h"
 #include "CGrhaphicsManager.h"
-
-#include "myMatrix.h"
-#include "myVector3.h"
-using MyMatrix4 = myMatrix<float>;
+#include "Camera.h"
 
 
 #define MAX_LOADSTRING 100
@@ -40,12 +37,15 @@ SPtr <IndexBuffer> g_pIndexBuffer;
 
 SPtr<InputLayout> g_pInputLayout;
 SPtr <VertexBuffer> g_pVertexBuffer;
+
+SPtr<ConstantBuffer> g_pWVP;
 SPtr<MODEL_VERTEX> g_pModelVertex;
 
 SPtr<Texture2D> g_pTexture2D;
 SPtr<SamplerState> g_pSampleState;
 Vector<MODEL_VERTEX> g_Mesh;
 bool g_isRunning = true;
+Camera g_MainCamera;
 // Declaraciones de funciones adelantadas incluidas en este módulo de código:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
@@ -240,6 +240,12 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_INITDIALOG:
         return (INT_PTR)TRUE;
 
+    case WM_SIZE:
+    {
+        RECT rc;
+        GetClientRect(g_hWnd, &rc);
+        g_MainCamera.setProjData(45.0f, static_cast<float>(rc.right) / static_cast<float>(rc.bottom), 0.1f, 100.0f);
+    }
     case WM_COMMAND:
         if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
         {
@@ -341,9 +347,19 @@ BOOL InitGraphicsAssets()
     };
 
     g_pIndexBuffer = g_GraphicsMan->createIndexBuffer(indices);
+    g_pWVP = g_GraphicsMan->createConsantBuffer(sizeof(MyMatrix4) * 2);
 
     g_pTexture2D = g_GraphicsMan->createTexture2DFromFile("StarWars_Mando.bmp");
     g_pSampleState = g_GraphicsMan->CreateSampleState();
+
+    RECT rc;
+    GetClientRect(g_hWnd, &rc);
+
+    g_MainCamera.setViewData(myVector3(0.0f, 0.0f, -5.0f), myVector3(0.0f, 0.0f, 0.0f), myVector3(0.0f, 1.0f, 0.0f));
+    g_MainCamera.setProjData(45.0f, static_cast<float>(rc.right) / static_cast<float>(rc.bottom), 0.1f, 100.0f);
+
+    g_GraphicsMan->updateConstantBuffer();
+
     return TRUE;
 
 }
@@ -399,33 +415,33 @@ BOOL InitGraphicsAssets()
 //
 //}
 
-MyMatrix4 LookAt(const myVector3& CameraPos,
-    const myVector3& ObjectivePos,
-    const myVector3& UpVector)
-{
-    const myVector3 ZAxis = (ObjectivePos - CameraPos).getVectorNormalize();
-    const myVector3 XAxis = (UpVector ^ ZAxis).getVectorNormalize();
-    const myVector3 YAxis = ZAxis ^ XAxis;
-
-    MyMatrix4 result;
-
-    for (uint32 RowIndex = 0; RowIndex < 3; ++RowIndex)
-    {
-        result.m_matrix[RowIndex][0] = (&XAxis.x)[RowIndex];
-        result.m_matrix[RowIndex][1] = (&YAxis.x)[RowIndex];
-        result.m_matrix[RowIndex][2] = (&ZAxis.x)[RowIndex];
-        result.m_matrix[RowIndex][3] = 0.0f;
-    }
-
-    myVector3 negCameraPos = CameraPos;
-    negCameraPos.x = negCameraPos.x * -1;
-    negCameraPos.y = negCameraPos.y * -1;
-    negCameraPos.z = negCameraPos.z * -1;
-
-    result.m_matrix[3][0] = negCameraPos | XAxis;
-
-    return result;
-}
+//MyMatrix4 LookAt(const myVector3& CameraPos,
+//    const myVector3& ObjectivePos,
+//    const myVector3& UpVector)
+//{
+//    const myVector3 ZAxis = (ObjectivePos - CameraPos).getVectorNormalize();
+//    const myVector3 XAxis = (UpVector ^ ZAxis).getVectorNormalize();
+//    const myVector3 YAxis = ZAxis ^ XAxis;
+//
+//    MyMatrix4 result;
+//
+//    for (uint32 RowIndex = 0; RowIndex < 3; ++RowIndex)
+//    {
+//        result.m_matrix[RowIndex][0] = (&XAxis.x)[RowIndex];
+//        result.m_matrix[RowIndex][1] = (&YAxis.x)[RowIndex];
+//        result.m_matrix[RowIndex][2] = (&ZAxis.x)[RowIndex];
+//        result.m_matrix[RowIndex][3] = 0.0f;
+//    }
+//
+//    myVector3 negCameraPos = CameraPos;
+//    negCameraPos.x = negCameraPos.x * -1;
+//    negCameraPos.y = negCameraPos.y * -1;
+//    negCameraPos.z = negCameraPos.z * -1;
+//
+//    result.m_matrix[3][0] = negCameraPos | XAxis;
+//
+//    return result;
+//}
 
 
 void Render()
@@ -455,8 +471,6 @@ void Render()
     myVector3 a(1.0f, 7.0f , 1.0f);
     myVector3 b(3.0f, 2.0f, 1.0f);
     myVector3 c(1.0f, 2.0f, 4.0f);
-
-    LookAt(a, b, c);
 }
 
 

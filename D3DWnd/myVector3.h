@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cmath>
+
 class myVector3
 {
 public:
@@ -8,7 +10,7 @@ public:
 
 	myVector3(float pos_x, float pos_y, float pos_z) { x = pos_x; y = pos_y; z = pos_z; }
 
-	myVector3 getVectorNormalize();
+	void getVectorNormalize();
 
 	myVector3 operator-(const myVector3& otro) const {
 		myVector3 resultado;
