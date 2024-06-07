@@ -330,6 +330,11 @@ void CGraphicsManager::DrawIndex(UINT count, UINT startIndexLocation, UINT BaseL
 	m_deviceContext->DrawIndexed(count, startIndexLocation, BaseLocation);
 }
 
+void CGraphicsManager::vsSetConstantBuffers(SPtr<ConstantBuffer> bufferID3D11, UINT32 StartSlot, UINT32 NumBuffers)
+{
+	m_deviceContext->VSSetConstantBuffers(StartSlot, NumBuffers, &bufferID3D11->m_pBuffer);
+}
+
 SPtr<Texture2D> CGraphicsManager::createTexture2DFromFile(const Path& fileName, uint32 format, uint32 usage)
 {
 	g_CodecMan.AddCodec(new BMPCodec());

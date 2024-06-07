@@ -210,6 +210,8 @@ public:
 	void setSamplers(WPtr<SamplerState> sampleState, UINT32 startSlot = 0, UINT32 numSamplers = 1);
 	void Draw(UINT count, UINT startVertexLocation = 0);
 	void DrawIndex(UINT count, UINT startIndexLocation = 0, UINT BaseLocation = 0);
+
+	void vsSetConstantBuffers(SPtr<ConstantBuffer> bufferID3D11, UINT32 StartSlot = 0, UINT32 NumBuffers = 1);
 private:
 	bool m_bFullScreen;
 	DXGI_SAMPLE_DESC m_multiConfig;
