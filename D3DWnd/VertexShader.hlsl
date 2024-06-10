@@ -1,6 +1,12 @@
 Texture2D txDiffuse : register(t0);
 SamplerState samLinear : register(s0);
 
+cbuffer WVP : register(b0)
+{
+    float4x4 View;
+    float4x4 Proj;
+}
+
 struct VS_INPUT
 {
 	float4 position : POSITION;
@@ -15,8 +21,11 @@ struct PS_INPUT
 
 PS_INPUT main(VS_INPUT input) 
 {
-	PS_INPUT output = (PS_INPUT)0;
-	output.position = input.position;
+	PS_INPUT output = (PS_INPUT) 0;
+	
+    output.position = mul(float4(input.position.xyz, 1.0f), mul(View, Proj));
+	
+	//output.position = input.position;
 	output.tex = input.tex;
 	return output;
 }

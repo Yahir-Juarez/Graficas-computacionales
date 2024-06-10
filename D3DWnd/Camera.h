@@ -9,12 +9,14 @@ public:
 	Camera(const myVector3& camPos,
 		const myVector3& targetPos,
 		const myVector3& upVector,
-		float fov,
-		float aspectRatio,
-		float nearPlane,
-		float farPlane) :
+		float HalfFOV,
+		float Width,
+		float Height,
+		float minZ, 
+		float maxZ)
+		:
 		m_viewMatrix(ViewMatrix(camPos, targetPos, upVector)),
-		m_projMatrix(ProjMatrix(fov, aspectRatio, nearPlane, farPlane))
+		m_projMatrix(ProjMatrix( HalfFOV, Width, Height, minZ, maxZ))
 	{}
 
 	void setViewData(const myVector3& camPos, const myVector3& targetPos, const myVector3& upVector)
@@ -22,13 +24,13 @@ public:
 		m_viewMatrix = ViewMatrix(camPos, targetPos, upVector);
 	}
 
-	void setProjData(float fov, float aspectRatio, float nearPlane, float farPlane)
+	void setProjData(float HalfFOV, float Width, float Height, float minZ, float maxZ)
 	{
-		m_projMatrix = ProjMatrix(fov, aspectRatio, nearPlane, farPlane);
+		m_projMatrix = ProjMatrix(HalfFOV, Width, Height, minZ, maxZ);
 	}
 
 	virtual ~Camera() = default;
 
-	ViewMatrix m_viewMatrix;
-	ProjMatrix m_projMatrix;
+	MyMatrix4 m_viewMatrix;
+	MyMatrix4 m_projMatrix;
 };

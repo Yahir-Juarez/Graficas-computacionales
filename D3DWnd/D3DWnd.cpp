@@ -244,7 +244,7 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     {
         RECT rc;
         GetClientRect(g_hWnd, &rc);
-        g_MainCamera.setProjData(45.0f, static_cast<float>(rc.right) / static_cast<float>(rc.bottom), 0.1f, 100.0f);
+        g_MainCamera.setProjData(45.0f, static_cast<float>(rc.right), static_cast<float>(rc.bottom), 0.1f, 100.0f);
     }
     case WM_COMMAND:
         if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
@@ -347,7 +347,10 @@ BOOL InitGraphicsAssets()
     };
 
     g_pIndexBuffer = g_GraphicsMan->createIndexBuffer(indices);
-    g_pWVP = g_GraphicsMan->createConsantBuffer(sizeof(MyMatrix4) * 2);
+
+    int sizeoM = sizeof(MyMatrix4);
+
+    g_pWVP = g_GraphicsMan->createConsantBuffer(sizeoM * 2);
 
     g_pTexture2D = g_GraphicsMan->createTexture2DFromFile("StarWars_Mando.bmp");
     g_pSampleState = g_GraphicsMan->CreateSampleState();
@@ -356,7 +359,7 @@ BOOL InitGraphicsAssets()
     GetClientRect(g_hWnd, &rc);
 
     g_MainCamera.setViewData(myVector3(0.0f, 0.0f, -5.0f), myVector3(0.0f, 0.0f, 0.0f), myVector3(0.0f, 1.0f, 0.0f));
-    g_MainCamera.setProjData(45.0f, static_cast<float>(rc.right) / static_cast<float>(rc.bottom), 0.1f, 100.0f);
+    g_MainCamera.setProjData(45.0f, static_cast<float>(rc.right), static_cast<float>(rc.bottom), 0.1f, 100.0f);
 
 
     struct WVP
@@ -370,7 +373,8 @@ BOOL InitGraphicsAssets()
     WVP myWVP;
     myWVP.view = g_MainCamera.m_viewMatrix.GetTransposed();
     myWVP.proj = g_MainCamera.m_projMatrix.GetTransposed();
-    g_GraphicsMan->updateConstantBuffer(g_pWVP, &g_MainCamera.m_viewMatrix, (sizeof(MyMatrix4) * 2));
+
+    g_GraphicsMan->updateConstantBuffer(g_pWVP, &myWVP, sizeof(myWVP));
 
     return TRUE;
 

@@ -95,14 +95,37 @@ public:
 class ProjMatrix : public MyMatrix4
 {
 public:
-	ProjMatrix(float fov, float aspectRatio, float nearPlane, float farPlane)
+	ProjMatrix(float HalfFOV, float Width, float Height, float minZ, float maxZ)
+	{
+		m_matrix[0][0] = 1.0f / tan(HalfFOV);
+		m_matrix[0][1] = 0.0f;
+		m_matrix[0][2] = 0.0f;
+		m_matrix[0][3] = 0.0f;
+
+		m_matrix[1][0] = 0.0f;
+		m_matrix[1][1] = Width / tan(HalfFOV) / Height;
+		m_matrix[1][2] = 0.0f;
+		m_matrix[1][3] = 0.0f;
+
+		m_matrix[2][0] = 0.0f;
+		m_matrix[2][1] = 0.0f;
+		m_matrix[2][2] = maxZ / (maxZ - minZ);
+		m_matrix[2][3] = 0.0f;
+
+		m_matrix[3][0] = 0.0f;
+		m_matrix[3][1] = 0.0f;
+		m_matrix[3][2] = -minZ * maxZ / (maxZ - minZ);
+		m_matrix[3][3] = 0.0f;
+	}
+
+	/*ProjMatrix(float fov, float aspectRatio, float nearPlane, float farPlane)
 	{
 		float tanHalfFov = tan(fov / 2.0f);
 		float zRange = nearPlane - farPlane;
 
-		m_matrix[0][0] = 1.0f / (tanHalfFov * aspectRatio); m_matrix[0][1] = 0.0f; m_matrix[0][2] = 0.0f; m_matrix[0][3] = 0.0f;
+		m_matrix[0][0] = 1.0f / (tanHalfFov); m_matrix[0][1] = 0.0f; m_matrix[0][2] = 0.0f; m_matrix[0][3] = 0.0f;
 		m_matrix[1][0] = 0.0f; m_matrix[1][1] = 1.0f / tanHalfFov; m_matrix[1][2] = 0.0f; m_matrix[1][3] = 0.0f;
 		m_matrix[2][0] = 0.0f; m_matrix[2][1] = 0.0f; m_matrix[2][2] =(-nearPlane - farPlane) / zRange; m_matrix[2][3] = 2.0f * farPlane * nearPlane / zRange;
 		m_matrix[3][0] = 0.0f; m_matrix[3][1] = 0.0f; m_matrix[3][2] = 1.0f; m_matrix[3][3] = 0.0f;
-	}
+	}*/
 };
