@@ -44,6 +44,15 @@ SPtr<MODEL_VERTEX> g_pModelVertex;
 SPtr<Texture2D> g_pTexture2D;
 SPtr<SamplerState> g_pSampleState;
 Vector<MODEL_VERTEX> g_Mesh;
+
+struct WVP
+{
+    MyMatrix4 view;
+    MyMatrix4 proj;
+};
+
+WVP myWVP;
+
 bool g_isRunning = true;
 Camera g_MainCamera;
 // Declaraciones de funciones adelantadas incluidas en este módulo de código:
@@ -362,15 +371,10 @@ BOOL InitGraphicsAssets()
     g_MainCamera.setProjData((3.1416f/4.0f), static_cast<float>(rc.right), static_cast<float>(rc.bottom), 0.1f, 100.0f);
 
 
-    struct WVP
-    {
-        MyMatrix4 view;
-        MyMatrix4 proj;
-    };
+    
 
     //Utiliza direct3d matematica intrinsica, para open GL no se necesaita la transpuesta
 
-    WVP myWVP;
     myWVP.view = g_MainCamera.m_viewMatrix.GetTransposed();
     myWVP.proj = g_MainCamera.m_projMatrix.GetTransposed();
 
@@ -461,6 +465,53 @@ BOOL InitGraphicsAssets()
 //}
 
 
+void moveCamera()
+{
+    bool calculate = false;
+    if (GetAsyncKeyState('D') & 0x8000) {
+        g_MainCamera.m_viewMatrix.m_matrix[3][0] += .001f;
+        calculate = true;
+    }
+    else if (GetAsyncKeyState('A') & 0x8000)
+    {
+        g_MainCamera.m_viewMatrix.m_matrix[3][0] -= .001f;
+        calculate = true;
+    }
+    if (GetAsyncKeyState('W') & 0x8000 && (GetAsyncKeyState(VK_LCONTROL)))
+    {
+        g_MainCamera.m_viewMatrix.m_matrix[3][2] -= .001f;
+        calculate = true;
+    }
+    else if (GetAsyncKeyState('S') & 0x8000 && (GetAsyncKeyState(VK_LCONTROL)))
+    {
+        g_MainCamera.m_viewMatrix.m_matrix[3][2] += .001f;
+        calculate = true;
+    }
+    else if (GetAsyncKeyState('W') & 0x8000) {
+        g_MainCamera.m_viewMatrix.m_matrix[3][1] += .001f;
+        calculate = true;
+    }
+    else if (GetAsyncKeyState('S') & 0x8000)
+    {
+        g_MainCamera.m_viewMatrix.m_matrix[3][1] -= .001f;
+        calculate = true;
+    }
+
+    if (calculate == true)
+    {
+        struct WVP
+        {
+            MyMatrix4 view;
+            MyMatrix4 proj;
+        };
+
+        myWVP.view = g_MainCamera.m_viewMatrix.GetTransposed();
+
+        g_GraphicsMan->updateConstantBuffer(g_pWVP, &myWVP, sizeof(myWVP));
+    }
+}
+
+
 void Render()
 {
     /*
@@ -470,7 +521,7 @@ void Render()
     g_GraphicsMan->clearRenderTargetView(g_GraphicsMan->getMainDSV());
 
     UINT offset = 0;
-    
+    moveCamera();
     g_GraphicsMan->setRenderTargets(1, g_GraphicsMan->getMainDSV());
     g_GraphicsMan->setInputLayout(g_pInputLayout);
     g_GraphicsMan->setVertexBuffers(g_pVertexBuffer, offset);
@@ -480,12 +531,10 @@ void Render()
     g_GraphicsMan->setPixelShader(g_pPixelShader);
     g_GraphicsMan->setShaderResources(g_pTexture2D);
     g_GraphicsMan->setSamplers(g_pSampleState);
-
+    
+    g_pWVP->getBuffer();
     g_GraphicsMan->vsSetConstantBuffers(g_pWVP);
     g_GraphicsMan->DrawIndex(36, 0, 0);
 
     g_GraphicsMan->present();
 }
-
-
-
