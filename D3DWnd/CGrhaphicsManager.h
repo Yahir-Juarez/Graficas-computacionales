@@ -202,7 +202,7 @@ public:
 	void setRenderTargets(UINT numViews = 1, ID3D11DepthStencilView* depthStencilView = nullptr);
 	void setInputLayout(SPtr<InputLayout> inputLayout); //
 	void setVertexBuffers(SPtr <VertexBuffer> vertexBuffer,UINT& offset);//--Cadenas//
-	void setIndexBuffers(SPtr <IndexBuffer> indexBuffer);//--Cadenas//
+	void setIndexBuffers(SPtr <IndexBuffer> indexBuffer, DXGI_FORMAT format = DXGI_FORMAT::DXGI_FORMAT_R32_UINT);//--Cadenas//
 	void setPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);//
 	void setVertexShader(SPtr<VertexShader> pShader);
 	void setPixelShader(SPtr<PixelShader> pShader);

@@ -288,9 +288,9 @@ void CGraphicsManager::setVertexBuffers(SPtr <VertexBuffer> vertexBuffer, UINT& 
 	m_deviceContext->IASetVertexBuffers(0, 1, &vertexBuffer->m_pBuffer, &vertexBuffer->m_stride, &offset);
 }
 
-void CGraphicsManager::setIndexBuffers(SPtr <IndexBuffer> indexBuffer)
+void CGraphicsManager::setIndexBuffers(SPtr <IndexBuffer> indexBuffer, DXGI_FORMAT format)
 {
-	m_deviceContext->IASetIndexBuffer(indexBuffer->m_pBuffer, DXGI_FORMAT_R32_UINT, 0);
+	m_deviceContext->IASetIndexBuffer(indexBuffer->m_pBuffer, format, 0);
 }
 
 void CGraphicsManager::setPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology)

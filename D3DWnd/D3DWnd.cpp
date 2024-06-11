@@ -359,7 +359,7 @@ BOOL InitGraphicsAssets()
     GetClientRect(g_hWnd, &rc);
 
     g_MainCamera.setViewData(myVector3(0.0f, 0.0f, -5.0f), myVector3(0.0f, 0.0f, 0.0f), myVector3(0.0f, 1.0f, 0.0f));
-    g_MainCamera.setProjData(45.0f, static_cast<float>(rc.right), static_cast<float>(rc.bottom), 0.1f, 100.0f);
+    g_MainCamera.setProjData((3.1416f/4.0f), static_cast<float>(rc.right), static_cast<float>(rc.bottom), 0.1f, 100.0f);
 
 
     struct WVP
@@ -485,10 +485,6 @@ void Render()
     g_GraphicsMan->DrawIndex(36, 0, 0);
 
     g_GraphicsMan->present();
-    
-    myVector3 a(1.0f, 7.0f , 1.0f);
-    myVector3 b(3.0f, 2.0f, 1.0f);
-    myVector3 c(1.0f, 2.0f, 4.0f);
 }
 
 

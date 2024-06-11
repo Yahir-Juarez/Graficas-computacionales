@@ -30,10 +30,10 @@ public:
 
 	myMatrix GetTransposed()
 	{
-		return myMatrix(m_matrix[0][0], m_matrix[0][1], m_matrix[0][2], m_matrix[0][3],
-			m_matrix[1][0], m_matrix[1][1], m_matrix[1][2], m_matrix[1][3],
-			m_matrix[2][0], m_matrix[2][1], m_matrix[2][2], m_matrix[2][3],
-			m_matrix[3][0], m_matrix[3][1], m_matrix[3][2], m_matrix[3][3]);
+		return myMatrix(m_matrix[0][0], m_matrix[1][0], m_matrix[2][0], m_matrix[3][0],
+						m_matrix[0][1], m_matrix[1][1], m_matrix[2][1], m_matrix[3][1],
+						m_matrix[0][2], m_matrix[1][2], m_matrix[2][2], m_matrix[3][2],
+						m_matrix[0][3], m_matrix[1][3], m_matrix[2][3], m_matrix[3][3]);
 	}
 	/*myMatrix(const myMatrix& matrix)
 	{
@@ -66,7 +66,7 @@ public:
 
 		myVector3 YAxis*/
 		myVector3 ZAxis = targetPos - camPos;
-		ZAxis.getVectorNormalize();
+		ZAxis.getVectorNormalize(); //cambiar nombre a funcion
 		myVector3 XAxis = upVector ^ ZAxis;
 		XAxis.getVectorNormalize();
 		myVector3 YAxis = ZAxis ^ XAxis;
@@ -110,7 +110,7 @@ public:
 		m_matrix[2][0] = 0.0f;
 		m_matrix[2][1] = 0.0f;
 		m_matrix[2][2] = maxZ / (maxZ - minZ);
-		m_matrix[2][3] = 0.0f;
+		m_matrix[2][3] = 1.0f;
 
 		m_matrix[3][0] = 0.0f;
 		m_matrix[3][1] = 0.0f;
