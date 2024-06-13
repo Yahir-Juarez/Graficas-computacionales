@@ -40,8 +40,8 @@ public:
 class CameraFPS : public Camera
 {
 public:
-	CameraFPS() : m_camPos(0.0f, 0.0f, 0.0f),
-		m_targetPos(0.0f, 0.0f, 1.0f),
+	CameraFPS() : m_camPos(0.0f, 0.0f, -5.0f),
+		m_targetPos(0.0f, 0.0f, 0.0f),
 		m_upVector(0.0f, 1.0f, 0.0f),
 		m_HalfFOV(3.14159 / 4.0f),
 		m_Width(1.0f),
@@ -106,6 +106,14 @@ public:
 		Up.Normalize();
 	}
 
+	void setData(myVector3& targetPos,
+	myVector3& camPos,
+	myVector3& upVector)
+	{
+		m_targetPos = targetPos; 
+		m_camPos = camPos;
+		m_upVector = upVector;
+	}
 	myVector3 m_targetPos;
 	myVector3 m_camPos;
 	myVector3 m_upVector;

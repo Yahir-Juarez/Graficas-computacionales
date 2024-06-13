@@ -413,8 +413,6 @@ BOOL InitGraphicsAssets()
 
     g_GraphicsMan->updateConstantBuffer(g_pWVP, &myWVP, sizeof(myWVP));
 
-    pScene->mMeshes[0];
-
     return TRUE;
 
 }
@@ -499,62 +497,42 @@ BOOL InitGraphicsAssets()
 //    return result;
 //}
 
+bool isKeyPressed(char key)
+{
+    return GetAsyncKeyState(key) & 0x8000;
+}
 
 void moveCamera()
 {
-    bool calculate = false;
-    if (GetAsyncKeyState('D') & 0x8000) {
-        g_MainCamera.m_viewMatrix.m_matrix[3][0] -= .01f;
-        /*g_MainCamera.moveRight(.1f);*/
-        calculate = true;
-    }
-    else if (GetAsyncKeyState('A') & 0x8000)
-    {
-        g_MainCamera.moveRight(0.00001f);
-       /* g_MainCamera.m_viewMatrix.m_matrix[3][0] += .01f;
-        calculate = true;*/
-    }
-    if (GetAsyncKeyState('W') & 0x8000 && (GetAsyncKeyState(VK_LCONTROL)))
-    {
-        g_MainCamera.m_viewMatrix.m_matrix[3][2] -= 1.0f;
-        calculate = true;
-    }
-    else if (GetAsyncKeyState('S') & 0x8000 && (GetAsyncKeyState(VK_LCONTROL)))
-    {
-        g_MainCamera.m_viewMatrix.m_matrix[3][2] += 1.0f;
-        calculate = true;
-    }
-    else if (GetAsyncKeyState('W') & 0x8000) {
-        g_MainCamera.m_viewMatrix.m_matrix[3][1] += 1.0f;
-        calculate = true;
-    }
-    else if (GetAsyncKeyState('S') & 0x8000)
-    {
-        g_MainCamera.m_viewMatrix.m_matrix[3][1] -= 1.0f;
-        calculate = true;
-    }
-    if (GetAsyncKeyState('X') & 0x8000)
-    {
-        g_MainCamera.RotatdeX(1);
-        calculate = true;
-        Sleep(100);
-    }
-    if (GetAsyncKeyState('Y') & 0x8000)
-    {
-        g_MainCamera.RotatdeY(1);
-        calculate = true;
-        Sleep(100);
-    }
+    myVector3 camMove{0.0f, 0.0f, 0.0f};
 
-
-    //if (calculate == true)
-    //{
-
-    //    myWVP.view = g_MainCamera.m_viewMatrix.GetTransposed();
-    //    //yWVP.proj = g_MainCamera.m_projMatrix.GetTransposed();
-
-    //    g_GraphicsMan->updateConstantBuffer(g_pWVP, &myWVP, sizeof(myWVP));
-    //}
+    if (isKeyPressed('A')) 
+    {
+        camMove.x = 1.0f;
+    }
+    else if (isKeyPressed('D'))
+    {
+        camMove.x = -1.0f;
+    }
+    if (isKeyPressed('W'))
+    {
+        camMove.z = 1.0f;
+    }
+    else if (isKeyPressed('S'))
+    {
+        camMove.z = -1.0f;
+    }
+    if (isKeyPressed('Q'))
+    {
+        camMove.y = 1.0f;
+    }
+    else if (isKeyPressed('E'))
+    {
+        camMove.y = -1.0f;
+    }
+    g_MainCamera.moveForward(camMove.z);
+    g_MainCamera.moveRight(camMove.x);
+    g_MainCamera.moveUp(camMove.y);
 }
 
 

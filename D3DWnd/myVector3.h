@@ -53,14 +53,14 @@ public:
 
 	float operator|(const myVector3& rhs) const 
 	{
-		int resultado = 0;
+		float resultado = 0;
 		for (int i = 0; i < 3; ++i) 
 		{
 			resultado += (&x)[i] * (&rhs.x)[i];
 		}
 		return resultado;
 	}
-	float x = 0.0f;
-	float y = 0.0f;
-	float z = 0.0f;
+	float x;
+	float y;
+	float z;
 };
