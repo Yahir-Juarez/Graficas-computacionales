@@ -8,6 +8,9 @@
 #include "CGrhaphicsManager.h"
 #include "Camera.h"
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 #define MAX_LOADSTRING 100
 
@@ -54,7 +57,7 @@ struct WVP
 WVP myWVP;
 
 bool g_isRunning = true;
-Camera g_MainCamera;
+CameraFPS g_MainCamera;
 // Declaraciones de funciones adelantadas incluidas en este módulo de código:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
@@ -63,6 +66,7 @@ void                Render();
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
+void                moveCamera();
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
                      _In_ LPWSTR    lpCmdLine,
@@ -230,6 +234,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             EndPaint(hWnd, &ps);
         }
         break;
+    case WM_KEYDOWN:
+        moveCamera();
+        break;
     case WM_DESTROY:
         g_isRunning = false;
         PostQuitMessage(0);
@@ -302,7 +309,7 @@ BOOL InitGraphicsAssets()
     
     g_pInputLayout = g_GraphicsMan->createInputLayout(vInputElements, g_pVertexShader);
 
-    g_Mesh.push_back({ -0.5f, 0.5f, 0.5f, 0.0f, 0.0f });
+    /*g_Mesh.push_back({ -0.5f, 0.5f, 0.5f, 0.0f, 0.0f });
     g_Mesh.push_back({ 0.5f, 0.5f, 0.5f, 1.0f, 0.0f });
     g_Mesh.push_back({ 0.5f, 0.5f, 0.8f, 1.0f, 1.0f });
     g_Mesh.push_back({ -0.5f, 0.5f, 0.8f, 0.0f, 1.0f });
@@ -330,11 +337,10 @@ BOOL InitGraphicsAssets()
     g_Mesh.push_back({ -0.5f, -0.5f, 0.8f, 0.0f, 0.0f });
     g_Mesh.push_back({ 0.5f, -0.5f, 0.8f, 1.0f, 0.0f });
     g_Mesh.push_back({ 0.5f, 0.5f, 0.8f, 1.0f, 1.0f });
-    g_Mesh.push_back({ -0.5f, 0.5f, 0.8f, 0.0f, 1.0f });
+    g_Mesh.push_back({ -0.5f, 0.5f, 0.8f, 0.0f, 1.0f });*/
 
-    g_pVertexBuffer = g_GraphicsMan->createVertexBuffer<MODEL_VERTEX>(g_Mesh);
-
-    Vector<uint32> indices
+    Vector<uint32> indices;
+    /*
     {
         3,1,0,
         2,1,3,
@@ -353,9 +359,36 @@ BOOL InitGraphicsAssets()
 
         22,20,21,
         23,20,22
-    };
+    };*/
 
-    g_pIndexBuffer = g_GraphicsMan->createIndexBuffer(indices);
+    Assimp::Importer aImporter;
+    const aiScene* pScene = aImporter.ReadFile("Test2.fbx", aiProcessPreset_TargetRealtime_MaxQuality);
+
+    for (unsigned int i = 0; i < pScene->mNumMeshes; ++i) {
+        aiMesh* mesh = pScene->mMeshes[i];
+
+        for (unsigned int j = 0; j < mesh->mNumVertices; ++j) {
+            aiVector3D vertex = mesh->mVertices[j];
+            float t_1 = vertex.x;
+            float t_2 = vertex.y;
+            float t_3 = vertex.z;
+            aiVector3D texCoord = mesh->mTextureCoords[0][j]; 
+            float t_4 = texCoord.x;
+            float t_5 = texCoord.y;
+            g_Mesh.push_back({ t_1, t_2, t_3, t_4, t_5 });
+        }
+
+        for (unsigned int j = 0; j < mesh->mNumFaces; ++j) {
+            aiFace face = mesh->mFaces[j];
+            for (unsigned int k = 0; k < face.mNumIndices; ++k) {
+                uint32 indexIter = face.mIndices[k];
+                indices.push_back(indexIter);
+                g_GraphicsMan->m_index++;
+            }
+        }
+        g_pVertexBuffer = g_GraphicsMan->createVertexBuffer<MODEL_VERTEX>(g_Mesh);
+        g_pIndexBuffer = g_GraphicsMan->createIndexBuffer(indices);
+    }
 
     int sizeoM = sizeof(MyMatrix4);
 
@@ -368,7 +401,7 @@ BOOL InitGraphicsAssets()
     GetClientRect(g_hWnd, &rc);
 
     g_MainCamera.setViewData(myVector3(0.0f, 0.0f, -5.0f), myVector3(0.0f, 0.0f, 0.0f), myVector3(0.0f, 1.0f, 0.0f));
-    g_MainCamera.setProjData((3.1416f/4.0f), static_cast<float>(rc.right), static_cast<float>(rc.bottom), 0.1f, 100.0f);
+    g_MainCamera.setProjData((3.1416f/4.0f), static_cast<float>(rc.right), static_cast<float>(rc.bottom), 0.1f, 400.0f);
 
 
     
@@ -379,6 +412,8 @@ BOOL InitGraphicsAssets()
     myWVP.proj = g_MainCamera.m_projMatrix.GetTransposed();
 
     g_GraphicsMan->updateConstantBuffer(g_pWVP, &myWVP, sizeof(myWVP));
+
+    pScene->mMeshes[0];
 
     return TRUE;
 
@@ -469,46 +504,57 @@ void moveCamera()
 {
     bool calculate = false;
     if (GetAsyncKeyState('D') & 0x8000) {
-        g_MainCamera.m_viewMatrix.m_matrix[3][0] += .001f;
+        g_MainCamera.m_viewMatrix.m_matrix[3][0] -= .01f;
+        /*g_MainCamera.moveRight(.1f);*/
         calculate = true;
     }
     else if (GetAsyncKeyState('A') & 0x8000)
     {
-        g_MainCamera.m_viewMatrix.m_matrix[3][0] -= .001f;
-        calculate = true;
+        g_MainCamera.moveRight(0.00001f);
+       /* g_MainCamera.m_viewMatrix.m_matrix[3][0] += .01f;
+        calculate = true;*/
     }
     if (GetAsyncKeyState('W') & 0x8000 && (GetAsyncKeyState(VK_LCONTROL)))
     {
-        g_MainCamera.m_viewMatrix.m_matrix[3][2] -= .001f;
+        g_MainCamera.m_viewMatrix.m_matrix[3][2] -= 1.0f;
         calculate = true;
     }
     else if (GetAsyncKeyState('S') & 0x8000 && (GetAsyncKeyState(VK_LCONTROL)))
     {
-        g_MainCamera.m_viewMatrix.m_matrix[3][2] += .001f;
+        g_MainCamera.m_viewMatrix.m_matrix[3][2] += 1.0f;
         calculate = true;
     }
     else if (GetAsyncKeyState('W') & 0x8000) {
-        g_MainCamera.m_viewMatrix.m_matrix[3][1] += .001f;
+        g_MainCamera.m_viewMatrix.m_matrix[3][1] += 1.0f;
         calculate = true;
     }
     else if (GetAsyncKeyState('S') & 0x8000)
     {
-        g_MainCamera.m_viewMatrix.m_matrix[3][1] -= .001f;
+        g_MainCamera.m_viewMatrix.m_matrix[3][1] -= 1.0f;
         calculate = true;
     }
-
-    if (calculate == true)
+    if (GetAsyncKeyState('X') & 0x8000)
     {
-        struct WVP
-        {
-            MyMatrix4 view;
-            MyMatrix4 proj;
-        };
-
-        myWVP.view = g_MainCamera.m_viewMatrix.GetTransposed();
-
-        g_GraphicsMan->updateConstantBuffer(g_pWVP, &myWVP, sizeof(myWVP));
+        g_MainCamera.RotatdeX(1);
+        calculate = true;
+        Sleep(100);
     }
+    if (GetAsyncKeyState('Y') & 0x8000)
+    {
+        g_MainCamera.RotatdeY(1);
+        calculate = true;
+        Sleep(100);
+    }
+
+
+    //if (calculate == true)
+    //{
+
+    //    myWVP.view = g_MainCamera.m_viewMatrix.GetTransposed();
+    //    //yWVP.proj = g_MainCamera.m_projMatrix.GetTransposed();
+
+    //    g_GraphicsMan->updateConstantBuffer(g_pWVP, &myWVP, sizeof(myWVP));
+    //}
 }
 
 
@@ -521,7 +567,6 @@ void Render()
     g_GraphicsMan->clearRenderTargetView(g_GraphicsMan->getMainDSV());
 
     UINT offset = 0;
-    moveCamera();
     g_GraphicsMan->setRenderTargets(1, g_GraphicsMan->getMainDSV());
     g_GraphicsMan->setInputLayout(g_pInputLayout);
     g_GraphicsMan->setVertexBuffers(g_pVertexBuffer, offset);
@@ -534,7 +579,12 @@ void Render()
     
     g_pWVP->getBuffer();
     g_GraphicsMan->vsSetConstantBuffers(g_pWVP);
-    g_GraphicsMan->DrawIndex(36, 0, 0);
+    g_GraphicsMan->DrawIndex(g_GraphicsMan->m_index++, 0, 0);
+
+    myWVP.view = g_MainCamera.m_viewMatrix.GetTransposed();
+    myWVP.proj = g_MainCamera.m_projMatrix.GetTransposed();
+
+    g_GraphicsMan->updateConstantBuffer(g_pWVP, &myWVP, sizeof(myWVP));
 
     g_GraphicsMan->present();
 }

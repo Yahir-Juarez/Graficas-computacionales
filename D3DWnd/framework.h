@@ -7,7 +7,7 @@
 #include "targetver.h"
 #define WIN32_LEAN_AND_MEAN             // Excluir material rara vez utilizado de encabezados de Windows
 // Archivos de encabezado de Windows
-#include <windows.h>
+#include <windowsx.h>
 // Archivos de encabezado en tiempo de ejecución de C
 #include <stdlib.h>
 #include <malloc.h>

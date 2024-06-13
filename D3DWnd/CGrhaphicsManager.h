@@ -212,6 +212,8 @@ public:
 	void DrawIndex(UINT count, UINT startIndexLocation = 0, UINT BaseLocation = 0);
 
 	void vsSetConstantBuffers(SPtr<ConstantBuffer> bufferID3D11, UINT32 StartSlot = 0, UINT32 NumBuffers = 1);
+
+	uint32 m_index = 0;
 private:
 	bool m_bFullScreen;
 	DXGI_SAMPLE_DESC m_multiConfig;

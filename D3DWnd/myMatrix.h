@@ -66,9 +66,9 @@ public:
 
 		myVector3 YAxis*/
 		myVector3 ZAxis = targetPos - camPos;
-		ZAxis.getVectorNormalize(); //cambiar nombre a funcion
+		ZAxis.Normalize(); //cambiar nombre a funcion
 		myVector3 XAxis = upVector ^ ZAxis;
-		XAxis.getVectorNormalize();
+		XAxis.Normalize();
 		myVector3 YAxis = ZAxis ^ XAxis;
 
 

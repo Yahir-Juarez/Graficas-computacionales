@@ -166,6 +166,7 @@
     <ClInclude Include="Texture2D.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CGraphicsManager.cpp" />
     <ClCompile Include="D3DWnd.cpp" />
     <ClCompile Include="GPUBuffer.cpp" />
