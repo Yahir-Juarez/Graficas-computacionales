@@ -400,7 +400,7 @@ BOOL InitGraphicsAssets()
     RECT rc;
     GetClientRect(g_hWnd, &rc);
 
-    g_MainCamera.setViewData(myVector3(0.0f, 0.0f, -5.0f), myVector3(0.0f, 0.0f, 0.0f), myVector3(0.0f, 1.0f, 0.0f));
+    g_MainCamera.setViewData(myVector3(0.0f, 0.0f, -50.0f), myVector3(0.0f, 0.0f, 0.0f), myVector3(0.0f, 1.0f, 0.0f));
     g_MainCamera.setProjData((3.1416f/4.0f), static_cast<float>(rc.right), static_cast<float>(rc.bottom), 0.1f, 400.0f);
 
 
@@ -533,6 +533,22 @@ void moveCamera()
     g_MainCamera.moveForward(camMove.z);
     g_MainCamera.moveRight(camMove.x);
     g_MainCamera.moveUp(camMove.y);
+    if (isKeyPressed('X'))
+    {
+        g_MainCamera.rotate(0.1f, 0.0f);
+    }
+    if (isKeyPressed('Y'))
+    {
+        g_MainCamera.rotate(0.0f, -0.1f);
+    }
+    if (isKeyPressed('Z'))
+    {
+        g_MainCamera.rotate(-0.1f, 0.0f);
+    }
+    if (isKeyPressed('T'))
+    {
+        g_MainCamera.rotate(0.0f, 0.1f);
+    }
 }
 
 

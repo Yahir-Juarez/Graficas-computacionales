@@ -104,6 +104,9 @@ public:
 		right.Normalize();
 		myVector3 Up = right ^ forward;
 		Up.Normalize();
+		m_targetPos = m_targetPos + Up * yaw;
+		m_targetPos = m_targetPos + right * pitch;
+		setViewData(m_camPos, m_targetPos, m_upVector);
 	}
 
 	void setData(myVector3& targetPos,
