@@ -35,10 +35,34 @@ public:
 						m_matrix[0][2], m_matrix[1][2], m_matrix[2][2], m_matrix[3][2],
 						m_matrix[0][3], m_matrix[1][3], m_matrix[2][3], m_matrix[3][3]);
 	}
+
+	myMatrix operator*(const myMatrix& other) const {
+		myMatrix result;
+		for (int i = 0; i < 4; ++i) {
+			for (int j = 0; j < 4; ++j) {
+				result.m_matrix[i][j] = 0;
+				for (int k = 0; k < 4; ++k) {
+					result.m_matrix[i][j] += m_matrix[i][k] * other.m_matrix[k][j];
+				}
+			}
+		}
+		return result;
+	}
+
+	myVector3 operator*(const myVector3& vec) const {
+		myVector3 result;
+		result.x = m_matrix[0][0] * vec.x + m_matrix[0][1] * vec.y + m_matrix[0][2] * vec.z + 0.0f;
+		result.y = m_matrix[1][0] * vec.x + m_matrix[1][1] * vec.y + m_matrix[1][2] * vec.z + 0.0f;
+		result.z = m_matrix[2][0] * vec.x + m_matrix[2][1] * vec.y + m_matrix[2][2] * vec.z + 0.0f;
+		return result;
+	}
+
+	//myVector3 TransformPosition(myVector3 position);
+	//myVector3 TransformDirection(myVector3 direction);
 	/*myMatrix(const myMatrix& matrix)
 	{
 		for (int y = 0; y < 4; y++)
-		{
+		{b
 			for (int x = 0; x < 4; x++)
 			{
 				m_matrix[x][y] = matrix[x][y];
@@ -128,4 +152,85 @@ public:
 		m_matrix[2][0] = 0.0f; m_matrix[2][1] = 0.0f; m_matrix[2][2] =(-nearPlane - farPlane) / zRange; m_matrix[2][3] = 2.0f * farPlane * nearPlane / zRange;
 		m_matrix[3][0] = 0.0f; m_matrix[3][1] = 0.0f; m_matrix[3][2] = 1.0f; m_matrix[3][3] = 0.0f;
 	}*/
+};
+
+class RotationXMatrix : public MyMatrix4
+{
+public:
+	RotationXMatrix(float rad)
+	{
+		m_matrix[0][0] = 1.0f;
+		m_matrix[0][1] = 0.0f;
+		m_matrix[0][2] = 0.0f;
+		m_matrix[0][3] = 0.0f;
+
+		m_matrix[1][0] = 0.0f;
+		m_matrix[1][1] = cos(rad);
+		m_matrix[1][2] = sin(rad);
+		m_matrix[1][3] = 0.0f;
+
+		m_matrix[2][0] = 0.0f;
+		m_matrix[2][1] = -sin(rad);
+		m_matrix[2][2] = cos(rad);
+		m_matrix[2][3] = 0.0f;
+
+		m_matrix[3][0] = 0.0f;
+		m_matrix[3][1] = 0.0f;
+		m_matrix[3][2] = 0.0f;
+		m_matrix[3][3] = 1.0f;
+	}
+};
+
+class RotationYMatrix : public MyMatrix4
+{
+public:
+	RotationYMatrix(float rad)
+	{
+		m_matrix[0][0] = cos(rad);
+		m_matrix[0][1] = 0.0f;
+		m_matrix[0][2] = -sin(rad);
+		m_matrix[0][3] = 0.0f;
+
+		m_matrix[1][0] = 0.0f;
+		m_matrix[1][1] = 1.0f;
+		m_matrix[1][2] = 0.0f;
+		m_matrix[1][3] = 0.0f;
+
+		m_matrix[2][0] = sin(rad);
+		m_matrix[2][1] = 0.0f;
+		m_matrix[2][2] = cos(rad);
+		m_matrix[2][3] = 0.0f;
+
+		m_matrix[3][0] = 0.0f;
+		m_matrix[3][1] = 0.0f;
+		m_matrix[3][2] = 0.0f;
+		m_matrix[3][3] = 1.0f;
+	}
+};
+
+class RotationZMatrix : public MyMatrix4
+{
+public:
+	RotationZMatrix(float rad)
+	{
+		m_matrix[0][0] = cos(rad);
+		m_matrix[0][1] = -sin(rad);
+		m_matrix[0][2] = 0.0f;
+		m_matrix[0][3] = 0.0f;
+
+		m_matrix[1][0] = sin(rad);
+		m_matrix[1][1] = cos(rad);
+		m_matrix[1][2] = 0.0f;
+		m_matrix[1][3] = 0.0f;
+
+		m_matrix[2][0] = 0.0f;
+		m_matrix[2][1] = 0.0f;
+		m_matrix[2][2] = 0.0f;
+		m_matrix[2][3] = 0.0f;
+
+		m_matrix[3][0] = 0.0f;
+		m_matrix[3][1] = 0.0f;
+		m_matrix[3][2] = 0.0f;
+		m_matrix[3][3] = 1.0f;
+	}
 };

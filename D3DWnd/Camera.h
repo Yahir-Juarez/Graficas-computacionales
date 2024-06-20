@@ -97,16 +97,23 @@ public:
 		setViewData(m_camPos, m_targetPos, m_upVector);
 	}
 
-	void rotate(float yaw, float pitch)
+	void rotate(float pitch, float yaw)
 	{
 		myVector3 forward = m_targetPos - m_camPos;
+		forward.Normalize();
+
+		MyMatrix4 rotation = RotationXMatrix(pitch) * RotationYMatrix(yaw);
+		myVector3 rotatedForward = rotation * forward;
+		m_targetPos = m_camPos + rotatedForward;
+		setViewData(m_camPos, m_targetPos, m_upVector);
+		/*myVector3 forward = m_targetPos - m_camPos;
 		myVector3 right = forward ^ m_upVector;
 		right.Normalize();
 		myVector3 Up = right ^ forward;
 		Up.Normalize();
 		m_targetPos = m_targetPos + Up * yaw;
 		m_targetPos = m_targetPos + right * pitch;
-		setViewData(m_camPos, m_targetPos, m_upVector);
+		setViewData(m_camPos, m_targetPos, m_upVector);*/
 	}
 
 	void setData(myVector3& targetPos,

@@ -60,6 +60,7 @@ public:
 		}
 		return resultado;
 	}
+
 	float x;
 	float y;
 	float z;

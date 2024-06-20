@@ -36,17 +36,20 @@ CGraphicsManager* g_GraphicsMan;
 SPtr <VertexShader> g_pVertexShader;
 SPtr <PixelShader> g_pPixelShader;
 
-SPtr <IndexBuffer> g_pIndexBuffer;
+Vector<SPtr <IndexBuffer>> g_pIndexBuffer;
 
 SPtr<InputLayout> g_pInputLayout;
-SPtr <VertexBuffer> g_pVertexBuffer;
+Vector<SPtr<VertexBuffer>> g_pVertexBuffer;
 
 SPtr<ConstantBuffer> g_pWVP;
-SPtr<MODEL_VERTEX> g_pModelVertex;
+Vector<SPtr<MODEL_VERTEX>> g_pModelVertex;
 
 SPtr<Texture2D> g_pTexture2D;
 SPtr<SamplerState> g_pSampleState;
 Vector<MODEL_VERTEX> g_Mesh;
+
+POINT g_MousePos;
+POINT g_MousePosLast;
 
 struct WVP
 {
@@ -67,6 +70,7 @@ LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
 void                moveCamera();
+void                moveCameraRotate();
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
                      _In_ LPWSTR    lpCmdLine,
@@ -237,6 +241,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_KEYDOWN:
         moveCamera();
         break;
+    case WM_MOUSEMOVE:
+    {
+        g_MousePosLast = g_MousePos;
+
+        g_MousePos.x = GET_X_LPARAM(lParam);
+        g_MousePos.y = GET_Y_LPARAM(lParam);
+
+        if (g_MousePosLast.x - g_MousePos.x != 0.0f || g_MousePosLast.y - g_MousePos.y != 0.0f)
+        {
+            g_MainCamera.rotate((g_MousePosLast.y - g_MousePos.y) * 0.005f, (g_MousePosLast.x - g_MousePos.x) * 0.005f);
+        }
+    }
+        break;
     case WM_DESTROY:
         g_isRunning = false;
         PostQuitMessage(0);
@@ -362,9 +379,9 @@ BOOL InitGraphicsAssets()
     };*/
 
     Assimp::Importer aImporter;
-    const aiScene* pScene = aImporter.ReadFile("Test2.fbx", aiProcessPreset_TargetRealtime_MaxQuality);
+    const aiScene* pScene = aImporter.ReadFile("Test5.fbx", aiProcessPreset_TargetRealtime_MaxQuality);
 
-    for (unsigned int i = 0; i < pScene->mNumMeshes; ++i) {
+    for (int i = 0; i < pScene->mNumMeshes; ++i) {
         aiMesh* mesh = pScene->mMeshes[i];
 
         for (unsigned int j = 0; j < mesh->mNumVertices; ++j) {
@@ -378,16 +395,19 @@ BOOL InitGraphicsAssets()
             g_Mesh.push_back({ t_1, t_2, t_3, t_4, t_5 });
         }
 
+        uint32 numVertex = 0;
         for (unsigned int j = 0; j < mesh->mNumFaces; ++j) {
             aiFace face = mesh->mFaces[j];
             for (unsigned int k = 0; k < face.mNumIndices; ++k) {
                 uint32 indexIter = face.mIndices[k];
                 indices.push_back(indexIter);
-                g_GraphicsMan->m_index++;
+                numVertex++;
             }
         }
-        g_pVertexBuffer = g_GraphicsMan->createVertexBuffer<MODEL_VERTEX>(g_Mesh);
-        g_pIndexBuffer = g_GraphicsMan->createIndexBuffer(indices);
+        g_GraphicsMan->m_index.push_back(numVertex);
+        g_pVertexBuffer.push_back(g_GraphicsMan->createVertexBuffer<MODEL_VERTEX>(g_Mesh));
+        g_pIndexBuffer.push_back( g_GraphicsMan->createIndexBuffer(indices));
+        g_Mesh.clear();
     }
 
     int sizeoM = sizeof(MyMatrix4);
@@ -400,7 +420,7 @@ BOOL InitGraphicsAssets()
     RECT rc;
     GetClientRect(g_hWnd, &rc);
 
-    g_MainCamera.setViewData(myVector3(0.0f, 0.0f, -50.0f), myVector3(0.0f, 0.0f, 0.0f), myVector3(0.0f, 1.0f, 0.0f));
+    g_MainCamera.setViewData(myVector3(0.0f, 0.0f, -5.0f), myVector3(0.0f, 0.0f, 0.0f), myVector3(0.0f, 1.0f, 0.0f));
     g_MainCamera.setProjData((3.1416f/4.0f), static_cast<float>(rc.right), static_cast<float>(rc.bottom), 0.1f, 400.0f);
 
 
@@ -506,34 +526,40 @@ void moveCamera()
 {
     myVector3 camMove{0.0f, 0.0f, 0.0f};
 
+    float speed = 1.0f;
+
+    if (GetAsyncKeyState(VK_LSHIFT) & 0x8000)
+    {
+        speed = 3.0f;
+    }
     if (isKeyPressed('A')) 
     {
-        camMove.x = 1.0f;
+        camMove.x = speed;
     }
     else if (isKeyPressed('D'))
     {
-        camMove.x = -1.0f;
+        camMove.x = -speed;
     }
     if (isKeyPressed('W'))
     {
-        camMove.z = 1.0f;
+        camMove.z = speed;
     }
     else if (isKeyPressed('S'))
     {
-        camMove.z = -1.0f;
+        camMove.z = -speed;
     }
     if (isKeyPressed('Q'))
     {
-        camMove.y = 1.0f;
+        camMove.y = speed;
     }
     else if (isKeyPressed('E'))
     {
-        camMove.y = -1.0f;
+        camMove.y = -speed;
     }
     g_MainCamera.moveForward(camMove.z);
     g_MainCamera.moveRight(camMove.x);
     g_MainCamera.moveUp(camMove.y);
-    if (isKeyPressed('X'))
+   /* if (isKeyPressed('X'))
     {
         g_MainCamera.rotate(0.1f, 0.0f);
     }
@@ -548,7 +574,11 @@ void moveCamera()
     if (isKeyPressed('T'))
     {
         g_MainCamera.rotate(0.0f, 0.1f);
-    }
+    }*/
+}
+
+void moveCameraRotate()
+{
 }
 
 
@@ -561,20 +591,22 @@ void Render()
     g_GraphicsMan->clearRenderTargetView(g_GraphicsMan->getMainDSV());
 
     UINT offset = 0;
-    g_GraphicsMan->setRenderTargets(1, g_GraphicsMan->getMainDSV());
-    g_GraphicsMan->setInputLayout(g_pInputLayout);
-    g_GraphicsMan->setVertexBuffers(g_pVertexBuffer, offset);
-    g_GraphicsMan->setIndexBuffers(g_pIndexBuffer);
-    g_GraphicsMan->setPrimitiveTopology();
-    g_GraphicsMan->setVertexShader(g_pVertexShader);
-    g_GraphicsMan->setPixelShader(g_pPixelShader);
-    g_GraphicsMan->setShaderResources(g_pTexture2D);
-    g_GraphicsMan->setSamplers(g_pSampleState);
-    
-    g_pWVP->getBuffer();
-    g_GraphicsMan->vsSetConstantBuffers(g_pWVP);
-    g_GraphicsMan->DrawIndex(g_GraphicsMan->m_index++, 0, 0);
+    for (int i = 0; i < g_pVertexBuffer.size(); i++)
+    {
+        g_GraphicsMan->setRenderTargets(1, g_GraphicsMan->getMainDSV());
+        g_GraphicsMan->setInputLayout(g_pInputLayout);
+        g_GraphicsMan->setVertexBuffers(g_pVertexBuffer[i], offset);
+        g_GraphicsMan->setIndexBuffers(g_pIndexBuffer[i]);
+        g_GraphicsMan->setPrimitiveTopology();
+        g_GraphicsMan->setVertexShader(g_pVertexShader);
+        g_GraphicsMan->setPixelShader(g_pPixelShader);
+        g_GraphicsMan->setShaderResources(g_pTexture2D);
+        g_GraphicsMan->setSamplers(g_pSampleState);
 
+        //g_pWVP->getBuffer();
+        g_GraphicsMan->vsSetConstantBuffers(g_pWVP);
+        g_GraphicsMan->DrawIndex(g_GraphicsMan->m_index[i], 0, 0);
+    }
     myWVP.view = g_MainCamera.m_viewMatrix.GetTransposed();
     myWVP.proj = g_MainCamera.m_projMatrix.GetTransposed();
 

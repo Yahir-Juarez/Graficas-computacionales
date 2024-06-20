@@ -1,6 +1,6 @@
 #pragma once
 
-#include <d3d11.h>
+//#include <d3d11.h>
 
 #include "Prerequisitos.h"
 
@@ -213,7 +213,7 @@ public:
 
 	void vsSetConstantBuffers(SPtr<ConstantBuffer> bufferID3D11, UINT32 StartSlot = 0, UINT32 NumBuffers = 1);
 
-	uint32 m_index = 0;
+	Vector<uint32> m_index;
 private:
 	bool m_bFullScreen;
 	DXGI_SAMPLE_DESC m_multiConfig;

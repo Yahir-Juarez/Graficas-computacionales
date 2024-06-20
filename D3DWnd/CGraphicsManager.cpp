@@ -1,6 +1,9 @@
 #include "CGrhaphicsManager.h"
 
 #define WIN32_LEAN_AND_MEAN
+
+#include <d3d11.h>
+
 #include <Windows.h>
 
 #include <cassert>
