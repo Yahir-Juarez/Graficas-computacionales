@@ -14,6 +14,15 @@
 
 #include "SamplerState.h"
 
+struct MODEL_VERTEX
+{
+	float x;
+	float y;
+	float z;
+	float u;
+	float v;
+};
+
 class LinearColor
 {
 public:
@@ -212,6 +221,8 @@ public:
 	void DrawIndex(UINT count, UINT startIndexLocation = 0, UINT BaseLocation = 0);
 
 	void vsSetConstantBuffers(SPtr<ConstantBuffer> bufferID3D11, UINT32 StartSlot = 0, UINT32 NumBuffers = 1);
+
+	void loadModel(const Path& filename, Vector<MODEL_VERTEX> Mesh, Vector<SPtr <IndexBuffer>>& indexBuffer, Vector<SPtr<VertexBuffer>>& VertexBuffer);
 
 	Vector<uint32> m_index;
 private:

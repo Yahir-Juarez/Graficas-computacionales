@@ -12,16 +12,12 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "Stb_Image.h"
+
 #define MAX_LOADSTRING 100
 
-struct MODEL_VERTEX
-{
-    float x;
-    float y;
-    float z;
-    float u;
-    float v;
-};
+
 
 // Variables globales:
 HWND g_hWnd;
@@ -289,9 +285,15 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     }
     return (INT_PTR)FALSE;
 }
-
+//Basic usage(see HDR discussion below for HDR usage) :
+    //    int x,y,n;
+    //    unsigned char *data = stbi_load(filename, &x, &y, &n, 4); 
 BOOL InitGraphicsAssets()
 {
+    int x, y, n;
+
+    unsigned char* data = stbi_load("Lena.BMP", &x, &y, &n, 4);
+
     /*
     bloque de creacion.
     */
@@ -326,95 +328,16 @@ BOOL InitGraphicsAssets()
     
     g_pInputLayout = g_GraphicsMan->createInputLayout(vInputElements, g_pVertexShader);
 
-    /*g_Mesh.push_back({ -0.5f, 0.5f, 0.5f, 0.0f, 0.0f });
-    g_Mesh.push_back({ 0.5f, 0.5f, 0.5f, 1.0f, 0.0f });
-    g_Mesh.push_back({ 0.5f, 0.5f, 0.8f, 1.0f, 1.0f });
-    g_Mesh.push_back({ -0.5f, 0.5f, 0.8f, 0.0f, 1.0f });
+    /////////////Carga modelo////////////
 
-    g_Mesh.push_back({ -0.5f, -0.5f, 0.5f, 0.0f, 0.0f });
-    g_Mesh.push_back({ 0.5f, -0.5f, 0.5f, 1.0f, 0.0f });
-    g_Mesh.push_back({ 0.5f, -0.5f, 0.8f, 1.0f, 1.0f });
-    g_Mesh.push_back({ -0.5f, -0.5f, 0.8f, 0.0f, 1.0f });
+    g_GraphicsMan->loadModel("Test2.fbx", g_Mesh, g_pIndexBuffer, g_pVertexBuffer);
 
-    g_Mesh.push_back({ -0.5f, -0.5f, 0.8f, 0.0f, 0.0f });
-    g_Mesh.push_back({ -0.5f, -0.5f, 0.5f, 1.0f, 0.0f });
-    g_Mesh.push_back({ -0.5f, 0.5f, 0.5f, 1.0f, 1.0f });
-    g_Mesh.push_back({ -0.5f, 0.5f, 0.8f, 0.0f, 1.0f });
-
-    g_Mesh.push_back({ 0.5f, -0.5f, 0.8f, 0.0f, 0.0f });
-    g_Mesh.push_back({ 0.5f, -0.5f, 0.5f, 1.0f, 0.0f });
-    g_Mesh.push_back({ 0.5f, 0.5f, 0.5f, 1.0f, 1.0f });
-    g_Mesh.push_back({ 0.5f, 0.5f, 0.8f, 0.0f, 1.0f });
-
-    g_Mesh.push_back({ -0.5f, -0.5f, 0.5f, 1.0f, 1.0f });
-    g_Mesh.push_back({ 0.5f, -0.5f, 0.5f, 0.0f, 1.0f });
-    g_Mesh.push_back({ 0.5f, 0.5f, 0.5f, 0.0f, 0.0f });
-    g_Mesh.push_back({ -0.5f, 0.5f, 0.5f, 1.0f, 0.0f });
-
-    g_Mesh.push_back({ -0.5f, -0.5f, 0.8f, 0.0f, 0.0f });
-    g_Mesh.push_back({ 0.5f, -0.5f, 0.8f, 1.0f, 0.0f });
-    g_Mesh.push_back({ 0.5f, 0.5f, 0.8f, 1.0f, 1.0f });
-    g_Mesh.push_back({ -0.5f, 0.5f, 0.8f, 0.0f, 1.0f });*/
-
-    Vector<uint32> indices;
-    /*
-    {
-        3,1,0,
-        2,1,3,
-
-        6,4,5,
-        7,4,6,
-
-        11,9,8,
-        10,9,11,
-
-        14,12,13,
-        15,12,14,
-
-        19,17,16,
-        18,17,19,
-
-        22,20,21,
-        23,20,22
-    };*/
-
-    Assimp::Importer aImporter;
-    const aiScene* pScene = aImporter.ReadFile("Test5.fbx", aiProcessPreset_TargetRealtime_MaxQuality);
-
-    for (int i = 0; i < pScene->mNumMeshes; ++i) {
-        aiMesh* mesh = pScene->mMeshes[i];
-
-        for (unsigned int j = 0; j < mesh->mNumVertices; ++j) {
-            aiVector3D vertex = mesh->mVertices[j];
-            float t_1 = vertex.x;
-            float t_2 = vertex.y;
-            float t_3 = vertex.z;
-            aiVector3D texCoord = mesh->mTextureCoords[0][j]; 
-            float t_4 = texCoord.x;
-            float t_5 = texCoord.y;
-            g_Mesh.push_back({ t_1, t_2, t_3, t_4, t_5 });
-        }
-
-        uint32 numVertex = 0;
-        for (unsigned int j = 0; j < mesh->mNumFaces; ++j) {
-            aiFace face = mesh->mFaces[j];
-            for (unsigned int k = 0; k < face.mNumIndices; ++k) {
-                uint32 indexIter = face.mIndices[k];
-                indices.push_back(indexIter);
-                numVertex++;
-            }
-        }
-        g_GraphicsMan->m_index.push_back(numVertex);
-        g_pVertexBuffer.push_back(g_GraphicsMan->createVertexBuffer<MODEL_VERTEX>(g_Mesh));
-        g_pIndexBuffer.push_back( g_GraphicsMan->createIndexBuffer(indices));
-        g_Mesh.clear();
-    }
-
+    /////////////////////////////////////
     int sizeoM = sizeof(MyMatrix4);
 
     g_pWVP = g_GraphicsMan->createConsantBuffer(sizeoM * 2);
 
-    g_pTexture2D = g_GraphicsMan->createTexture2DFromFile("StarWars_Mando.bmp");
+    g_pTexture2D = g_GraphicsMan->createTexture2DFromFile("Test2Texture.bmp");
     g_pSampleState = g_GraphicsMan->CreateSampleState();
 
     RECT rc;
@@ -591,7 +514,7 @@ void Render()
     g_GraphicsMan->clearRenderTargetView(g_GraphicsMan->getMainDSV());
 
     UINT offset = 0;
-    for (int i = 0; i < g_pVertexBuffer.size(); i++)
+    for (int i = 0; i < g_pIndexBuffer.size(); i++)
     {
         g_GraphicsMan->setRenderTargets(1, g_GraphicsMan->getMainDSV());
         g_GraphicsMan->setInputLayout(g_pInputLayout);
@@ -613,4 +536,97 @@ void Render()
     g_GraphicsMan->updateConstantBuffer(g_pWVP, &myWVP, sizeof(myWVP));
 
     g_GraphicsMan->present();
+}
+
+
+void cargaModelo()
+{
+    //////////////////////////////////////////////////// CARGA MODELO ////////////////////////////////////////////
+
+    /*g_Mesh.push_back({ -0.5f, 0.5f, 0.5f, 0.0f, 0.0f });
+    g_Mesh.push_back({ 0.5f, 0.5f, 0.5f, 1.0f, 0.0f });
+    g_Mesh.push_back({ 0.5f, 0.5f, 0.8f, 1.0f, 1.0f });
+    g_Mesh.push_back({ -0.5f, 0.5f, 0.8f, 0.0f, 1.0f });
+
+    g_Mesh.push_back({ -0.5f, -0.5f, 0.5f, 0.0f, 0.0f });
+    g_Mesh.push_back({ 0.5f, -0.5f, 0.5f, 1.0f, 0.0f });
+    g_Mesh.push_back({ 0.5f, -0.5f, 0.8f, 1.0f, 1.0f });
+    g_Mesh.push_back({ -0.5f, -0.5f, 0.8f, 0.0f, 1.0f });
+
+    g_Mesh.push_back({ -0.5f, -0.5f, 0.8f, 0.0f, 0.0f });
+    g_Mesh.push_back({ -0.5f, -0.5f, 0.5f, 1.0f, 0.0f });
+    g_Mesh.push_back({ -0.5f, 0.5f, 0.5f, 1.0f, 1.0f });
+    g_Mesh.push_back({ -0.5f, 0.5f, 0.8f, 0.0f, 1.0f });
+
+    g_Mesh.push_back({ 0.5f, -0.5f, 0.8f, 0.0f, 0.0f });
+    g_Mesh.push_back({ 0.5f, -0.5f, 0.5f, 1.0f, 0.0f });
+    g_Mesh.push_back({ 0.5f, 0.5f, 0.5f, 1.0f, 1.0f });
+    g_Mesh.push_back({ 0.5f, 0.5f, 0.8f, 0.0f, 1.0f });
+
+    g_Mesh.push_back({ -0.5f, -0.5f, 0.5f, 1.0f, 1.0f });
+    g_Mesh.push_back({ 0.5f, -0.5f, 0.5f, 0.0f, 1.0f });
+    g_Mesh.push_back({ 0.5f, 0.5f, 0.5f, 0.0f, 0.0f });
+    g_Mesh.push_back({ -0.5f, 0.5f, 0.5f, 1.0f, 0.0f });
+
+    g_Mesh.push_back({ -0.5f, -0.5f, 0.8f, 0.0f, 0.0f });
+    g_Mesh.push_back({ 0.5f, -0.5f, 0.8f, 1.0f, 0.0f });
+    g_Mesh.push_back({ 0.5f, 0.5f, 0.8f, 1.0f, 1.0f });
+    g_Mesh.push_back({ -0.5f, 0.5f, 0.8f, 0.0f, 1.0f });*/
+
+    //Vector<uint32> indices;
+    ///*
+    //{
+    //    3,1,0,
+    //    2,1,3,
+
+    //    6,4,5,
+    //    7,4,6,
+
+    //    11,9,8,
+    //    10,9,11,
+
+    //    14,12,13,
+    //    15,12,14,
+
+    //    19,17,16,
+    //    18,17,19,
+
+    //    22,20,21,
+    //    23,20,22
+    //};*/
+
+    //Assimp::Importer aImporter;
+    //const aiScene* pScene = aImporter.ReadFile("Test2.fbx", aiProcessPreset_TargetRealtime_MaxQuality);
+
+    //for (int i = 0; i < pScene->mNumMeshes; ++i) {
+    //    aiMesh* mesh = pScene->mMeshes[i];
+
+    //    for (int j = 0; j < mesh->mNumVertices; ++j) {
+    //        aiVector3D vertex = mesh->mVertices[j];
+    //        float posX = vertex.x;
+    //        float posY = vertex.y;
+    //        float posZ = vertex.z;
+    //        aiVector3D texCoord = mesh->mTextureCoords[0][j]; 
+    //        float posU = texCoord.x;
+    //        float posV = texCoord.y;
+    //        g_Mesh.push_back({ posX, posY, posZ, posU, posV });
+    //    }
+
+    //    uint32 numVertex = 0; //codigo todo pitero alch <3 tqm yair :b
+    //    for (int j = 0; j < mesh->mNumFaces; ++j) {
+    //        aiFace face = mesh->mFaces[j];
+    //        for (int k = 0; k < face.mNumIndices; ++k) {
+    //            uint32 indexIter = face.mIndices[k];
+    //            indices.push_back(indexIter);
+    //            numVertex++;
+    //        }
+    //    }
+    //    g_GraphicsMan->m_index.push_back(numVertex);
+    //    g_pVertexBuffer.push_back(g_GraphicsMan->createVertexBuffer<MODEL_VERTEX>(g_Mesh));
+    //    g_pIndexBuffer.push_back( g_GraphicsMan->createIndexBuffer(indices));
+    //    g_Mesh.clear();
+    //}
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    bool x;
 }

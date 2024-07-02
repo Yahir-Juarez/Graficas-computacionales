@@ -10,6 +10,10 @@
 
 #include "ImageProcess/Image.h"
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 inline void
 throwIfFailed(HRESULT hr)
 {
@@ -336,6 +340,42 @@ void CGraphicsManager::DrawIndex(UINT count, UINT startIndexLocation, UINT BaseL
 void CGraphicsManager::vsSetConstantBuffers(SPtr<ConstantBuffer> bufferID3D11, UINT32 StartSlot, UINT32 NumBuffers)
 {
 	m_deviceContext->VSSetConstantBuffers(StartSlot, NumBuffers, &bufferID3D11->m_pBuffer);
+}
+
+void CGraphicsManager::loadModel(const Path& filename, Vector<MODEL_VERTEX> Mesh, Vector<SPtr <IndexBuffer>>& indexBuffer, Vector<SPtr<VertexBuffer>>& VertexBuffer)
+{
+	Vector<uint32> indices;
+	Assimp::Importer aImporter;
+	const aiScene* pScene = aImporter.ReadFile(filename, aiProcessPreset_TargetRealtime_MaxQuality);
+
+	for (int i = 0; i < pScene->mNumMeshes; ++i) {
+		aiMesh* mesh = pScene->mMeshes[i];
+
+		for (int j = 0; j < mesh->mNumVertices; ++j) {
+			aiVector3D vertex = mesh->mVertices[j];
+			float posX = vertex.x;
+			float posY = vertex.y;
+			float posZ = vertex.z;
+			aiVector3D texCoord = mesh->mTextureCoords[0][j];
+			float posU = texCoord.x;
+			float posV = texCoord.y;
+			Mesh.push_back({ posX, posY, posZ, posU, posV });
+		}
+
+		uint32 numVertex = 0; //codigo todo pitero alch <3 tqm yair :b
+		for (int j = 0; j < mesh->mNumFaces; ++j) {
+			aiFace face = mesh->mFaces[j];
+			for (int k = 0; k < face.mNumIndices; ++k) {
+				uint32 indexIter = face.mIndices[k];
+				indices.push_back(indexIter);
+				numVertex++;
+			}
+		}
+		m_index.push_back(numVertex);
+		VertexBuffer.push_back(createVertexBuffer<MODEL_VERTEX>(Mesh));
+		indexBuffer.push_back(createIndexBuffer(indices));
+		Mesh.clear();
+	}
 }
 
 SPtr<Texture2D> CGraphicsManager::createTexture2DFromFile(const Path& fileName, uint32 format, uint32 usage)
