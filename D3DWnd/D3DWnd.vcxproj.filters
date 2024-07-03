@@ -78,6 +78,9 @@
     <ClInclude Include="Stb_Image.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="TextureManage.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="D3DWnd.cpp">
@@ -123,6 +126,9 @@
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="CGraphicsManagerOpenGL.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureManage.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>

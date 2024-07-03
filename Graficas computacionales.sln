@@ -9,12 +9,18 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "D3DWnd", "D3DWnd\D3DWnd.vcx
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug OPGL|x64 = Debug OPGL|x64
+		Debug OPGL|x86 = Debug OPGL|x86
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D657353E-0BBA-403C-B4A2-51F3609370BB}.Debug OPGL|x64.ActiveCfg = Debug OPGL|x64
+		{D657353E-0BBA-403C-B4A2-51F3609370BB}.Debug OPGL|x64.Build.0 = Debug OPGL|x64
+		{D657353E-0BBA-403C-B4A2-51F3609370BB}.Debug OPGL|x86.ActiveCfg = Debug OPGL|Win32
+		{D657353E-0BBA-403C-B4A2-51F3609370BB}.Debug OPGL|x86.Build.0 = Debug OPGL|Win32
 		{D657353E-0BBA-403C-B4A2-51F3609370BB}.Debug|x64.ActiveCfg = Debug|x64
 		{D657353E-0BBA-403C-B4A2-51F3609370BB}.Debug|x64.Build.0 = Debug|x64
 		{D657353E-0BBA-403C-B4A2-51F3609370BB}.Debug|x86.ActiveCfg = Debug|Win32
@@ -23,6 +29,10 @@ Global
 		{D657353E-0BBA-403C-B4A2-51F3609370BB}.Release|x64.Build.0 = Release|x64
 		{D657353E-0BBA-403C-B4A2-51F3609370BB}.Release|x86.ActiveCfg = Release|Win32
 		{D657353E-0BBA-403C-B4A2-51F3609370BB}.Release|x86.Build.0 = Release|Win32
+		{FD01DA4C-213C-4913-92BC-EFA30EA1D486}.Debug OPGL|x64.ActiveCfg = Debug OPGL|x64
+		{FD01DA4C-213C-4913-92BC-EFA30EA1D486}.Debug OPGL|x64.Build.0 = Debug OPGL|x64
+		{FD01DA4C-213C-4913-92BC-EFA30EA1D486}.Debug OPGL|x86.ActiveCfg = Debug OPGL|Win32
+		{FD01DA4C-213C-4913-92BC-EFA30EA1D486}.Debug OPGL|x86.Build.0 = Debug OPGL|Win32
 		{FD01DA4C-213C-4913-92BC-EFA30EA1D486}.Debug|x64.ActiveCfg = Debug|x64
 		{FD01DA4C-213C-4913-92BC-EFA30EA1D486}.Debug|x64.Build.0 = Debug|x64
 		{FD01DA4C-213C-4913-92BC-EFA30EA1D486}.Debug|x86.ActiveCfg = Debug|Win32

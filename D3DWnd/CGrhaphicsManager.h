@@ -56,7 +56,7 @@ public:
 
 	ID3D11RenderTargetView* getRenderTargetView() { return m_pRenderTargetView; }
 
-	SPtr<InputLayout> createInputLayout(const Vector<D3D11_INPUT_ELEMENT_DESC>& layout, 
+	SPtr<InputLayout> createInputLayout(Vector<void*> p_layout,
 										WPtr<VertexShader> pVS);
 
 	SPtr<VertexShader> createVertexShader(const Path& filaName,
@@ -204,10 +204,10 @@ public:
 	SPtr<Texture2D> createTexture2DFromFile(const Path& fileName, uint32 format = DXGI_FORMAT_B8G8R8A8_UNORM, uint32 usage = D3D11_USAGE_DEFAULT);
 	SPtr<Texture2D> createTexture(uint32 Width, uint32 height, uint32 format = DXGI_FORMAT_B8G8R8A8_UNORM, uint32 usage = D3D11_USAGE_DEFAULT, uint32 bindFlag = D3D11_BIND_SHADER_RESOURCE);
 	
-
+#ifdef D3D11_GRAPH_SYS
 	ID3D11DeviceContext* getDC() { return m_deviceContext; } //minuto 10:20
 	ID3D11DepthStencilView* getMainDSV(){ return m_pDethStencil->m_pDepthStencilView; }
-
+#endif // D3D11_GRAPH_SYS
 	void setRenderTargets(UINT numViews = 1, ID3D11DepthStencilView* depthStencilView = nullptr);
 	void setInputLayout(SPtr<InputLayout> inputLayout); //
 	void setVertexBuffers(SPtr <VertexBuffer> vertexBuffer,UINT& offset);//--Cadenas//

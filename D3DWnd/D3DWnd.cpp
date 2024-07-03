@@ -326,7 +326,13 @@ BOOL InitGraphicsAssets()
     posElements1.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
     posElements1.InstanceDataStepRate = 0;
     
-    g_pInputLayout = g_GraphicsMan->createInputLayout(vInputElements, g_pVertexShader);
+    Vector<void*> vpInputLayout;
+    for (int i = 0; i < vInputElements.size(); i++)
+    {
+        vpInputLayout.push_back(&vInputElements[i]);
+    }
+
+    g_pInputLayout = g_GraphicsMan->createInputLayout(vpInputLayout, g_pVertexShader);
 
     /////////////Carga modelo////////////
 

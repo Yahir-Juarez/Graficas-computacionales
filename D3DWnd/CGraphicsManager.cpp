@@ -1,5 +1,7 @@
 #include "CGrhaphicsManager.h"
 
+#ifdef D3D11_GRAPH_SYS
+
 #define WIN32_LEAN_AND_MEAN
 
 #include <d3d11.h>
@@ -249,11 +251,17 @@ SPtr<PixelShader> CGraphicsManager::createPixelShader(const Path& fileName, cons
 	return myShader;
 }
 
-SPtr<InputLayout> CGraphicsManager::createInputLayout(const Vector<D3D11_INPUT_ELEMENT_DESC>& layout,
+SPtr<InputLayout> CGraphicsManager::createInputLayout(Vector<void*> p_layout,
 	WPtr<VertexShader> pVS)
 {
 	auto pLayout = std::make_shared<InputLayout>();
 	auto vs = pVS.lock();
+	Vector<D3D11_INPUT_ELEMENT_DESC> layout;
+
+	for (int i = 0; i < p_layout.size(); i++)
+	{
+		layout.push_back(*reinterpret_cast<D3D11_INPUT_ELEMENT_DESC*>(p_layout[i]));
+	}
 	throwIfFailed(m_device->CreateInputLayout(&layout[0], 
 		static_cast<UINT>(layout.size()), //rellenar hora 10:06
 		vs->m_pBlob->GetBufferPointer(), 
@@ -440,3 +448,5 @@ SPtr<Texture2D> CGraphicsManager::createTexture(uint32 Width, uint32 Height, uin
 	}
 	return pT2D;
 }
+
+#endif // D3D11_GRAPH_SYS
