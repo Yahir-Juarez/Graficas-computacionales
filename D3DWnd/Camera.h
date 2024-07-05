@@ -40,7 +40,10 @@ public:
 class CameraFPS : public Camera
 {
 public:
-	CameraFPS() : m_camPos(0.0f, 0.0f, -5.0f),
+	float actualPitch = 0;
+	float actualYaw = 0;
+
+	CameraFPS() : m_camPos(0.0f, 0.0f, 50.0f),
 		m_targetPos(0.0f, 0.0f, 0.0f),
 		m_upVector(0.0f, 1.0f, 0.0f),
 		m_HalfFOV(3.14159 / 4.0f),
@@ -63,6 +66,7 @@ public:
 		float maxZ) : m_camPos(camPos), m_targetPos(targetPos), m_upVector(upVector),
 		m_HalfFOV(HalfFOV), m_Width(Width), m_Height(Height), m_MinZ(minZ), m_MaxZ(maxZ)
 	{	
+		m_camPosRotate = m_camPos;
 		setViewData(m_camPos, m_targetPos, m_upVector);
 		setProjData(m_HalfFOV, m_Width, m_Height, m_MinZ, m_MaxZ);
 	}
@@ -72,6 +76,7 @@ public:
 		myVector3 forward = m_targetPos - m_camPos;
 		forward.Normalize();
 		m_camPos = m_camPos + forward * amount;
+		m_camPosRotate = m_camPos;
 		m_targetPos = m_targetPos + forward * amount;
 		setViewData(m_camPos, m_targetPos, m_upVector);
 	}
@@ -82,6 +87,7 @@ public:
 		myVector3 right = forward ^ m_upVector;
 		right.Normalize();
 		m_camPos = m_camPos + right * amount;
+		m_camPosRotate = m_camPos;
 		m_targetPos = m_targetPos + right * amount;
 		setViewData(m_camPos, m_targetPos, m_upVector);
 	}
@@ -93,18 +99,23 @@ public:
 		myVector3 Up = right ^ forward;
 		Up.Normalize();
 		m_camPos = m_camPos + Up * amount;
+		m_camPosRotate = m_camPos;
 		m_targetPos = m_targetPos + Up * amount;
 		setViewData(m_camPos, m_targetPos, m_upVector);
 	}
 
 	void rotate(float pitch, float yaw)
 	{
-		myVector3 forward = m_targetPos - m_camPos;
+		myVector3 forward = m_targetPos - m_camPosRotate;
 		forward.Normalize();
 
-		MyMatrix4 rotation = RotationXMatrix(pitch) * RotationYMatrix(yaw);
+		actualPitch += pitch;
+		actualYaw += yaw;
+
+		MyMatrix4 rotation = RotationXMatrix(actualPitch) * RotationYMatrix(actualYaw);
 		myVector3 rotatedForward = rotation * forward;
-		m_targetPos = m_camPos + rotatedForward;
+
+		m_targetPos = m_camPosRotate + rotatedForward;
 		setViewData(m_camPos, m_targetPos, m_upVector);
 		/*myVector3 forward = m_targetPos - m_camPos;
 		myVector3 right = forward ^ m_upVector;
@@ -126,6 +137,7 @@ public:
 	}
 	myVector3 m_targetPos;
 	myVector3 m_camPos;
+	myVector3 m_camPosRotate;
 	myVector3 m_upVector;
 	float m_HalfFOV;
 	float m_Width;

@@ -352,26 +352,36 @@ void CGraphicsManager::vsSetConstantBuffers(SPtr<ConstantBuffer> bufferID3D11, U
 
 void CGraphicsManager::loadModel(const Path& filename, Vector<MODEL_VERTEX> Mesh, Vector<SPtr <IndexBuffer>>& indexBuffer, Vector<SPtr<VertexBuffer>>& VertexBuffer)
 {
-	Vector<uint32> indices;
 	Assimp::Importer aImporter;
 	const aiScene* pScene = aImporter.ReadFile(filename, aiProcessPreset_TargetRealtime_MaxQuality);
 
-	for (int i = 0; i < pScene->mNumMeshes; ++i) {
+	for (int i = 0; i < pScene->mNumMeshes; ++i) 
+	{
+		Vector<uint32> indices;
 		aiMesh* mesh = pScene->mMeshes[i];
 
-		for (int j = 0; j < mesh->mNumVertices; ++j) {
+		for (int j = 0; j < mesh->mNumVertices; ++j) 
+		{
 			aiVector3D vertex = mesh->mVertices[j];
 			float posX = vertex.x;
 			float posY = vertex.y;
 			float posZ = vertex.z;
-			aiVector3D texCoord = mesh->mTextureCoords[0][j];
-			float posU = texCoord.x;
-			float posV = texCoord.y;
-			Mesh.push_back({ posX, posY, posZ, posU, posV });
+			if (mesh->HasTextureCoords(0)) 
+			{
+				aiVector3D texCoord = mesh->mTextureCoords[0][j];
+				float posU = texCoord.x;
+				float posV = texCoord.y;
+				Mesh.push_back({ posX, posY, posZ, posU, posV });
+			}
+			else 
+			{
+				Mesh.push_back({ posX, posY, posZ, 0.0f, 0.0f });
+			}
 		}
 
-		uint32 numVertex = 0; //codigo todo pitero alch <3 tqm yair :b
-		for (int j = 0; j < mesh->mNumFaces; ++j) {
+		uint32 numVertex = 0; 
+		for (int j = 0; j < mesh->mNumFaces; ++j) 
+		{
 			aiFace face = mesh->mFaces[j];
 			for (int k = 0; k < face.mNumIndices; ++k) {
 				uint32 indexIter = face.mIndices[k];

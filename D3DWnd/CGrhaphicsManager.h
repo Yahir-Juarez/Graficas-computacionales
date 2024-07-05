@@ -237,3 +237,5 @@ private:
 	
 	ID3D11RenderTargetView* m_pRenderTargetView = nullptr;
 };
+
+//Conceprual 08:36

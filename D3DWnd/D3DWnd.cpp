@@ -331,26 +331,27 @@ BOOL InitGraphicsAssets()
     {
         vpInputLayout.push_back(&vInputElements[i]);
     }
-
+    
     g_pInputLayout = g_GraphicsMan->createInputLayout(vpInputLayout, g_pVertexShader);
 
     /////////////Carga modelo////////////
 
     g_GraphicsMan->loadModel("Test2.fbx", g_Mesh, g_pIndexBuffer, g_pVertexBuffer);
+    //g_GraphicsMan->loadModel("Bistro_Research_Interior.fbx", g_Mesh, g_pIndexBuffer, g_pVertexBuffer);
 
     /////////////////////////////////////
     int sizeoM = sizeof(MyMatrix4);
 
     g_pWVP = g_GraphicsMan->createConsantBuffer(sizeoM * 2);
 
-    g_pTexture2D = g_GraphicsMan->createTexture2DFromFile("Test2Texture.bmp");
+   g_pTexture2D = g_GraphicsMan->createTexture2DFromFile("Test2Texture.bmp");
     g_pSampleState = g_GraphicsMan->CreateSampleState();
 
     RECT rc;
     GetClientRect(g_hWnd, &rc);
 
-    g_MainCamera.setViewData(myVector3(0.0f, 0.0f, -5.0f), myVector3(0.0f, 0.0f, 0.0f), myVector3(0.0f, 1.0f, 0.0f));
-    g_MainCamera.setProjData((3.1416f/4.0f), static_cast<float>(rc.right), static_cast<float>(rc.bottom), 0.1f, 400.0f);
+    g_MainCamera.setViewData(myVector3(0.0f, 0.0f, 50.0f), myVector3(0.0f, 0.0f, 0.0f), myVector3(0.0f, 1.0f, 0.0f));
+    g_MainCamera.setProjData((3.1416f/4.0f), static_cast<float>(rc.right), static_cast<float>(rc.bottom), 0.1f, 800.0f);
 
 
     

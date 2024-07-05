@@ -24,7 +24,9 @@ SPtr<VertexShader> CGraphicsManager::createVertexShader(const Path& fileName, co
 	}
 
 	glGetProgramiv()*/
-
+	GLuint VertexArrayID;
+	glGenVertexArrays(1, &VertexArrayID);
+	glBindVertexArray(VertexArrayID);
 	return myShader;
 }
 
