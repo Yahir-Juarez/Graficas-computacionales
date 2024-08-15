@@ -106,16 +106,15 @@ public:
 
 	void rotate(float pitch, float yaw)
 	{
-		myVector3 forward = m_targetPos - m_camPosRotate;
+
+		////////Rotacioon de camara base///////////
+
+		myVector3 forward = m_targetPos - m_camPos;
 		forward.Normalize();
 
-		actualPitch += pitch;
-		actualYaw += yaw;
-
-		MyMatrix4 rotation = RotationXMatrix(actualPitch) * RotationYMatrix(actualYaw);
+		MyMatrix4 rotation = RotationXMatrix(pitch) * RotationYMatrix(yaw);
 		myVector3 rotatedForward = rotation * forward;
-
-		m_targetPos = m_camPosRotate + rotatedForward;
+		m_targetPos = m_camPos + rotatedForward;
 		setViewData(m_camPos, m_targetPos, m_upVector);
 		/*myVector3 forward = m_targetPos - m_camPos;
 		myVector3 right = forward ^ m_upVector;
@@ -124,7 +123,70 @@ public:
 		Up.Normalize();
 		m_targetPos = m_targetPos + Up * yaw;
 		m_targetPos = m_targetPos + right * pitch;
+		setViewData(m_camPos, m_targetPos, m_upVector);
+
+		/////////////////////////////////////////////////////////
+
+		/////////////////////Pruebas de rotacion de camara////////////
+
+		//myVector3 forward = m_targetPos - m_camPos;
+		//forward.Normalize();
+		///*actualPitch = 0.0112999883;
+		//actualYaw = 0.0112999883;*/
+		//MyMatrix4 rotation = RotationXMatrix(-actualPitch) * RotationYMatrix(-actualYaw);
+		//myVector3 rotatedForward = rotation * forward;
+		//m_targetPos = m_camPos + rotatedForward;
+		//setViewData(m_camPos, m_targetPos, m_upVector);
+
+
+		//////////////////////"Mas viable"/////////////////////////
+
+		//myVector3 forward2 = m_targetPos - m_camPos;
+		//forward2.Normalize();
+		////actualPitch += 0.001;
+		//if (yaw > 0.0000001f)
+		//{
+		//	yaw += 0.0f;
+		//}
+		//actualYaw += yaw;
+		//MyMatrix4 rotation2 = RotationXMatrix(actualPitch) * RotationYMatrix(3.1416/2);
+		//myVector3 rotatedForward2 = rotation2 * forward2;
+		//m_targetPos = m_camPos + rotatedForward2;
+		//setViewData(m_camPos, m_targetPos, m_upVector);
+
+		///////////////////////////////////////////////////////////////////////
+
+		/*myVector3 forward = m_targetPos - m_camPos;
+		myVector3 right = forward ^ m_upVector;
+		right.Normalize();
+		myVector3 Up = right ^ forward;
+		Up.Normalize();
+		m_targetPos = m_targetPos + Up * yaw;
+		m_targetPos = m_targetPos + right * pitch;
+		setViewData(m_camPos, m_targetPos, m_upVector);
 		setViewData(m_camPos, m_targetPos, m_upVector);*/
+		/*myVector3 forward = m_targetPos - m_camPosRotate;
+		forward.Normalize();
+
+		actualPitch += pitch;
+		actualYaw += yaw;
+
+		MyMatrix4 rotation = RotationXMatrix(pitch) * RotationYMatrix(yaw);
+		myVector3 rotatedForward = rotation * forward;
+
+		m_targetPos = m_camPosRotate + rotatedForward;
+		setViewData(m_camPos, m_targetPos, m_upVector);*/
+
+		/*myVector3 forward = m_targetPos - m_camPos;
+		myVector3 right = forward ^ m_upVector;
+		right.Normalize();
+		myVector3 Up = right ^ forward;
+		Up.Normalize();
+		m_targetPos = m_targetPos + Up * yaw;
+		m_targetPos = m_targetPos + right * pitch;
+		setViewData(m_camPos, m_targetPos, m_upVector);*/
+	
+		////////////////////////////////////////////////////////
 	}
 
 	void setData(myVector3& targetPos,

@@ -12,9 +12,6 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "Stb_Image.h"
-
 #define MAX_LOADSTRING 100
 
 
@@ -106,6 +103,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     // Bucle principal de mensajes:
 
 
+    float time = 0.0f;
     while (g_isRunning)
     {
         while (PeekMessage(&msg, g_hWnd, 0, 0, PM_REMOVE))
@@ -122,6 +120,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             /*graph.clearRenderTarget(graph.getRenderTargetView(), LinearColor(1, 0, 0, 1));
             graph.present();*/
         }
+        //time = gettick
         Render();
     }
 
@@ -248,6 +247,29 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             g_MainCamera.rotate((g_MousePosLast.y - g_MousePos.y) * 0.005f, (g_MousePosLast.x - g_MousePos.x) * 0.005f);
         }
+
+        /////////////////////Test rotacion///////////////////////////////
+        //if (g_MousePosLast.x - g_MousePos.x != 0.0f || g_MousePosLast.y - g_MousePos.y != 0.0f)
+        //{
+        //    //g_MainCamera.rotate((g_MousePosLast.y - g_MousePos.y) * 0.000005f, (g_MousePosLast.x - g_MousePos.x) * 0.000005f);
+        //    if (g_MousePosLast.y - g_MousePos.y > 0)
+        //    {
+        //        g_MainCamera.rotate(0.001, 0.0f);
+        //    }
+        //    else
+        //    {
+        //        g_MainCamera.rotate(-0.001, 0.0f);
+        //    }
+        //    if ((g_MousePosLast.x - g_MousePos.x) > 0)
+        //    {
+        //        g_MainCamera.rotate(0, 0.001f);
+        //    }
+        //    else
+        //    {
+        //        g_MainCamera.rotate(0, -0.001f);
+        //    }
+        //}
+    ////////////////////////////////////////////////////////
     }
         break;
     case WM_DESTROY:
@@ -290,10 +312,6 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     //    unsigned char *data = stbi_load(filename, &x, &y, &n, 4); 
 BOOL InitGraphicsAssets()
 {
-    int x, y, n;
-
-    unsigned char* data = stbi_load("Lena.BMP", &x, &y, &n, 4);
-
     /*
     bloque de creacion.
     */
@@ -336,7 +354,7 @@ BOOL InitGraphicsAssets()
 
     /////////////Carga modelo////////////
 
-    g_GraphicsMan->loadModel("Test2.fbx", g_Mesh, g_pIndexBuffer, g_pVertexBuffer);
+    g_GraphicsMan->loadModel("Walking.fbx", g_Mesh, g_pIndexBuffer, g_pVertexBuffer);
     //g_GraphicsMan->loadModel("Bistro_Research_Interior.fbx", g_Mesh, g_pIndexBuffer, g_pVertexBuffer);
 
     /////////////////////////////////////
@@ -344,7 +362,7 @@ BOOL InitGraphicsAssets()
 
     g_pWVP = g_GraphicsMan->createConsantBuffer(sizeoM * 2);
 
-   g_pTexture2D = g_GraphicsMan->createTexture2DFromFile("Test2Texture.bmp");
+    g_pTexture2D = g_GraphicsMan->createTexture2DFromFile("Test2Texture.bmp");
     g_pSampleState = g_GraphicsMan->CreateSampleState();
 
     RECT rc;

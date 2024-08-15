@@ -224,6 +224,7 @@ public:
 
 	void loadModel(const Path& filename, Vector<MODEL_VERTEX> Mesh, Vector<SPtr <IndexBuffer>>& indexBuffer, Vector<SPtr<VertexBuffer>>& VertexBuffer);
 
+
 	Vector<uint32> m_index;
 private:
 	bool m_bFullScreen;

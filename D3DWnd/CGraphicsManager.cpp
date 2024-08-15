@@ -16,6 +16,33 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "Stb_Image.h"
+
+bool nodeIsBone(const aiNode* node, const aiScene* scene) {
+	for (unsigned int i = 0; i < scene->mNumMeshes; i++) {
+		const aiMesh* mesh = scene->mMeshes[i];
+		for (unsigned int j = 0; j < mesh->mNumBones; j++) {
+			if (std::string(mesh->mBones[j]->mName.C_Str()) == node->mName.C_Str()) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+void ProcessSkeleton(const aiNode* node, const aiScene* scene) {
+	for (unsigned int i = 0; i < node->mNumChildren; i++) {
+		ProcessSkeleton(node->mChildren[i], scene);
+	}
+
+	// Si este nodo es un hueso, obtén su información
+	if (nodeIsBone(node, scene)) {
+		string x = node->mName.C_Str();
+		// Procesa la información del hueso, como su nombre, posición, rotación, etc.
+	}
+}
+
 inline void
 throwIfFailed(HRESULT hr)
 {
@@ -354,12 +381,15 @@ void CGraphicsManager::loadModel(const Path& filename, Vector<MODEL_VERTEX> Mesh
 {
 	Assimp::Importer aImporter;
 	const aiScene* pScene = aImporter.ReadFile(filename, aiProcessPreset_TargetRealtime_MaxQuality);
-
+	pScene->hasSkeletons();
+	aiNode* rootNode = pScene->mRootNode;
+	ProcessSkeleton(rootNode, pScene);
 	for (int i = 0; i < pScene->mNumMeshes; ++i) 
 	{
 		Vector<uint32> indices;
 		aiMesh* mesh = pScene->mMeshes[i];
-
+		
+		mesh->mBones;
 		for (int j = 0; j < mesh->mNumVertices; ++j) 
 		{
 			aiVector3D vertex = mesh->mVertices[j];
@@ -398,6 +428,23 @@ void CGraphicsManager::loadModel(const Path& filename, Vector<MODEL_VERTEX> Mesh
 
 SPtr<Texture2D> CGraphicsManager::createTexture2DFromFile(const Path& fileName, uint32 format, uint32 usage)
 {
+	//int x, y, n;
+
+	//unsigned char* data = stbi_load(fileName.c_str(), &x, &y, &n, 0);
+	//g_CodecMan.AddCodec(new BMPCodec());
+	//Image newTexture;
+	//newTexture.CreateFromImageFile(fileName);
+
+	//auto pT2D = createTexture(x, y);
+	///*D3D11_SUBRESOURCE_DATA initData;
+	//initData.pSysMem = newTexture.m_pixelData.data();
+	//initData.SysMemPitch = newTexture.m_pitch;
+	//initData.SysMemSlicePitch = 0;*/
+
+	//m_deviceContext->UpdateSubresource(pT2D->m_pTexture, 0, nullptr, data, 4, 0);
+	///*m_device->CreateTexture2D(&descDepth, &initData, &pT2D->m_pTexture);*/
+	//return pT2D;
+
 	g_CodecMan.AddCodec(new BMPCodec());
 	Image newTexture;
 	newTexture.CreateFromImageFile(fileName);

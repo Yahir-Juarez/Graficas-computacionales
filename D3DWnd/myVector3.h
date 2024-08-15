@@ -65,3 +65,24 @@ public:
 	float y;
 	float z;
 };
+
+struct float3
+{
+	float x, y, z;
+};
+struct Light
+{
+	enum LIGHT_TYPE : unsigned int
+	{
+		DIRECTIONA = 0,
+		POINT,
+		SPOT
+
+	};
+	unsigned int Type;
+	float SpotCutoff;
+	float SpotExponent;
+	myVector3 lightDir;
+	myVector3 LightPos;
+	myVector3 LightColor;
+};
