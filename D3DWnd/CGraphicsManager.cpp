@@ -12,36 +12,19 @@
 
 #include "ImageProcess/Image.h"
 
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-
 #define STB_IMAGE_IMPLEMENTATION
 #include "Stb_Image.h"
 
-bool nodeIsBone(const aiNode* node, const aiScene* scene) {
-	for (unsigned int i = 0; i < scene->mNumMeshes; i++) {
-		const aiMesh* mesh = scene->mMeshes[i];
-		for (unsigned int j = 0; j < mesh->mNumBones; j++) {
-			if (std::string(mesh->mBones[j]->mName.C_Str()) == node->mName.C_Str()) {
-				return true;
-			}
-		}
-	}
-	return false;
-}
-
-void ProcessSkeleton(const aiNode* node, const aiScene* scene) {
-	for (unsigned int i = 0; i < node->mNumChildren; i++) {
-		ProcessSkeleton(node->mChildren[i], scene);
-	}
-
-	// Si este nodo es un hueso, obtén su información
-	if (nodeIsBone(node, scene)) {
-		string x = node->mName.C_Str();
-		// Procesa la información del hueso, como su nombre, posición, rotación, etc.
-	}
-}
+//void UpdateAnimation(float deltaTime) {
+//	// Calcula la posición actual en la animación.
+//	float animationTime = fmod(deltaTime * ticksPerSecond, duration);
+//
+//	for (unsigned int i = 0; i < numBones; i++) {
+//		// Interpola las transformaciones de cada hueso.
+//		XMMATRIX boneTransform = InterpolateBone(animationTime, bones[i]);
+//		// Actualiza la matriz global del hueso.
+//	}
+//}
 
 inline void
 throwIfFailed(HRESULT hr)
@@ -381,47 +364,87 @@ void CGraphicsManager::loadModel(const Path& filename, Vector<MODEL_VERTEX> Mesh
 {
 	Assimp::Importer aImporter;
 	const aiScene* pScene = aImporter.ReadFile(filename, aiProcessPreset_TargetRealtime_MaxQuality);
-	pScene->hasSkeletons();
+
 	aiNode* rootNode = pScene->mRootNode;
-	ProcessSkeleton(rootNode, pScene);
-	for (int i = 0; i < pScene->mNumMeshes; ++i) 
+
+	for (int i = 0; i < pScene->mNumMeshes; ++i)
 	{
 		Vector<uint32> indices;
 		aiMesh* mesh = pScene->mMeshes[i];
-		
-		mesh->mBones;
-		for (int j = 0; j < mesh->mNumVertices; ++j) 
+
+		// Inicializar blend weights y bone indices
+		std::vector<MODEL_VERTEX> vertices(mesh->mNumVertices);
+
+		// Procesar vértices y texturas
+		for (int j = 0; j < mesh->mNumVertices; ++j)
 		{
 			aiVector3D vertex = mesh->mVertices[j];
-			float posX = vertex.x;
-			float posY = vertex.y;
-			float posZ = vertex.z;
-			if (mesh->HasTextureCoords(0)) 
+			vertices[j].x = vertex.x;
+			vertices[j].y = vertex.y;
+			vertices[j].z = vertex.z;
+
+			if (mesh->HasTextureCoords(0))
 			{
 				aiVector3D texCoord = mesh->mTextureCoords[0][j];
-				float posU = texCoord.x;
-				float posV = texCoord.y;
-				Mesh.push_back({ posX, posY, posZ, posU, posV });
+				vertices[j].u = texCoord.x;
+				vertices[j].v = texCoord.y;
 			}
-			else 
+			else
 			{
-				Mesh.push_back({ posX, posY, posZ, 0.0f, 0.0f });
+				vertices[j].u = 0.0f;
+				vertices[j].v = 0.0f;
+			}
+
+			// Inicializar pesos e índices a 0
+			memset(vertices[j].blendWeight, 0, sizeof(vertices[j].blendWeight));
+			memset(vertices[j].boneIndices, 0, sizeof(vertices[j].boneIndices));
+		}
+
+		// Procesar huesos y asignar pesos e índices de huesos a los vértices
+		for (int j = 0; j < mesh->mNumBones; ++j)
+		{
+			aiBone* bone = mesh->mBones[j];
+			uint32 boneIndex = j; // o usa un mapa para relacionar con índices reales en tu sistema
+
+			for (int k = 0; k < bone->mNumWeights; ++k)
+			{
+				aiVertexWeight weight = bone->mWeights[k];
+				uint32 vertexID = weight.mVertexId;
+
+				for (int l = 0; l < 4; ++l)
+				{
+					if (vertices[vertexID].blendWeight[l] == 0.0f)
+					{
+						vertices[vertexID].blendWeight[l] = weight.mWeight;
+						vertices[vertexID].boneIndices[l] = boneIndex;
+						break;
+					}
+				}
 			}
 		}
 
-		uint32 numVertex = 0; 
-		for (int j = 0; j < mesh->mNumFaces; ++j) 
+		// Agregar vértices procesados a Mesh
+		Mesh.insert(Mesh.end(), vertices.begin(), vertices.end());
+
+		// Procesar caras e índices
+		uint32 numVertex = 0;
+		for (int j = 0; j < mesh->mNumFaces; ++j)
 		{
 			aiFace face = mesh->mFaces[j];
-			for (int k = 0; k < face.mNumIndices; ++k) {
+			for (int k = 0; k < face.mNumIndices; ++k)
+			{
 				uint32 indexIter = face.mIndices[k];
 				indices.push_back(indexIter);
 				numVertex++;
 			}
 		}
 		m_index.push_back(numVertex);
+
+		// Crear buffers
 		VertexBuffer.push_back(createVertexBuffer<MODEL_VERTEX>(Mesh));
 		indexBuffer.push_back(createIndexBuffer(indices));
+
+		// Limpiar Mesh para el próximo mesh
 		Mesh.clear();
 	}
 }

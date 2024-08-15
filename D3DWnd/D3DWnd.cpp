@@ -120,7 +120,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             /*graph.clearRenderTarget(graph.getRenderTargetView(), LinearColor(1, 0, 0, 1));
             graph.present();*/
         }
-        //time = gettick
+        time = GetTickCount64();
         Render();
     }
 
@@ -320,7 +320,7 @@ BOOL InitGraphicsAssets()
 
     Vector<D3D11_INPUT_ELEMENT_DESC> vInputElements;
 
-    vInputElements.resize(2);
+    vInputElements.resize(4);
     
     auto& posElements = vInputElements[0];
     memset(&posElements, 0, sizeof(D3D11_INPUT_ELEMENT_DESC));
@@ -343,6 +343,28 @@ BOOL InitGraphicsAssets()
     posElements1.AlignedByteOffset = 12;
     posElements1.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
     posElements1.InstanceDataStepRate = 0;
+
+    auto& posElements2 = vInputElements[2];
+    memset(&posElements2, 0, sizeof(D3D11_INPUT_ELEMENT_DESC));
+
+    posElements2.SemanticName = "BLENDWEIGHT";
+    posElements2.SemanticIndex = 0;
+    posElements2.Format = DXGI_FORMAT_R32G32B32_FLOAT;
+    posElements2.InputSlot = 0;
+    posElements2.AlignedByteOffset = 20;
+    posElements2.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+    posElements2.InstanceDataStepRate = 0;
+
+    auto& posElements3 = vInputElements[3];
+    memset(&posElements3, 0, sizeof(D3D11_INPUT_ELEMENT_DESC));
+
+    posElements3.SemanticName = "BLENDINDICES";
+    posElements3.SemanticIndex = 0;
+    posElements3.Format = DXGI_FORMAT_R32G32_FLOAT;
+    posElements3.InputSlot = 0;
+    posElements3.AlignedByteOffset = 36;
+    posElements3.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+    posElements3.InstanceDataStepRate = 0;
     
     Vector<void*> vpInputLayout;
     for (int i = 0; i < vInputElements.size(); i++)

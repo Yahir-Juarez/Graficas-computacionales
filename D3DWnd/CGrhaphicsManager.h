@@ -14,6 +14,8 @@
 
 #include "SamplerState.h"
 
+#include "Skeleton.h"
+
 struct MODEL_VERTEX
 {
 	float x;
@@ -21,6 +23,8 @@ struct MODEL_VERTEX
 	float z;
 	float u;
 	float v;
+	float blendWeight[4];  // Pesos de mezcla (hasta 4 huesos)
+	float boneIndices[4]; // Índices de huesos (correspondientes a los pesos)
 };
 
 class LinearColor
