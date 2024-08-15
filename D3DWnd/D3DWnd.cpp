@@ -320,7 +320,7 @@ BOOL InitGraphicsAssets()
 
     Vector<D3D11_INPUT_ELEMENT_DESC> vInputElements;
 
-    vInputElements.resize(4);
+    vInputElements.resize(8);
     
     auto& posElements = vInputElements[0];
     memset(&posElements, 0, sizeof(D3D11_INPUT_ELEMENT_DESC));
@@ -365,6 +365,50 @@ BOOL InitGraphicsAssets()
     posElements3.AlignedByteOffset = 36;
     posElements3.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
     posElements3.InstanceDataStepRate = 0;
+
+    auto& posElements4 = vInputElements[4];
+    memset(&posElements4, 0, sizeof(D3D11_INPUT_ELEMENT_DESC));
+
+    posElements4.SemanticName = "TEXCOORD";
+    posElements4.SemanticIndex = 1;
+    posElements4.Format = DXGI_FORMAT_R32G32B32_FLOAT;
+    posElements4.InputSlot = 0;
+    posElements4.AlignedByteOffset = 52;
+    posElements4.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+    posElements4.InstanceDataStepRate = 0;
+
+    auto& posElements5 = vInputElements[5];
+    memset(&posElements5, 0, sizeof(D3D11_INPUT_ELEMENT_DESC));
+
+    posElements5.SemanticName = "TEXCOORD";
+    posElements5.SemanticIndex = 2;
+    posElements5.Format = DXGI_FORMAT_R32G32_FLOAT;
+    posElements5.InputSlot = 0;
+    posElements5.AlignedByteOffset = 68;
+    posElements5.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+    posElements5.InstanceDataStepRate = 0;
+
+    auto& posElements6 = vInputElements[6];
+    memset(&posElements6, 0, sizeof(D3D11_INPUT_ELEMENT_DESC));
+
+    posElements6.SemanticName = "TEXCOORD";
+    posElements6.SemanticIndex = 3;
+    posElements6.Format = DXGI_FORMAT_R32G32B32_FLOAT;
+    posElements6.InputSlot = 0;
+    posElements6.AlignedByteOffset = 84;
+    posElements6.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+    posElements6.InstanceDataStepRate = 0;
+
+    auto& posElements7 = vInputElements[7];
+    memset(&posElements7, 0, sizeof(D3D11_INPUT_ELEMENT_DESC));
+
+    posElements7.SemanticName = "COLOR";
+    posElements7.SemanticIndex = 0;
+    posElements7.Format = DXGI_FORMAT_R32G32_FLOAT;
+    posElements7.InputSlot = 0;
+    posElements7.AlignedByteOffset = 92;
+    posElements7.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+    posElements7.InstanceDataStepRate = 0;
     
     Vector<void*> vpInputLayout;
     for (int i = 0; i < vInputElements.size(); i++)

@@ -372,10 +372,8 @@ void CGraphicsManager::loadModel(const Path& filename, Vector<MODEL_VERTEX> Mesh
 		Vector<uint32> indices;
 		aiMesh* mesh = pScene->mMeshes[i];
 
-		// Inicializar blend weights y bone indices
 		std::vector<MODEL_VERTEX> vertices(mesh->mNumVertices);
 
-		// Procesar vértices y texturas
 		for (int j = 0; j < mesh->mNumVertices; ++j)
 		{
 			aiVector3D vertex = mesh->mVertices[j];
@@ -398,13 +396,22 @@ void CGraphicsManager::loadModel(const Path& filename, Vector<MODEL_VERTEX> Mesh
 			// Inicializar pesos e índices a 0
 			memset(vertices[j].blendWeight, 0, sizeof(vertices[j].blendWeight));
 			memset(vertices[j].boneIndices, 0, sizeof(vertices[j].boneIndices));
+
+			// Inicializar los nuevos elementos a valores por defecto (0)
+			memset(vertices[j].instance_Quaternion, 0, sizeof(vertices[j].instance_Quaternion));
+			memset(vertices[j].instance_PositionAndScale, 0, sizeof(vertices[j].instance_PositionAndScale));
+			memset(vertices[j].instance_ScaleYZ, 0, sizeof(vertices[j].instance_ScaleYZ));
+			memset(vertices[j].instance_ColorAndId, 0, sizeof(vertices[j].instance_ColorAndId));
+
+			// Aquí podrías agregar lógica para asignar valores específicos a los nuevos campos,
+			// dependiendo de cómo gestionas las instancias y los datos asociados a ellas.
 		}
 
 		// Procesar huesos y asignar pesos e índices de huesos a los vértices
 		for (int j = 0; j < mesh->mNumBones; ++j)
 		{
 			aiBone* bone = mesh->mBones[j];
-			uint32 boneIndex = j; // o usa un mapa para relacionar con índices reales en tu sistema
+			uint32 boneIndex = j;
 
 			for (int k = 0; k < bone->mNumWeights; ++k)
 			{
@@ -423,10 +430,8 @@ void CGraphicsManager::loadModel(const Path& filename, Vector<MODEL_VERTEX> Mesh
 			}
 		}
 
-		// Agregar vértices procesados a Mesh
 		Mesh.insert(Mesh.end(), vertices.begin(), vertices.end());
 
-		// Procesar caras e índices
 		uint32 numVertex = 0;
 		for (int j = 0; j < mesh->mNumFaces; ++j)
 		{
@@ -440,11 +445,9 @@ void CGraphicsManager::loadModel(const Path& filename, Vector<MODEL_VERTEX> Mesh
 		}
 		m_index.push_back(numVertex);
 
-		// Crear buffers
 		VertexBuffer.push_back(createVertexBuffer<MODEL_VERTEX>(Mesh));
 		indexBuffer.push_back(createIndexBuffer(indices));
 
-		// Limpiar Mesh para el próximo mesh
 		Mesh.clear();
 	}
 }

@@ -25,10 +25,10 @@ struct VS_INPUT
     
     //----------------------------------------------------//
     
-    //float4 instance_Quaternion : TEXCOORD1;
-    //float4 instance_PositionAndScale : TEXCOORD2;
-    //float2 instance_ScaleYZ : TEXCOORD3;
-    //float4 instance_ColorAndId;
+    float4 instance_Quaternion : TEXCOORD1;
+    float4 instance_PositionAndScale : TEXCOORD2;
+    float2 instance_ScaleYZ : TEXCOORD3;
+    float4 instance_ColorAndId : COLOR0;
 };
 
 struct PS_INPUT
