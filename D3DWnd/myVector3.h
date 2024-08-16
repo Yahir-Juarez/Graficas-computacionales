@@ -66,8 +66,6 @@ public:
 	float z;
 };
 
-#include <iostream>
-
 class myVector4 {
 public:
 	float x, y, z, w;
@@ -110,6 +108,62 @@ public:
 	}
 };
 
+class MyQuaternion {
+public:
+	float w, x, y, z;
+
+	// Constructor por defecto: cuaternión identidad
+	MyQuaternion() : w(1), x(0), y(0), z(0) {}
+
+	// Constructor con parámetros
+	MyQuaternion(float w, float x, float y, float z) : w(w), x(x), y(y), z(z) {}
+
+	// Magnitud del cuaternión
+	float magnitude() const {
+		return std::sqrt(w * w + x * x + y * y + z * z);
+	}
+
+	// Normalización del cuaternión
+	MyQuaternion normalize() const {
+		float mag = magnitude();
+		return MyQuaternion(w / mag, x / mag, y / mag, z / mag);
+	}
+
+	// Multiplicación de cuaterniones (composición de rotaciones)
+	MyQuaternion operator*(const MyQuaternion& q) const {
+		return MyQuaternion(
+			w * q.w - x * q.x - y * q.y - z * q.z,
+			w * q.x + x * q.w + y * q.z - z * q.y,
+			w * q.y - x * q.z + y * q.w + z * q.x,
+			w * q.z + x * q.y - y * q.x + z * q.w
+		);
+	}
+
+	// Conversión a matriz de rotación 4x4
+	void toRotationMatrix(float matrix[4][4]) const {
+		MyQuaternion q = normalize();
+
+		matrix[0][0] = 1 - 2 * (q.y * q.y + q.z * q.z);
+		matrix[0][1] = 2 * (q.x * q.y - q.w * q.z);
+		matrix[0][2] = 2 * (q.x * q.z + q.w * q.y);
+		matrix[0][3] = 0;
+
+		matrix[1][0] = 2 * (q.x * q.y + q.w * q.z);
+		matrix[1][1] = 1 - 2 * (q.x * q.x + q.z * q.z);
+		matrix[1][2] = 2 * (q.y * q.z - q.w * q.x);
+		matrix[1][3] = 0;
+
+		matrix[2][0] = 2 * (q.x * q.z - q.w * q.y);
+		matrix[2][1] = 2 * (q.y * q.z + q.w * q.x);
+		matrix[2][2] = 1 - 2 * (q.x * q.x + q.y * q.y);
+		matrix[2][3] = 0;
+
+		matrix[3][0] = 0;
+		matrix[3][1] = 0;
+		matrix[3][2] = 0;
+		matrix[3][3] = 1;
+	}
+};
 
 struct float3
 {
