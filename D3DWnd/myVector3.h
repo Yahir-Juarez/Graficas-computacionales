@@ -66,6 +66,51 @@ public:
 	float z;
 };
 
+#include <iostream>
+
+class myVector4 {
+public:
+	float x, y, z, w;
+
+	// Constructor por defecto - inicializa todos los valores en 0
+	myVector4() : x(0), y(0), z(0), w(0) {}
+
+	// Constructor con parámetros para inicializar todos los componentes
+	myVector4(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
+
+	// Constructor que inicializa todos los componentes con un mismo valor
+	myVector4(float value) : x(value), y(value), z(value), w(value) {}
+
+	// Sobrecarga del operador de suma
+	myVector4 operator+(const myVector4& other) const {
+		return myVector4(x + other.x, y + other.y, z + other.z, w + other.w);
+	}
+
+	// Sobrecarga del operador de resta
+	myVector4 operator-(const myVector4& other) const {
+		return myVector4(x - other.x, y - other.y, z - other.z, w - other.w);
+	}
+
+	// Sobrecarga del operador de multiplicación por un escalar
+	myVector4 operator*(float scalar) const {
+		return myVector4(x * scalar, y * scalar, z * scalar, w * scalar);
+	}
+
+	// Sobrecarga del operador de asignación
+	myVector4& operator=(const myVector4& other) {
+		if (this == &other)
+			return *this; // Evita la autoasignación
+
+		x = other.x;
+		y = other.y;
+		z = other.z;
+		w = other.w;
+
+		return *this;
+	}
+};
+
+
 struct float3
 {
 	float x, y, z;

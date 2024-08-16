@@ -16,23 +16,6 @@
 
 #include "Skeleton.h"
 
-struct MODEL_VERTEX
-{
-	float x;
-	float y;
-	float z;
-	float u;
-	float v;
-	float blendWeight[4];  // Pesos de mezcla (hasta 4 huesos)
-	float boneIndices[4]; // Índices de huesos (correspondientes a los pesos)
-
-	//////////////////////////////////////////////////////////////////////////////////////////
-
-	float instance_Quaternion[4];       // Cuaternión de la instancia
-	float instance_PositionAndScale[4]; // Posición y escala de la instancia
-	float instance_ScaleYZ[2];          // Escala YZ de la instancia
-	float instance_ColorAndId[4];       // Color e ID de la instancia
-};
 
 class LinearColor
 {
