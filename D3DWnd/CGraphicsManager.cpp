@@ -367,79 +367,106 @@ void CGraphicsManager::loadModel(const Path& filename, Vector<MODEL_VERTEX> Mesh
 
 	aiNode* rootNode = pScene->mRootNode;
 
+	//vector <unsigned int> indices;
+	Vector<Bone> vPadre;
+	unsigned int countBounds;
+
+	//for (int i = 0; i < pScene->mNumMeshes; ++i)
+	//{
+	//	Vector<uint32> indices;
+	//	aiMesh* mesh = pScene->mMeshes[i];
+	//	std::vector<MODEL_VERTEX> vertices(mesh->mNumVertices);
+
+	//	for (int j = 0; j < mesh->mNumVertices; ++j)
+	//	{
+	//		aiVector3D vertex = mesh->mVertices[j];
+	//		vertices[j].x = vertex.x;
+	//		vertices[j].y = vertex.y;
+	//		vertices[j].z = vertex.z;
+
+	//		if (mesh->HasTextureCoords(0))
+	//		{
+	//			aiVector3D texCoord = mesh->mTextureCoords[0][j];
+	//			vertices[j].u = texCoord.x;
+	//			vertices[j].v = texCoord.y;
+	//		}
+	//		else
+	//		{
+	//			vertices[j].u = 0.0f;
+	//			vertices[j].v = 0.0f;
+	//		}
+
+	//		// Inicializar pesos e índices a 0
+	//		memset(vertices[j].blendWeight, 0, sizeof(vertices[j].blendWeight));
+	//		memset(vertices[j].boneIndices, 0, sizeof(vertices[j].boneIndices));
+
+	//		// Inicializar los nuevos elementos a valores por defecto (0)
+	//		memset(vertices[j].instance_Quaternion, 0, sizeof(vertices[j].instance_Quaternion));
+	//		memset(vertices[j].instance_PositionAndScale, 0, sizeof(vertices[j].instance_PositionAndScale));
+	//		memset(vertices[j].instance_ScaleYZ, 0, sizeof(vertices[j].instance_ScaleYZ));
+	//		memset(vertices[j].instance_ColorAndId, 0, sizeof(vertices[j].instance_ColorAndId));
+
+	//		// Aquí podrías agregar lógica para asignar valores específicos a los nuevos campos,
+	//		// dependiendo de cómo gestionas las instancias y los datos asociados a ellas.
+	//	}
+
+	//	// Procesar huesos y asignar pesos e índices de huesos a los vértices
+	//	for (int j = 0; j < mesh->mNumBones; ++j)
+	//	{
+	//		aiBone* bone = mesh->mBones[j];
+	//		uint32 boneIndex = j;
+
+	//		for (int k = 0; k < bone->mNumWeights; ++k)
+	//		{
+	//			aiVertexWeight weight = bone->mWeights[k];
+	//			uint32 vertexID = weight.mVertexId;
+
+	//			for (int l = 0; l < 4; ++l)
+	//			{
+	//				if (vertices[vertexID].blendWeight[l] == 0.0f)
+	//				{
+	//					vertices[vertexID].blendWeight[l] = weight.mWeight;
+	//					vertices[vertexID].boneIndices[l] = boneIndex;
+	//					break;
+	//				}
+	//			}
+	//		}
+	//	}
+
+	//	Mesh.insert(Mesh.end(), vertices.begin(), vertices.end());
+
+	//	uint32 numVertex = 0;
+	//	for (int j = 0; j < mesh->mNumFaces; ++j)
+	//	{
+	//		aiFace face = mesh->mFaces[j];
+	//		for (int k = 0; k < face.mNumIndices; ++k)
+	//		{
+	//			uint32 indexIter = face.mIndices[k];
+	//			indices.push_back(indexIter);
+	//			numVertex++;
+	//		}
+	//	}
+	//	m_index.push_back(numVertex);
+
+	//	VertexBuffer.push_back(createVertexBuffer<MODEL_VERTEX>(Mesh));
+	//	indexBuffer.push_back(createIndexBuffer(indices));
+
+	//	Mesh.clear();
+	//}
+
 	for (int i = 0; i < pScene->mNumMeshes; ++i)
 	{
 		Vector<uint32> indices;
 		aiMesh* mesh = pScene->mMeshes[i];
-
-		std::vector<MODEL_VERTEX> vertices(mesh->mNumVertices);
-
-		for (int j = 0; j < mesh->mNumVertices; ++j)
-		{
-			aiVector3D vertex = mesh->mVertices[j];
-			vertices[j].x = vertex.x;
-			vertices[j].y = vertex.y;
-			vertices[j].z = vertex.z;
-
-			if (mesh->HasTextureCoords(0))
-			{
-				aiVector3D texCoord = mesh->mTextureCoords[0][j];
-				vertices[j].u = texCoord.x;
-				vertices[j].v = texCoord.y;
-			}
-			else
-			{
-				vertices[j].u = 0.0f;
-				vertices[j].v = 0.0f;
-			}
-
-			// Inicializar pesos e índices a 0
-			memset(vertices[j].blendWeight, 0, sizeof(vertices[j].blendWeight));
-			memset(vertices[j].boneIndices, 0, sizeof(vertices[j].boneIndices));
-
-			// Inicializar los nuevos elementos a valores por defecto (0)
-			memset(vertices[j].instance_Quaternion, 0, sizeof(vertices[j].instance_Quaternion));
-			memset(vertices[j].instance_PositionAndScale, 0, sizeof(vertices[j].instance_PositionAndScale));
-			memset(vertices[j].instance_ScaleYZ, 0, sizeof(vertices[j].instance_ScaleYZ));
-			memset(vertices[j].instance_ColorAndId, 0, sizeof(vertices[j].instance_ColorAndId));
-
-			// Aquí podrías agregar lógica para asignar valores específicos a los nuevos campos,
-			// dependiendo de cómo gestionas las instancias y los datos asociados a ellas.
-		}
-
-		// Procesar huesos y asignar pesos e índices de huesos a los vértices
-		for (int j = 0; j < mesh->mNumBones; ++j)
-		{
-			aiBone* bone = mesh->mBones[j];
-			uint32 boneIndex = j;
-
-			for (int k = 0; k < bone->mNumWeights; ++k)
-			{
-				aiVertexWeight weight = bone->mWeights[k];
-				uint32 vertexID = weight.mVertexId;
-
-				for (int l = 0; l < 4; ++l)
-				{
-					if (vertices[vertexID].blendWeight[l] == 0.0f)
-					{
-						vertices[vertexID].blendWeight[l] = weight.mWeight;
-						vertices[vertexID].boneIndices[l] = boneIndex;
-						break;
-					}
-				}
-			}
-		}
-
-		Mesh.insert(Mesh.end(), vertices.begin(), vertices.end());
-
+		Bone padre;
+		Bone::loadModel(pScene, mesh, Mesh, indices, padre, countBounds);
+		vPadre.push_back(padre);
 		uint32 numVertex = 0;
 		for (int j = 0; j < mesh->mNumFaces; ++j)
 		{
 			aiFace face = mesh->mFaces[j];
 			for (int k = 0; k < face.mNumIndices; ++k)
 			{
-				uint32 indexIter = face.mIndices[k];
-				indices.push_back(indexIter);
 				numVertex++;
 			}
 		}

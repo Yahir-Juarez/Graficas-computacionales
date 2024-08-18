@@ -220,6 +220,7 @@ public:
 
 
 	Vector<uint32> m_index;
+	//Bone m_bones;
 private:
 	bool m_bFullScreen;
 	DXGI_SAMPLE_DESC m_multiConfig;
