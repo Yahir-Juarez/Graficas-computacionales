@@ -21,7 +21,6 @@ bool BMPCodec::Decode(const Path& filePath)
 
 	auto fileSize = imgFile.tellg();
 	imgFile.seekp(ios::beg);
-	cout << "hola";
 	BITMAPFILEHEADER bmpFH;
 	imgFile.read(reinterpret_cast<char*>(&bmpFH), sizeof(bmpFH));
 

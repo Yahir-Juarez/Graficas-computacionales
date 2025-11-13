@@ -40,8 +40,8 @@ public:
 
 	std::vector<Bone> children = {};
 
-	bool readSkeleton(Bone& boneOutput, aiNode* node, std::unordered_map<std::string, std::pair<int, MyMatrix4>>& boneInfoTable);
-	void loadModel(const aiScene* scene, aiMesh* mesh, std::vector<MODEL_VERTEX>& verticesOutput, std::vector<unsigned int>& indicesOutput, Bone& skeletonOutput, unsigned int& nBoneCount);
+	static bool readSkeleton(Bone& boneOutput, aiNode* node, std::unordered_map<std::string, std::pair<int, MyMatrix4>>& boneInfoTable);
+	static void loadModel(const aiScene* scene, aiMesh* mesh, std::vector<MODEL_VERTEX>& verticesOutput, std::vector<unsigned int>& indicesOutput, Bone& skeletonOutput, unsigned int& nBoneCount);
 };
 
 struct BoneTransformTrack {

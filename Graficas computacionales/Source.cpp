@@ -1,13 +1,14 @@
 #include <iostream>
 #include <random>
 #include <cmath>
+#include <filesystem>
 #include "Image.h"
 
 int Random(int min, int max) {
-	static std::random_device rd;
-	static std::mt19937 gen(rd());
-	std::uniform_int_distribution<int> dis(min, max);
-	return dis(gen);
+  static std::random_device rd;
+  static std::mt19937 gen(rd());
+  std::uniform_int_distribution<int> dis(min, max);
+  return dis(gen);
 }
 
 float lsR = 0.33f;
@@ -45,13 +46,13 @@ Color GreyScale(const Image& img, int pX, int pY)
 	Color currColor(img.SampleBilineal(textCoorsSize.pointX * pX, textCoorsSize.pointY * pY));
 
 	float lum = ((currColor.r * lsR) + (currColor.g * lsG) + (currColor.b * lsB));
-	if (lum > 255)
+	if (lum > 255.0f)
 	{
-		lum = 255;
+		lum = 255.0f;
 	}
-	else if (lum < 0)
+	else if (lum < 0.0f)
 	{
-		lum = 0;
+		lum = 0.0f;
 	}
 	return Color(lum, lum, lum);
 }
@@ -107,15 +108,27 @@ Color GreyScale(const Image& img, int pX, int pY)
 //	return Color(sum, sum, sum);
 //}
 
+std::string GetFileName(const std::string& path)
+{
+	std::filesystem::path p(path);
+	return p.stem().string(); // Devuelve el nombre sin la extensión
+}
+
 int main()
 {
 	g_CodecMan.AddCodec(new BMPCodec());
 
 	/////////////// Crear Imagen //////////////////////////
 
+	cout << "Escribe una ruta a una imagen tipo BMP, la imagen debe ser RGB de 3 canales\n";
+	cout << "Ejemplo:\nC:/Users/super/OneDrive/Escritorio/Graficas computacionales/x64/Release/Yoda.bmp\n";
+
+	string path;
+	std::getline(std::cin, path);
+
 	Image imagenOriginal;
 	Image imageOriginalRaster;
-	imagenOriginal.CreateFromImageFile("StarWars.bmp");
+	imagenOriginal.CreateFromImageFile(path);
 	imageOriginalRaster.CreateFromImageFile("Yoda.bmp");
 
 	///////////////////////////////////////////////////////
@@ -139,8 +152,9 @@ int main()
 	Image imageScale;
 	imageScale.scaleImg(2.5, imagenOriginal);
 
-	//////////////// bitBlit ////////////////////////
+	std::cout << "Imagen escalada\n";
 
+	//////////////// bitBlit ////////////////////////
 	Image imagebBitBlit;
 	imagebBitBlit.CreateImage(1920, 1080, imagenOriginal.m_bpp);
 	for (int i = 0; i < 1000; i++)
@@ -150,6 +164,8 @@ int main()
 			Random((0), imagenOriginal.m_width), Random((0), imagenOriginal.m_height);
 	}
 
+	std::cout << "Bit Blit\n";
+
 	////////////// Rotar Imagen ///////////////////////////	
 	
 	Image imageRotate;
@@ -157,21 +173,29 @@ int main()
 	imageRotate.rotate(127, imageScale);
 	imageRasterRotate.rotate(237, imageOriginalRaster);
 
+	std::cout << "Imagen rotada\n";
+
 	///////////// Raster ////////////////////////////////
 
 	Image imageRaster;
 	imageRaster = imageScale;
 	imageRaster.Raster(imageRasterRotate, 95, 123);
 
+	std::cout << "Raster\n";
+
 	////////////// Scale Gray ///////////////////////////
 
 	Image processImageGray;
 	processImageGray = imagenOriginal.ProcessImage(GreyScale);
 
+	std::cout << "Filtro blanco y negro\n";
+
 	///////////// Process Blur //////////////////////////////
 
 	Image processImageBlur;
-	processImageBlur = processImageGray.ProcessImage(blur);
+	processImageBlur = imagenOriginal.ProcessImage(blur);
+
+	std::cout << "Blur\n";
 
 	///////////// Process sobel //////////////////////////////
 
@@ -180,7 +204,6 @@ int main()
 
 	Image SumScale;
 	SumScale = processImageGray.ProcessImage(topSobel);
-
 	for (int x = 0; x < SumScale.m_height; x++)
 	{
 		for (int y = 0; y < SumScale.m_width; y++)
@@ -205,12 +228,16 @@ int main()
 		}
 	}
 
+	std::cout << "Sobel\n";
+
 	///////////// Process Prewwit //////////////////////////////
 
 	Image processImagePrewwit;
 	processImagePrewwit = processImageGray.ProcessImage(leftPrewwit);
 	Image processImagePrewwitTop;
 	processImagePrewwitTop = processImageGray.ProcessImage(topPrewwit);
+
+	std::cout << "Prewwit\n";
 
 	////////////////// Address Texture ////////////////////////
 
@@ -228,22 +255,26 @@ int main()
 	//}
 	
 	auto codec = g_CodecMan.GetCodecByFileExt(".bmp");
-
+	string nameFile = GetFileName(path);
+	nameFile = "ImageProcess/" + nameFile;
 	if (codec)
 	{
-		codec->Encode(imagenOriginal, "ImageProcess/StarWars.bmp");
-		codec->Encode(bilinealImage, "ImageProcess/StarWarsBilineal.bmp");
-		codec->Encode(imageScale, "ImageProcess/StarWarsScale.bmp");
-		codec->Encode(imagebBitBlit, "ImageProcess/StarWarsBitBlit.bmp");
-		codec->Encode(imageRotate, "ImageProcess/StarWarsRotate.bmp");
-		codec->Encode(imageRaster, "ImageProcess/StarWarsRaster.bmp");
-		codec->Encode(processImageGray, "ImageProcess/StarWarsGrayScale.bmp");
-		codec->Encode(processImageBlur, "ImageProcess/StarWarsBlur.bmp");
-		codec->Encode(processImageSobel, "ImageProcess/leftSobel.bmp");
-		codec->Encode(processImagePrewwit, "ImageProcess/leftPrewitt.bmp");
-		codec->Encode(processImagePrewwitTop, "ImageProcess/StarWarsPrewittTop.bmp");
-		codec->Encode(SumScale, "ImageProcess/StarWarsSobelSum.bmp");
+		codec->Encode(imagenOriginal, nameFile + ".bmp");
+		codec->Encode(bilinealImage, nameFile + "Bilineal.bmp");
+		codec->Encode(imageScale, nameFile + "Scale.bmp");
+		codec->Encode(imagebBitBlit, nameFile + "BitBlit.bmp");
+		codec->Encode(imageRotate, nameFile + "Rotate.bmp");
+		codec->Encode(imageRaster, nameFile + "Raster.bmp");
+		codec->Encode(processImageGray, nameFile + "GrayScale.bmp");
+		codec->Encode(processImageBlur, nameFile + "Blur.bmp");
+		codec->Encode(processImageSobel, nameFile + "Sobel.bmp");
+		codec->Encode(processImagePrewwit, nameFile + "leftPrewitt.bmp");
+		codec->Encode(processImagePrewwitTop, nameFile + "PrewittTop.bmp");
+		codec->Encode(SumScale, nameFile + "SobelSum.bmp");
 	}
 
+	std::cout << "Imagenes guardadas en la carpeta ImageProcess exitosamente. :)\nPresiona enter para salir.";
+	std::cin.get();
 	return 0;
 }
+

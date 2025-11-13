@@ -396,22 +396,10 @@ void Image::Raster(Image& src,
 
 	for (int fy = 0; fy < arrayPoints[3].pointY; ++fy)
 	{
-		if (fy == 78)
-		{
-			cout << "si";
-		}
-		cout << "Detector de puntos en linea hacia la izquierda\n";
 		PointIterL = GetPointInLine((PointIterL.pointX), fy, arrayPoints[2].pointX, (arrayPoints[2].pointY + 1), dx, dy, error);
-		cout << "Fin de recorrimiento\n\n";
 		PointIterR = GetPointInLine((PointIterR.pointX), fy, arrayPoints[1].pointX, (arrayPoints[1].pointY + 1), dx2, dy2, error2);
 		for (int fx = PointIterL.pointX; fx <= PointIterR.pointX; fx++)
 		{
-			/////////////////////////////////
-			//No dejar esto			/////
-			//isBlack() muy racista	/////
-			//como para estar en el	/////
-			//codigo xD				/////
-			/////////////////////////////////
 			if (!(src.GetPixel(fx, fy)).isBlack())
 			{
 				
