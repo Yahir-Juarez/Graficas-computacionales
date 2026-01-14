@@ -86,14 +86,14 @@ int main()
   //g_CodecMan.AddCodec(new BMPCodec());
   sf::VideoMode size = sf::VideoMode(sf::Vector2u(1785, 900));
 
-  image.CreateFromImageFile("C:/Users/super/OneDrive/Escritorio/Graficas computacionales/Graficas computacionales/Yoda.bmp");
+  //image.CreateFromImageFile("C:/Users/super/OneDrive/Escritorio/Graficas computacionales/Graficas computacionales/Yoda.bmp");
   window = sf::RenderWindow(size, "Image Processor");
   window.setFramerateLimit(60);
 
   sf::IntRect rect(sf::Vector2i(0, 0), sf::Vector2i(image.GetWidth(), image.GetHeight()));
 
-  testImage = sf::Image( Path("C:/Users/super/OneDrive/Escritorio/Graficas computacionales/Graficas computacionales/Resources/Import.png"));
-  testImageExport = sf::Image(Path("C:/Users/super/OneDrive/Escritorio/Graficas computacionales/Graficas computacionales/Resources/Export.png"));
+  testImage = sf::Image( Path("Resources/Import.png"));
+  testImageExport = sf::Image(Path("Resources/Export.png"));
   //testImage = createImageSFML(image);
 
   tex = sf::Texture(testImage);
@@ -125,6 +125,9 @@ int main()
       if (const auto* wndCommand = wndEvent.value().getIf<sf::Event::WndCommand>())
       {
         //WindowProc(hwnd, WM_COMMAND, wndCommand->wParam, wndCommand->lParam);
+      }
+      if (wndEvent.value().getIf<sf::Event::Closed>()) {
+        window.close();
       }
       ImGui::SFML::ProcessEvent(window, *wndEvent);
     }
