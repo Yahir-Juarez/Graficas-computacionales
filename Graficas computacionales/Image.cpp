@@ -1,5 +1,8 @@
 #include "Image.h"
+
 #include <iostream>
+
+#include <SFML\Graphics.hpp>
 
 using namespace std;
 
@@ -338,15 +341,64 @@ Image Image::ProcessImage(const float matrix[])
 			sum += ((GetPixel(iX - 1, iY + 1)).r) * matrix[6];
 			sum += ((GetPixel(iX, iY + 1)).r) * matrix[7];
 			sum += ((GetPixel(iX + 1, iY + 1)).r) * matrix[8];
-			if (sum > 255)
-			{
-				//sum = 255;
-			}
-			else if (sum < 0)
+			if (sum < 0)
 			{
 				sum = 0;
 			}
 			rt.SetPixel(iX, iY, Color(sum, sum, sum));
+		}
+	}
+	return rt;
+}
+
+Image Image::ProcessImageColor(const float matrix[])
+{
+
+	Image rt;
+	rt.CreateImage(m_width, m_height, m_bpp);
+
+	for (int iY = 0; iY < m_height; iY++)
+	{
+		for (int iX = 0; iX < m_width; iX++)
+		{
+			float sumR = 0.0f;
+			float sumG = 0.0f;
+			float sumB = 0.0f;
+			sumR += ((GetPixel(iX, iY - 1)).r) * matrix[1];
+			sumR += ((GetPixel(iX + 1, iY - 1)).r) * matrix[2];
+			sumR += ((GetPixel(iX - 1, iY)).r) * matrix[3];
+			sumR += ((GetPixel(iX, iY)).r) * matrix[4];
+			sumR += ((GetPixel(iX - 1, iY - 1)).r) * matrix[0];
+			sumR += ((GetPixel(iX + 1, iY)).r) * matrix[5];
+			sumR += ((GetPixel(iX - 1, iY + 1)).r) * matrix[6];
+			sumR += ((GetPixel(iX, iY + 1)).r) * matrix[7];
+			sumR += ((GetPixel(iX + 1, iY + 1)).r) * matrix[8];
+
+			sumG += ((GetPixel(iX, iY - 1)).g) * matrix[1];
+			sumG += ((GetPixel(iX + 1, iY - 1)).g) * matrix[2];
+			sumG += ((GetPixel(iX - 1, iY)).g) * matrix[3];
+			sumG += ((GetPixel(iX, iY)).g) * matrix[4];
+			sumG += ((GetPixel(iX - 1, iY - 1)).g) * matrix[0];
+			sumG += ((GetPixel(iX + 1, iY)).g) * matrix[5];
+			sumG += ((GetPixel(iX - 1, iY + 1)).g) * matrix[6];
+			sumG += ((GetPixel(iX, iY + 1)).g) * matrix[7];
+			sumG += ((GetPixel(iX + 1, iY + 1)).g) * matrix[8];
+
+			sumB += ((GetPixel(iX, iY - 1)).b) * matrix[1];
+			sumB += ((GetPixel(iX + 1, iY - 1)).b) * matrix[2];
+			sumB += ((GetPixel(iX - 1, iY)).b) * matrix[3];
+			sumB += ((GetPixel(iX, iY)).b) * matrix[4];
+			sumB += ((GetPixel(iX - 1, iY - 1)).b) * matrix[0];
+			sumB += ((GetPixel(iX + 1, iY)).b) * matrix[5];
+			sumB += ((GetPixel(iX - 1, iY + 1)).b) * matrix[6];
+			sumB += ((GetPixel(iX, iY + 1)).b) * matrix[7];
+			sumB += ((GetPixel(iX + 1, iY + 1)).b) * matrix[8];
+
+			if (sumR < 0)
+			{
+				sumR = 0;
+			}
+			rt.SetPixel(iX, iY, Color(sumR, sumG, sumB));
 		}
 	}
 	return rt;
@@ -459,9 +511,9 @@ void Image::DrawLine(int x0, int y0, int x1, int y1, Color color)
 		{
 			for (int i = 0; i < dx; ++i)
 			{
-				m_pixelData[startPos + 0] = static_cast<byte>(color.b);
-				m_pixelData[startPos + 1] = static_cast<byte>(color.g);
-				m_pixelData[startPos + 2] = static_cast<byte>(color.r);
+				m_pixelData[startPos + 0] = static_cast<Byte2>(color.b);
+				m_pixelData[startPos + 1] = static_cast<Byte2>(color.g);
+				m_pixelData[startPos + 2] = static_cast<Byte2>(color.r);
 				startPos += m_bpp;
 			}
 			return;
@@ -522,6 +574,42 @@ void Image::draw_line(int x0, int y0, int x1, int y1) {
 			y0 += y_inc;
 		}
 	}
+}
+
+bool
+Image::codecOtherExtension(const Path& path)
+{
+	int32 x, y, n;
+	//float* data = stbi_loadf(path.c_str(), &x, &y, &n, 4);
+
+	sf::Image imageCodec(path);
+
+	m_width = imageCodec.getSize().x;
+	m_height = imageCodec.getSize().y;
+
+	const uint8_t* raw = imageCodec.getPixelsPtr();
+
+	size_t size = m_width * m_height * 4;
+
+	std::vector<std::byte> vec(size);
+
+	for (size_t i = 0; i < size; i++) {
+		vec[i] = std::byte(raw[i]);
+	}
+
+	m_pixelData.clear();
+
+	for (int i = 0; i < vec.size(); i++) {
+		m_pixelData.push_back(vec[i + 2]);
+		m_pixelData.push_back(vec[i + 1]);
+		m_pixelData.push_back(vec[i]);
+
+		i = i + 3;
+	}
+
+	m_pitch = 3 * m_width;
+	m_bpp = 24;
+	return true;
 }
 
 

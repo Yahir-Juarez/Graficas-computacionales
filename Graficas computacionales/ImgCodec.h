@@ -1,7 +1,7 @@
 #pragma once
 
 #include <fstream>
-//#include <Windows.h>
+#include <Windows.h>
 //#include <wingdi.h>
 
 #include "AppTypes.h"
@@ -22,6 +22,7 @@ public:
 
 	virtual bool Decode(const Path& filePath) = 0;
 	virtual bool Encode(const Image& image, const String& fileName) = 0;
+	virtual bool Encode(const Image& image, TCHAR* fileName) = 0;
 	virtual void Clear() = 0;
 
 	virtual uint32 GetBitsPerPixel() 
@@ -36,7 +37,7 @@ public:
 	{
 		return m_heihgt;
 	}
-	virtual Vector<byte> GetPixelData() 
+	virtual Vector<Byte2> GetPixelData()
 	{
 		return m_pixelData;
 	}
@@ -53,7 +54,7 @@ protected:
 	uint32 m_bpp = 0;
 	uint32 m_width = 0;
 	uint32 m_heihgt = 0;
-	Vector<byte> m_pixelData;
+	Vector<Byte2> m_pixelData;
 };
 
 class BMPCodec : public ImgCodec
@@ -73,6 +74,8 @@ public:
 	bool Decode(const Path& filePath) override;
 
 	bool Encode(const Image& image, const String& fileName) override;
+
+	bool Encode(const Image& image, TCHAR* fileName) override;
 
 	void Clear() override
 	{

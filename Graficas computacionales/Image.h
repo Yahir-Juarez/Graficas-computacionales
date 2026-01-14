@@ -7,6 +7,7 @@
 #include <iostream>
 #include <functional>
 
+#include "Header\stb_image.h"
 using std::cout;
 
 using std::max;
@@ -114,16 +115,16 @@ public:
 		uint32 basePos = (y * m_pitch) + (x * (m_bpp >> 3));
 		if (m_bpp == 24)
 		{
-			m_pixelData[basePos + 0] = static_cast<byte>(color.r);
-			m_pixelData[basePos + 1] = static_cast<byte>(color.g);
-			m_pixelData[basePos + 2] = static_cast<byte>(color.b);
+			m_pixelData[basePos + 0] = static_cast<Byte2>(color.r);
+			m_pixelData[basePos + 1] = static_cast<Byte2>(color.g);
+			m_pixelData[basePos + 2] = static_cast<Byte2>(color.b);
 		}
 		else if (m_bpp == 32)
 		{
-			m_pixelData[basePos + 0] = static_cast<byte>(color.r);
-			m_pixelData[basePos + 1] = static_cast<byte>(color.g);
-			m_pixelData[basePos + 2] = static_cast<byte>(color.b);
-			m_pixelData[basePos + 3] = static_cast<byte>(color.b);
+			m_pixelData[basePos + 0] = static_cast<Byte2>(color.r);
+			m_pixelData[basePos + 1] = static_cast<Byte2>(color.g);
+			m_pixelData[basePos + 2] = static_cast<Byte2>(color.b);
+			m_pixelData[basePos + 3] = static_cast<Byte2>(color.b);
 		}
 		return true;
 	}
@@ -166,12 +167,16 @@ public:
 
 	void CreateFromImageFile(const Path& filePath)
 	{
+		g_CodecMan.AddCodec(new BMPCodec());
 		String fileExt = FileUtil::GetFileExtension(filePath);
 
 		ImgCodec* pCodec = g_CodecMan.GetCodecByFileExt(fileExt);
 
 		if (!pCodec)
 		{
+			if (codecOtherExtension(filePath)) {
+				return;
+			}
 			pCodec->Clear();
 			return;
 		}
@@ -204,6 +209,8 @@ public:
 		int y = 0);
 
 	Image ProcessImage(const float matrix[]);
+
+	Image ProcessImageColor(const float matrix[]);
 	Image ProcessImage(std::function < Color(const Image&, int, int)> procFunction);
 
 	bool scaleImg(float scale, Image& ptrImg)
@@ -226,6 +233,9 @@ public:
 	}
 
 	void draw_line(int x0, int y0, int x1, int y1);
+
+	bool
+	codecOtherExtension(const Path& path);
 
 	int getRoationPosX(int x, int y, float grados)
 	{
@@ -295,7 +305,7 @@ public:
 	uint32 m_height = 0;
 	uint32 m_pitch = 0;
 
-	Vector<byte> m_pixelData;
+	Vector<Byte2> m_pixelData;
 
 	vector2D point1;
 	vector2D point2;

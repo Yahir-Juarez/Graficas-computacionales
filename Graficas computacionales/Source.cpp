@@ -3,58 +3,56 @@
 #include <cmath>
 #include <filesystem>
 #include "Image.h"
+#include "ImageProceUI_App.h"
+#include <SFML/Graphics.hpp>
+
+int main3()
+{
+	// Crear una ventana
+	sf::VideoMode size = sf::VideoMode(sf::Vector2u(800, 600));
+
+	sf::RenderWindow window(size, "Mi Ventana SFML");
+
+	// Limitar el framerate (opcional)
+	window.setFramerateLimit(60);
+
+	// Crear un círculo para dibujar
+	sf::CircleShape circle(50);
+	circle.setFillColor(sf::Color::Green);
+	circle.setPosition(sf::Vector2f(375.0f, 275.0f));
+
+	// Loop principal
+	while (window.isOpen())
+	{
+		//sf::Event event;
+		//while (window.pollEvent(event))
+		//{
+		//	// Cerrar ventana con la X
+		//	if (event.type == sf::Event::Closed)
+		//		window.close();
+
+		//	// Presionar ESC también cierra la ventana
+		//	if (event.type == sf::Event::KeyPressed &&
+		//		event.key.code == sf::Keyboard::Escape)
+		//	{
+		//		window.close();
+		//	}
+		//}
+
+		// Limpiar, dibujar y mostrar
+		window.clear(sf::Color(30, 30, 30)); // Fondo gris oscuro
+		window.draw(circle);
+		window.display();
+	}
+
+	return 0;
+}
 
 int Random(int min, int max) {
   static std::random_device rd;
   static std::mt19937 gen(rd());
   std::uniform_int_distribution<int> dis(min, max);
   return dis(gen);
-}
-
-float lsR = 0.33f;
-float lsG = 0.60f;
-float lsB = 0.03f;
-
-float leftSobel[9]  =  {-1, 0, 1,
-					-2, 0, 2,
-					-1, 0, 1};
-
-float topSobel[9] = { 1, 2, 1,
-				  0, 0, 0,
-				  -1, -2, -1 };
-
-float leftPrewwit[9] = { 1, 0, -1,
-					1, 0, -1,
-					1, 0, -1 };
-
-
-float topPrewwit[9] = { 1, 1, 1,
-				  0, 0, 0,
-				  -1, -1, -1 };
-
-float blur[9] = { 0.0625f, 0.125f, 0.0625f,
-				0.125f, 0.25f, 0.125f,
-				0.0625f, 0.125f, 0.0625f };
-
-float outLine[9] = { -1, -1, -1,
-					-1, 8, -1,
-					-1, -1, -1 };
-
-Color GreyScale(const Image& img, int pX, int pY)
-{
-	vector2D textCoorsSize(1.0f / img.m_width, 1.0f / img.m_height);
-	Color currColor(img.SampleBilineal(textCoorsSize.pointX * pX, textCoorsSize.pointY * pY));
-
-	float lum = ((currColor.r * lsR) + (currColor.g * lsG) + (currColor.b * lsB));
-	if (lum > 255.0f)
-	{
-		lum = 255.0f;
-	}
-	else if (lum < 0.0f)
-	{
-		lum = 0.0f;
-	}
-	return Color(lum, lum, lum);
 }
 
 //Color sobelScale(const Image& img, int pX, int pY, const float matrix[])
@@ -114,7 +112,7 @@ std::string GetFileName(const std::string& path)
 	return p.stem().string(); // Devuelve el nombre sin la extensión
 }
 
-int main()
+int main2()
 {
 	g_CodecMan.AddCodec(new BMPCodec());
 
@@ -186,24 +184,24 @@ int main()
 	////////////// Scale Gray ///////////////////////////
 
 	Image processImageGray;
-	processImageGray = imagenOriginal.ProcessImage(GreyScale);
+	processImageGray = imagenOriginal.ProcessImage(ImageProceUI_APP::greyScale);
 
 	std::cout << "Filtro blanco y negro\n";
 
 	///////////// Process Blur //////////////////////////////
 
 	Image processImageBlur;
-	processImageBlur = imagenOriginal.ProcessImage(blur);
+	processImageBlur = imagenOriginal.ProcessImage(KeblerImage::blur);
 
 	std::cout << "Blur\n";
 
 	///////////// Process sobel //////////////////////////////
 
 	Image processImageSobel;
-	processImageSobel = processImageGray.ProcessImage(leftSobel);
+	processImageSobel = processImageGray.ProcessImage(KeblerImage::leftSobel);
 
 	Image SumScale;
-	SumScale = processImageGray.ProcessImage(topSobel);
+	SumScale = processImageGray.ProcessImage(KeblerImage::topSobel);
 	for (int x = 0; x < SumScale.m_height; x++)
 	{
 		for (int y = 0; y < SumScale.m_width; y++)
@@ -233,9 +231,9 @@ int main()
 	///////////// Process Prewwit //////////////////////////////
 
 	Image processImagePrewwit;
-	processImagePrewwit = processImageGray.ProcessImage(leftPrewwit);
+	processImagePrewwit = processImageGray.ProcessImage(KeblerImage::leftPrewwit);
 	Image processImagePrewwitTop;
-	processImagePrewwitTop = processImageGray.ProcessImage(topPrewwit);
+	processImagePrewwitTop = processImageGray.ProcessImage(KeblerImage::topPrewwit);
 
 	std::cout << "Prewwit\n";
 
